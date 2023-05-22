@@ -49,6 +49,12 @@ return require("packer").startup(function(use)
     }   
 }
 
+use {
+    'goolord/alpha-nvim',
+    config = function ()
+        require'alpha'.setup(require'alpha.themes.dashboard'.config)
+    end
+}
 
 
 use {
@@ -78,10 +84,7 @@ use {
 
 use "akinsho/toggleterm.nvim"
 
-
-
-
-
+use 'sbdchd/neoformat'
 
 -- colorschemes
 use { "catppuccin/nvim", as = "catppuccin" }

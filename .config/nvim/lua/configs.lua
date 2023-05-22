@@ -6,6 +6,7 @@ require	"configs.treesitter-config"
 require	"configs.nvimtree-config"
 require "configs.lualine-config"
 require "configs.fox-config"
+require "configs.alpha-config"
 
 
 require "configs.toggleterm-config"

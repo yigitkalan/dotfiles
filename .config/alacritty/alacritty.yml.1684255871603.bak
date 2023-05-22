@@ -5,30 +5,30 @@ colors:
   # Default colors
   primary:
     background: '#0b0e12'
-    foreground: '#e5e1d8'
+    foreground: '#C6C6C4'
 
   # Normal colors
   normal:
-    black: '#000000'
-    red: '#f7786d'
-    green: '#bde97c'
-    yellow: '#efdfac'
-    blue: '#6ebaf8'
-    magenta: '#ef88ff'
-    cyan: '#90fdf8'
-    white: '#e5e1d8'
+    black: '#10100E'
+    red: '#C40233'
+    green: '#009F6B'
+    yellow: '#FFD700'
+    blue: '#0087BD'
+    magenta: '#9A4EAE'
+    cyan: '#20B2AA'
+    white: '#C6C6C4'
 
   # Bright colors
   bright:
-    black: '#b4b4b4'
-    red: '#f99f92'
-    green: '#e3f7a1'
-    yellow: '#f2e9bf'
-    blue: '#b3d2ff'
-    magenta: '#e5bdff'
-    cyan: '#c2fefa'
-    white: '#ffffff'
-theme: Wombat
+    black: '#696969'
+    red: '#FF2400'
+    green: '#03C03C'
+    yellow: '#FDFF00'
+    blue: '#007FFF'
+    magenta: '#FF1493'
+    cyan: '#00CCCC'
+    white: '#FFFAFA'
+theme: Blood-Moon
 
 # #0b0e12
 # Import additional configuration files

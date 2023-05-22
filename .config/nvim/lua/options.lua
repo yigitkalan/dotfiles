@@ -15,8 +15,8 @@ o.showmode = false
 o.mouse='nicr'
 o.mouse='a'
 o.incsearch = true
-o.tabstop = 4
-o.shiftwidth = 4
+o.tabstop = 2
+o.shiftwidth = 2
 o.expandtab = true
 o.autoindent = true
 o.updatetime = 50
@@ -45,49 +45,57 @@ vim.cmd[[let g:OmniSharp_loglevel = 'DEBUG' ]]
 
 vim.cmd[[let g:ale_linters = {'cs': ['OmniSharp']}]]
 
--- coc options
+-- to continue file where you left of
 vim.cmd[[
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+  \| exe "normal! g'\"" | endif
+  endif
+  ]]
 
-" May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
-" utf-8 byte sequence
-set encoding=utf-8
-" Some servers have issues with backup files, see #649
-set nobackup
-set nowritebackup
+  -- coc options
+  vim.cmd[[
 
-" Having longer updatetime (default is 4000 ms = 4s) leads to noticeable
-" delays and poor user experience
-set updatetime=300
+  " May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
+  " utf-8 byte sequence
+  set encoding=utf-8
+  " Some servers have issues with backup files, see #649
+  set nobackup
+  set nowritebackup
 
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved
-set signcolumn=yes
+  " Having longer updatetime (default is 4000 ms = 4s) leads to noticeable
+  " delays and poor user experience
+  set updatetime=300
 
-" Use tab for trigger completion with characters ahead and navigate
-" NOTE: There's always complete item selected by default, you may want to enable
-" no select by `"suggest.noselect": true` in your configuration file
-" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
-" other plugin before putting this into your config
-inoremap <silent><expr> <TAB>
-\ coc#pum#visible() ? coc#pum#next(1) :
-\ CheckBackspace() ? "\<Tab>" :
-\ coc#refresh()
-inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+  " Always show the signcolumn, otherwise it would shift the text each time
+  " diagnostics appear/become resolved
+  set signcolumn=yes
 
-" Make <CR> to accept selected completion item or notify coc.nvim to format
-" <C-g>u breaks current undo, please make your own choice
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
-\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+  " Use tab for trigger completion with characters ahead and navigate
+  " NOTE: There's always complete item selected by default, you may want to enable
+  " no select by `"suggest.noselect": true` in your configuration file
+  " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+  " other plugin before putting this into your config
+  inoremap <silent><expr> <TAB>
+  \ coc#pum#visible() ? coc#pum#next(1) :
+  \ CheckBackspace() ? "\<Tab>" :
+  \ coc#refresh()
+  inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-function! CheckBackspace() abort
-let col = col('.') - 1
-return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
+  " Make <CR> to accept selected completion item or notify coc.nvim to format
+  " <C-g>u breaks current undo, please make your own choice
+  inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+  \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-" Use <c-space> to trigger completion
-if has('nvim')
+  function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+  endfunction
+
+  " Use <c-space> to trigger completion
+  if has('nvim')
     inoremap <silent><expr> <c-space> coc#refresh()
-else
+  else
     inoremap <silent><expr> <c-@> coc#refresh()
     endif
 
@@ -107,84 +115,84 @@ else
 
     function! ShowDocumentation()
     if CocAction('hasProvider', 'hover')
-        call CocActionAsync('doHover')
+      call CocActionAsync('doHover')
     else
-        call feedkeys('K', 'in')
+      call feedkeys('K', 'in')
+      endif
+      endfunction
+
+      " Highlight the symbol and its references when holding the cursor
+      autocmd CursorHold * silent call CocActionAsync('highlight')
+
+      " Symbol renaming
+      nmap <leader>rn <Plug>(coc-rename)
+
+      " Formatting selected code
+      xmap <leader>f  <Plug>(coc-format-selected)
+      nmap <leader>f  <Plug>(coc-format-selected)
+
+      augroup mygroup
+      autocmd!
+      " Setup formatexpr specified filetype(s)
+      autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+      " Update signature help on jump placeholder
+      autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+      augroup end
+
+      " Remap keys for applying code actions at the cursor position
+      nmap <leader>ac  <Plug>(coc-codeaction-cursor)
+      " Remap keys for apply code actions affect whole buffer
+      nmap <leader>ab  <Plug>(coc-codeaction-source)
+      nmap <leader>af  <Plug>(coc-codeaction)
+      " Apply the most preferred quickfix action to fix diagnostic on the current line
+      nmap <leader>af  <Plug>(coc-fix-current)
+
+      " Remap keys for applying refactor code actions
+      nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+      xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+      nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+
+      " Run the Code Lens action on the current line
+      nmap <leader>cl  <Plug>(coc-codelens-action)
+
+      " Map function and class text objects
+      " NOTE: Requires 'textDocument.documentSymbol' support from the language server
+      xmap if <Plug>(coc-funcobj-i)
+      omap if <Plug>(coc-funcobj-i)
+      xmap af <Plug>(coc-funcobj-a)
+      omap af <Plug>(coc-funcobj-a)
+      xmap ic <Plug>(coc-classobj-i)
+      omap ic <Plug>(coc-classobj-i)
+      xmap ac <Plug>(coc-classobj-a)
+      omap ac <Plug>(coc-classobj-a)
+
+      " Remap <C-f> and <C-b> to scroll float windows/popups
+      if has('nvim-0.4.0') || has('patch-8.2.0750')
+        nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+        nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+        inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+        inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+        vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+        vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
         endif
-        endfunction
 
-        " Highlight the symbol and its references when holding the cursor
-        autocmd CursorHold * silent call CocActionAsync('highlight')
+        " Use CTRL-S for selections ranges
+        " Requires 'textDocument/selectionRange' support of language server
+        nmap <silent> <C-s> <Plug>(coc-range-select)
+        xmap <silent> <C-s> <Plug>(coc-range-select)
 
-        " Symbol renaming
-        nmap <leader>rn <Plug>(coc-rename)
+        " Add `:Format` command to format current buffer
+        command! -nargs=0 Format :call CocActionAsync('format')
 
-        " Formatting selected code
-        xmap <leader>f  <Plug>(coc-format-selected)
-        nmap <leader>f  <Plug>(coc-format-selected)
+        " Add `:Fold` command to fold current buffer
+        command! -nargs=? Fold :call     CocAction('fold', <f-args>)
 
-        augroup mygroup
-        autocmd!
-        " Setup formatexpr specified filetype(s)
-        autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
-        " Update signature help on jump placeholder
-        autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
-        augroup end
+        " Add `:OR` command for organize imports of the current buffer
+        command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
 
-        " Remap keys for applying code actions at the cursor position
-        nmap <leader>ac  <Plug>(coc-codeaction-cursor)
-        " Remap keys for apply code actions affect whole buffer
-        nmap <leader>ab  <Plug>(coc-codeaction-source)
-        nmap <leader>af  <Plug>(coc-codeaction)
-        " Apply the most preferred quickfix action to fix diagnostic on the current line
-        nmap <leader>af  <Plug>(coc-fix-current)
+        " Add (Neo)Vim's native statusline support
+        " NOTE: Please see `:h coc-status` for integrations with external plugins that
+        " provide custom statusline: lightline.vim, vim-airline
+        set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 
-        " Remap keys for applying refactor code actions
-        nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
-        xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-        nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
-
-        " Run the Code Lens action on the current line
-        nmap <leader>cl  <Plug>(coc-codelens-action)
-
-        " Map function and class text objects
-        " NOTE: Requires 'textDocument.documentSymbol' support from the language server
-        xmap if <Plug>(coc-funcobj-i)
-        omap if <Plug>(coc-funcobj-i)
-        xmap af <Plug>(coc-funcobj-a)
-        omap af <Plug>(coc-funcobj-a)
-        xmap ic <Plug>(coc-classobj-i)
-        omap ic <Plug>(coc-classobj-i)
-        xmap ac <Plug>(coc-classobj-a)
-        omap ac <Plug>(coc-classobj-a)
-
-        " Remap <C-f> and <C-b> to scroll float windows/popups
-        if has('nvim-0.4.0') || has('patch-8.2.0750')
-            nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-            nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-            inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
-            inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
-            vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
-            vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
-            endif
-
-            " Use CTRL-S for selections ranges
-            " Requires 'textDocument/selectionRange' support of language server
-            nmap <silent> <C-s> <Plug>(coc-range-select)
-            xmap <silent> <C-s> <Plug>(coc-range-select)
-
-            " Add `:Format` command to format current buffer
-            command! -nargs=0 Format :call CocActionAsync('format')
-
-            " Add `:Fold` command to fold current buffer
-            command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-
-            " Add `:OR` command for organize imports of the current buffer
-            command! -nargs=0 OR   :call     CocActionAsync('runCommand', 'editor.action.organizeImport')
-
-            " Add (Neo)Vim's native statusline support
-            " NOTE: Please see `:h coc-status` for integrations with external plugins that
-            " provide custom statusline: lightline.vim, vim-airline
-            set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
-
-            ]]
+        ]]

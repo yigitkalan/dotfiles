@@ -11,15 +11,21 @@ export VISUAL=nvim
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+#ANDROID
+export ANDROID=$HOME/Android
+export ANDROID_SDK=$ANDROID/Sdk
+export EMULATOR=$ANDROID/emulator
+export PATH=$ANDROID_SDK:$EMULATOR:$PATH
+
 # Flutter
-export FLUTTER=$HOME/.flutter/flutter
+export FLUTTER=$ANDROID/flutter
 export PATH=$FLUTTER/bin:$PATH
-export PATH=$HOME/Android/Sdk/cmdline-tools/latest/bin:$PATH
+export PATH=$ANDROID/cmdline-tools/latest/bin:$PATH
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# ZSH_THEME="robbyrussell"
 
 
 export PATH=$HOME/.local/bin:$PATH

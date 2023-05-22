@@ -51,5 +51,6 @@ map('n','<a-l>', '<c-w>l')
 map('n','<a-h>', '<c-w>h')
 
 map('n','<leader>u', vim.cmd.UndotreeToggle)
+map('n','<leader>sd', ':CocList diagnostics<CR>')
 
 

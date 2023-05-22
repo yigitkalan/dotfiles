@@ -21,6 +21,7 @@ font pango:FiraCode Nerd Font Medium 12
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex --autostart --environment i3
 
+
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
 
@@ -35,7 +36,7 @@ floating_modifier $mod
 
 # start a terminal
 # bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Return exec alacritty -o font.size=12
+bindsym $mod+Return exec alacritty -o font.size=10
 # kill focused window
 bindsym $mod+q kill
 
@@ -54,7 +55,7 @@ bindsym $mod+d exec --no-startup-id rofi -show run
 
 #new way to get rid of title or borders
 default_border pixel 0
-default_floating_border pixel 0
+default_floating_border pixel 3
 
 
 
