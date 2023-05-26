@@ -55,7 +55,7 @@ bindsym $mod+d exec --no-startup-id rofi -show run
 
 #new way to get rid of title or borders
 default_border pixel 0
-default_floating_border pixel 3
+default_floating_border pixel 0
 
 
 
@@ -112,7 +112,7 @@ bindsym $mod+a focus parent
 
 hide_edge_borders both
 gaps inner 10
-gaps top 30
+gaps top 35
 
 smart_borders on
 smart_borders no_gaps

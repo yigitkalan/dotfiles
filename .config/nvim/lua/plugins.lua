@@ -77,7 +77,6 @@ use 'mbbill/undotree'
 
 use {
     'nvim-telescope/telescope.nvim', tag = '0.1.1',
-    -- or                            , branch = '0.1.x',
     requires = { {'nvim-lua/plenary.nvim'} }
 }
 
@@ -86,10 +85,17 @@ use "akinsho/toggleterm.nvim"
 
 use 'sbdchd/neoformat'
 
+
 -- colorschemes
 use { "catppuccin/nvim", as = "catppuccin" }
 use 'folke/tokyonight.nvim'
 use({ 'rose-pine/neovim', as = 'rose-pine' })
 use "EdenEast/nightfox.nvim" -- Packer
+use 'joshdick/onedark.vim'
+use 'tomasr/molokai'
+use "rebelot/kanagawa.nvim"
+use 'NLKNguyen/papercolor-theme'
+use 'rafi/awesome-vim-colorschemes'
+
 
 end)

@@ -33,7 +33,7 @@ g.transparent_enabled = true
 
 
 
-vim.cmd.colorscheme('tokyonight')
+vim.cmd.colorscheme('nightfox')
 
 
 

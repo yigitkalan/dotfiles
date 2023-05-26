@@ -4,7 +4,7 @@ items: null
 colors:
   # Default colors
   primary:
-    background: '#0b0e12'
+    background: '#121317'
     foreground: '#e5e1d8'
 
   # Normal colors
@@ -30,7 +30,7 @@ colors:
     white: '#ffffff'
 theme: Wombat
 
-# #0b0e12
+# #121317
 # Import additional configuration files
 #
 # Imports are loaded in order, skipping all missing files, with the importing
