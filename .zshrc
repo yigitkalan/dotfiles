@@ -16,11 +16,11 @@ export ANDROID=$HOME/Android
 export ANDROID_SDK=$ANDROID/Sdk
 export EMULATOR=$ANDROID/emulator
 export PATH=$ANDROID_SDK:$EMULATOR:$PATH
+export PATH=$ANDROID/cmdline-tools/latest/bin:$PATH
 
 # Flutter
 export FLUTTER=$ANDROID/flutter
 export PATH=$FLUTTER/bin:$PATH
-export PATH=$ANDROID/cmdline-tools/latest/bin:$PATH
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME

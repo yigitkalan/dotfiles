@@ -2,33 +2,33 @@
 
 items: null
 colors:
-  name: Tomorrow (dark)
-  author: Chris Kempson
+  # Default colors
   primary:
-    background: "#121317"
-    foreground: "#c5c8c6"
-  cursor:
-    text: "#1d1f21"
-    cursor: "#c5c8c6"
+    background: '#121317'
+    foreground: '#e5e1d8'
+
+  # Normal colors
   normal:
-    black: "#1d1f21"
-    red: "#cc6666"
-    green: "#b5bd68"
-    yellow: "#f0c674"
-    blue: "#81a2be"
-    magenta: "#b294bb"
-    cyan: "#8abeb7"
-    white: "#c5c8c6"
+    black: '#000000'
+    red: '#f7786d'
+    green: '#bde97c'
+    yellow: '#efdfac'
+    blue: '#6ebaf8'
+    magenta: '#ef88ff'
+    cyan: '#90fdf8'
+    white: '#e5e1d8'
+
+  # Bright colors
   bright:
-    black: "#969896"
-    red: "#cc6666"
-    green: "#b5bd68"
-    yellow: "#f0c674"
-    blue: "#81a2be"
-    magenta: "#b294bb"
-    cyan: "#8abeb7"
-    white: "#ffffff"
-theme: Tomorrow.dark
+    black: '#b4b4b4'
+    red: '#f99f92'
+    green: '#e3f7a1'
+    yellow: '#f2e9bf'
+    blue: '#b3d2ff'
+    magenta: '#e5bdff'
+    cyan: '#c2fefa'
+    white: '#ffffff'
+theme: Wombat
 
 # #121317
 # Import additional configuration files

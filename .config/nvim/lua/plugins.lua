@@ -96,6 +96,10 @@ use 'tomasr/molokai'
 use "rebelot/kanagawa.nvim"
 use 'NLKNguyen/papercolor-theme'
 use 'rafi/awesome-vim-colorschemes'
+use({
+  'glepnir/zephyr-nvim',
+  requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
+})
 
 
 end)

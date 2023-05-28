@@ -2,33 +2,33 @@
 
 items: null
 colors:
-  name: Tomorrow (dark)
-  author: Chris Kempson
+  name: Yousai
+  author: Kori
   primary:
     background: "#121317"
-    foreground: "#c5c8c6"
+    foreground: "#34302D"
   cursor:
-    text: "#1d1f21"
-    cursor: "#c5c8c6"
+    text: "#F5E7DE"
+    cursor: "#34302D"
   normal:
-    black: "#1d1f21"
-    red: "#cc6666"
-    green: "#b5bd68"
-    yellow: "#f0c674"
-    blue: "#81a2be"
-    magenta: "#b294bb"
-    cyan: "#8abeb7"
-    white: "#c5c8c6"
+    black: "#666661"
+    red: "#992E2E"
+    green: "#4C3226"
+    yellow: "#A67C53"
+    blue: "#4C7399"
+    magenta: "#BF9986"
+    cyan: "#D97742"
+    white: "#34302D"
   bright:
-    black: "#969896"
-    red: "#cc6666"
-    green: "#b5bd68"
-    yellow: "#f0c674"
-    blue: "#81a2be"
-    magenta: "#b294bb"
-    cyan: "#8abeb7"
-    white: "#ffffff"
-theme: Tomorrow.dark
+    black: "#7F7F7A"
+    red: "#B23636"
+    green: "#664233"
+    yellow: "#BF8F60"
+    blue: "#5986B2"
+    magenta: "#D9AE98"
+    cyan: "#F2854A"
+    white: "#4C4742"
+theme: Yousai
 
 # #121317
 # Import additional configuration files
