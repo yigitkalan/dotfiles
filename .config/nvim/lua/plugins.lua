@@ -48,13 +48,13 @@ return require("packer").startup(function(use)
         }
     }   
 }
-
 use {
     'goolord/alpha-nvim',
     config = function ()
         require'alpha'.setup(require'alpha.themes.dashboard'.config)
     end
 }
+
 
 
 use {
@@ -65,24 +65,19 @@ use {
 }
 
 
-use 'iamcco/markdown-preview.nvim'
-
 -- coc and autocompletion
 use { 'neoclide/coc.nvim', branch='release' }
 use 'lervag/vimtex'
 use 'OmniSharp/omnisharp-vim'
 use 'dense-analysis/ale'
 
-use 'mbbill/undotree'
-
 use {
     'nvim-telescope/telescope.nvim', tag = '0.1.1',
-    requires = { {'nvim-lua/plenary.nvim'} }
+     requires = { {'nvim-lua/plenary.nvim'} }
 }
 
 
 use "akinsho/toggleterm.nvim"
-
 use 'sbdchd/neoformat'
 
 

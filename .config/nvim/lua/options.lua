@@ -15,8 +15,8 @@ o.showmode = false
 o.mouse='nicr'
 o.mouse='a'
 o.incsearch = true
-o.tabstop = 2
-o.shiftwidth = 2
+o.tabstop = 4
+o.shiftwidth = 4
 o.expandtab = true
 o.autoindent = true
 o.updatetime = 50
@@ -32,10 +32,7 @@ g.transparent_enabled = true
 
 
 
-
 vim.cmd.colorscheme('nightfox')
-
-
 
 
 -- g.OmniSharp_start_without_solution = true

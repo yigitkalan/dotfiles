@@ -53,6 +53,9 @@ bindsym $mod+d exec --no-startup-id rofi -show run
 #to get rid of the borders
 # for_window [class=".*"] border pixel 0
 
+for_window [title="Friends List"] floating enable
+for_window [title="Steam - News"] floating enable
+
 #new way to get rid of title or borders
 default_border pixel 0
 default_floating_border pixel 0
@@ -207,9 +210,9 @@ bindsym $mod+shift+x exec betterlockscreen -s
 bindsym $mod+shift+p exec opera
 
 # Screenshots
-bindsym Print exec --no-startup-id maim -o "/home/$USER/Pictures/screenshots$(date)"
+bindsym Print exec --no-startup-id maim -o "$HOME/Pictures/screenshots/$(date).png"
 bindsym $mod+Print exec --no-startup-id maim -o --window $(xdotool getactivewindow) "/home/$USER/Pictures/screenshots/$(date).png"
-bindsym Shift+Print exec --no-startup-id maim -o --select "/home/$USER/Pictures/screenshots/$(date).png"
+bindsym Shift+Print exec --no-startup-id maim -o --select "$HOME/Pictures/screenshots/$(date).png"
 
 
 ## Clipboard Screenshots

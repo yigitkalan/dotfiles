@@ -13,9 +13,6 @@ map('n', '<leader>pf', builtin.find_files)
 map('n', '<leader>pg', builtin.live_grep)
 map('n', '<leader>si', ':so $MYVIMRC<cr>')
 
--- keep the cursor in the middle while searching
-map("n", "n", "nzzzv")
-map("n", "N", "Nzzzv")
 
 -- jk to escape
 map('i', 'jk','<esc>')
@@ -39,18 +36,18 @@ map('v', 'J', ":m '>+1<cr>gv=gv")
 -- greatest remap ever
 map("x", "<leader>p", [["_dP]])
 
--- disable arrows
+-- make arrows for split navigation
 map('n','<up>', '<c-w>k')
 map('n','<down>', '<c-w>j')
 map('n','<right>', '<c-w>l')
 map('n','<left>', '<c-w>h')
 
+-- split navigarion
 map('n','<a-k>', '<c-w>k')
 map('n','<a-j>', '<c-w>j')
 map('n','<a-l>', '<c-w>l')
 map('n','<a-h>', '<c-w>h')
 
-map('n','<leader>u', vim.cmd.UndotreeToggle)
-map('n','<leader>sd', ':CocList diagnostics<CR>')
 
+map('n','<leader>sd', ':CocList diagnostics<CR>')
 
