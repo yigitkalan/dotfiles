@@ -2,33 +2,33 @@
 
 items: null
 colors:
-  name: Ashes (dark)
+  name: Tomorrow (dark)
   author: Chris Kempson
   primary:
     background: "#121317"
-    foreground: "#c7ccd1"
+    foreground: "#c5c8c6"
   cursor:
-    text: "#1c2023"
-    cursor: "#c7ccd1"
+    text: "#1d1f21"
+    cursor: "#c5c8c6"
   normal:
-    black: "#1c2023"
-    red: "#c7ae95"
-    green: "#95c7ae"
-    yellow: "#aec795"
-    blue: "#ae95c7"
-    magenta: "#c795ae"
-    cyan: "#95aec7"
-    white: "#c7ccd1"
+    black: "#1d1f21"
+    red: "#cc6666"
+    green: "#b5bd68"
+    yellow: "#f0c674"
+    blue: "#81a2be"
+    magenta: "#b294bb"
+    cyan: "#8abeb7"
+    white: "#c5c8c6"
   bright:
-    black: "#747c84"
-    red: "#c7ae95"
-    green: "#95c7ae"
-    yellow: "#aec795"
-    blue: "#ae95c7"
-    magenta: "#c795ae"
-    cyan: "#95aec7"
-    white: "#f3f4f5"
-theme: Ashes.dark
+    black: "#969896"
+    red: "#cc6666"
+    green: "#b5bd68"
+    yellow: "#f0c674"
+    blue: "#81a2be"
+    magenta: "#b294bb"
+    cyan: "#8abeb7"
+    white: "#ffffff"
+theme: Tomorrow.dark
 
 # #121317
 # Import additional configuration files

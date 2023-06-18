@@ -160,7 +160,7 @@ bindsym $mod+Shift+0 move container to workspace  $ws10
 
 
 for_window [class="Spotify"] move to workspace $ws9
-for_window [class="Opera"] move to workspace $ws2
+for_window [class="Brave-browser"] move to workspace $ws2
 for_window [class="discord"] move to workspace $ws3
 for_window [class="Microsoft Teams - Preview"] move to workspace $ws4
 for_window [class="unityhub"] move to workspace $ws5
@@ -207,7 +207,7 @@ bindsym $mod+Ctrl+greater move workspace to output right
 bindsym $mod+Ctrl+less move workspace to output left
 
 bindsym $mod+shift+x exec betterlockscreen -s 
-bindsym $mod+shift+p exec opera
+bindsym $mod+shift+p exec brave
 
 # Screenshots
 bindsym Print exec --no-startup-id maim -o "$HOME/Pictures/screenshots/$(date).png"

@@ -125,27 +125,27 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-# alias zshconfig="mate ~/.zshrc"
+alias zshconfig="nvim ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias sdn="shutdown now"
 alias cl="clear"
 alias gogh="bash -c  \"\$(wget -qO- https://git.io/vQgMr)\""
 alias rm="rm -i"
+alias univim="nvim --listen /tmp/nvimsocket"
 
 
 #open bluetooth
 alias startBl='sudo systemctl start bluetooth'
 
 
-#connect to qcy-t7
-alias connectSound="until bluetoothctl connect FC:58:FA:AC:D3:6F; do  echo ...  ; sleep 1; done"
-
-#disconnect qcy-t7
-alias disconnectSound="until bluetoothctl disconnect FC:58:FA:AC:D3:6F; do  echo ...  ; sleep 1; done"
-
-alias androidst="cd ~/Android/android-studio/bin && ./studio.sh"
+# #connect to qcy-t7
+# alias connectSound="until bluetoothctl connect FC:58:FA:AC:D3:6F; do  echo ...  ; sleep 1; done"
+#
+# #disconnect qcy-t7
+# alias disconnectSound="until bluetoothctl disconnect FC:58:FA:AC:D3:6F; do  echo ...  ; sleep 1; done"
 
 alias clearcache="sudo sh -c 'echo 3 >  /proc/sys/vm/drop_caches'"
+
 # alias vim="useNEOVIMinstead"
 alias v="nvim"
 

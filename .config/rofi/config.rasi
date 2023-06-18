@@ -4,7 +4,7 @@
     font: "FiraCode Nerd Font 14";
     foreground: #f8f8f2;
     background-color: #111112;
-    active-background: #6c7a4d;
+    active-background: #538f84;
     urgent-background: #ff5555;
     urgent-foreground: #282a36;
     selected-background: @active-background;
