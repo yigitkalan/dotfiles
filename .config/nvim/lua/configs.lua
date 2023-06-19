@@ -1,4 +1,5 @@
 require "configs.catppuccin-config"
+require "configs.telescope-config"
 require "configs.rose-pine-config"
 require	"configs.transparent-config"
 require	"configs.tokyonight-config"

@@ -34,6 +34,8 @@ g.transparent_enabled = true
 
 vim.cmd.colorscheme('challenger_deep')
 
+
+--omnisharp shortcuts for coc replacements
 vim.cmd[[
 augroup omnisharp_commands
 autocmd!
@@ -57,6 +59,7 @@ autocmd!
 augroup END
 ]]
 
+
 vim.cmd[[
 let g:OmniSharp_popup_options = {
 \ 'winblend': 0,
@@ -64,6 +67,8 @@ let g:OmniSharp_popup_options = {
 \ 'border': 'rounded'
 \}
 ]]
+
+
 -- g.OmniSharp_start_without_solution = true
 vim.cmd[[let g:OmniSharp_server_use_net6 = 0]]
 vim.cmd[[let g:OmniSharp_server_use_mono = 1]]

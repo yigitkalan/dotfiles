@@ -73,9 +73,9 @@ use 'dense-analysis/ale'
 
 use {
     'nvim-telescope/telescope.nvim', tag = '0.1.1',
-     requires = { {'nvim-lua/plenary.nvim'} }
-}
+     requires = {'nvim-lua/plenary.nvim'} 
 
+}
 
 use "akinsho/toggleterm.nvim"
 use 'sbdchd/neoformat'
