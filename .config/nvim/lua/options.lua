@@ -30,9 +30,9 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
+g.nvim_tree_ignore = { '*.meta' }
 
-
-vim.cmd.colorscheme('challenger_deep')
+vim.cmd.colorscheme('kanagawa-wave')
 
 
 --omnisharp shortcuts for coc replacements

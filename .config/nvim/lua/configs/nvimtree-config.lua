@@ -66,7 +66,7 @@ renderer = {
     icons = {
         webdev_colors = true,
         git_placement = "before",
-        modified_placement = "after",
+        modified_placement = "before",
         padding = " ",
         symlink_arrow = " ➛ ",
         show = {
@@ -138,13 +138,13 @@ filters = {
     dotfiles = false,
     git_clean = false,
     no_buffer = false,
-    custom = {},
+    custom = {"*.meta"},
     exclude = {},
 },
 filesystem_watchers = {
     enable = true,
     debounce_delay = 50,
-    ignore_dirs = {},
+    ignore_dirs = {"*.meta"},
 },
 git = {
     enable = true,
@@ -154,7 +154,7 @@ git = {
     timeout = 400,
 },
 modified = {
-    enable = false,
+    enable = true,
     show_on_dirs = true,
     show_on_open_dirs = true,
 },
