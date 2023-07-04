@@ -158,7 +158,9 @@ alias keyb="setxkbmap -layout"
 
 alias clearswaps="rm -rf ~/.local/state/nvim/swap/*"
 
-alias locate="sudo find / -name "
+alias wconnect="nmcli device wifi connect"
+alias wlist="nmcli device wifi list"
+
 
 eval "$(starship init zsh)"
 #neofetch
