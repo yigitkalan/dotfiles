@@ -2,7 +2,6 @@ local g = vim.g
 local o = vim.opt
 
 g.mapleader = " "
--- o.autochdir = true
 o.hlsearch = false
 o.laststatus = 2
 o.number = true
@@ -22,6 +21,10 @@ o.autoindent = true
 o.updatetime = 50
 o.swapfile = false
 
+
+-- block comment on new line after pressing enter or o
+vim.cmd[[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
+
 o.termguicolors = true
 
 g.AutoPairsShortcutJump = '<c-l>'
@@ -29,8 +32,6 @@ g.AutoPairsShortcutJump = '<c-l>'
 g.ale_set_highlights = 1
 
 g.transparent_enabled = true
-
-g.nvim_tree_ignore = { '*.meta' }
 
 vim.cmd.colorscheme('kanagawa-wave')
 
@@ -50,7 +51,7 @@ autocmd!
 
   autocmd FileType cs nmap <silent> <buffer> <Leader>os= <Plug>(omnisharp_code_format)
 
-  autocmd FileType cs nmap <silent> <buffer> <Leader>osnm <Plug>(omnisharp_rename)
+  autocmd FileType cs nmap <silent> <buffer> <Leader>rn <Plug>(omnisharp_rename)
 
   autocmd FileType cs nmap <silent> <buffer> <Leader>osre <Plug>(omnisharp_restart_server)
   autocmd FileType cs nmap <silent> <buffer> <Leader>osst <Plug>(omnisharp_start_server)

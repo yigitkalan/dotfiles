@@ -111,6 +111,16 @@ _G.packer_plugins = {
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/coc.nvim",
     url = "https://github.com/neoclide/coc.nvim"
   },
+  ["copilot.vim"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/copilot.vim",
+    url = "https://github.com/github/copilot.vim"
+  },
+  ["hardtime.nvim"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/hardtime.nvim",
+    url = "https://github.com/m4xshen/hardtime.nvim"
+  },
   ["indent-blankline.nvim"] = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/indent-blankline.nvim",
@@ -120,6 +130,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/kanagawa.nvim",
     url = "https://github.com/rebelot/kanagawa.nvim"
+  },
+  ["lsp_signature.nvim"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/lsp_signature.nvim",
+    url = "https://github.com/ray-x/lsp_signature.nvim"
   },
   ["lualine.nvim"] = {
     loaded = true,
