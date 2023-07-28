@@ -1,0 +1,155 @@
+{
+    "vim.handleKeys": {
+        "<C-a>": false,
+        "<C-f>": false,
+        "C-d": false
+    },
+    // "vim.useCtrlKeys": false,
+    "vim.enableNeovim": true,
+    "vim.incsearch": true,
+    "vim.leader": "<space>",
+    "vim.useSystemClipboard": true,
+    "vim.smartRelativeLine": true,
+    "vim.sneakUseIgnorecaseAndSmartcase": true,
+    //use cl for s in normal mode
+    "vim.sneak": true,
+    //change vim sneak key something else from s
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "k"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["J", "k"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["j", "K"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["J", "K"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "vim.commandLineModeKeyBindingsNonRecursive": [
+        {
+            "before": ["j", "k"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["J", "k"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["j", "K"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["J", "K"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        //open documentation with shift + k like mouse hover
+        {
+            "before": ["K"],
+            "commands": [
+                {
+                    "command": "editor.action.showHover",
+                    "args": []
+                }
+            ]
+        },
+        //go to definiition with g+d
+        {
+            "before": ["g", "d"],
+            "commands": [
+                {
+                    "command": "editor.action.goToDeclaration",
+                    "args": []
+                }
+            ]
+        },
+        //go to references with g+r
+        {
+            "before": ["g", "r"],
+            "commands": [
+                {
+                    "command": "editor.action.goToReferences",
+                    "args": []
+                }
+            ]
+        },
+        //rename with leader + r + e
+        {
+            "before": ["<leader>", "r", "e"],
+            "commands": [
+                {
+                    "command": "editor.action.rename",
+                    "args": []
+                }
+            ]
+        }
+    ],
+
+    "editor.fontFamily": "Cascadia Code",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 18,
+    "files.trimFinalNewlines": true,
+    "json.schemas": [],
+    "editor.tokenColorCustomizations": {},
+    "workbench.colorCustomizations": {},
+    "prettier.tabWidth": 4,
+    "editor.detectIndentation": false,
+    "update.mode": "none",
+    "omnisharp.monoPath": "/usr/bin/mono",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Bearded Theme Monokai Black",
+    "java.server.launchMode": "Standard",
+    "code-runner.runInTerminal": true,
+    "terminal.integrated.enableMultiLinePasteWarning": false,
+    "editor.autoClosingBrackets": "always",
+
+    "editor.inlineSuggest.suppressSuggestions": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.suggest.localityBonus": true,
+    "security.workspace.trust.untrustedFiles": "open",
+
+    "editor.lineNumbers": "relative",
+    "prettier.printWidth": 80,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[csharp]": {
+        "editor.defaultFormatter": "csharpier.csharpier-vscode"
+    },
+
+    "workbench.startupEditor": "none",
+    "editor.cursorBlinking": "expand",
+    "editor.cursorSurroundingLines": 10,
+    "omnisharp.organizeImportsOnFormat": true,
+    "editor.rulers": [100],
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
+    },
+    "editor.quickSuggestions": {
+        "other": "on",
+        "strings": "on"
+    },
+    "omnisharp.loggingLevel": "error",
+    "editor.suggestSelection": "recentlyUsed",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "git.autofetch": true,
+    "editor.formatOnSave": true,
+    "editor.cursorSmoothCaretAnimation": "on",
+    "editor.smoothScrolling": true,
+    "files.exclude": {
+        "**/.meta": true,
+        "**/*.meta": true,
+        "**/*.physicMaterial": true,
+        "**/*.prefab": true
+    },
+    "githubPullRequests.createOnPublishBranch": "never"
+}
