@@ -169,7 +169,7 @@ alias clearswaps="rm -rf ~/.local/state/nvim/swap/*"
 alias wconnect="nmcli device wifi connect"
 alias wlist="nmcli device wifi list"
 
-alias liveweb="live-server . ; sass --watch . "
+alias livehere="live-server . & ; sass --watch . & "
 
 
 eval "$(starship init zsh)"
