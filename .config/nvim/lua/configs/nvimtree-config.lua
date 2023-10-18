@@ -11,25 +11,17 @@ sync_root_with_cwd = false,
 reload_on_bufenter = false,
 respect_buf_cwd = false,
 on_attach = "default",
-remove_keymaps = false,
 select_prompts = false,
 view = {
     centralize_selection = false,
     cursorline = true,
     debounce_delay = 15,
-    width = 22,
-    hide_root_folder = false,
+    width = 25,
     side = "left",
     preserve_window_proportions = false,
     number = false,
     relativenumber = false,
     signcolumn = "yes",
-    mappings = {
-        custom_only = false,
-        list = {
-            -- user mappings go here
-        },
-    },
     float = {
         enable = false,
         quit_on_focus_loss = true,

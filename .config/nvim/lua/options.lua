@@ -11,8 +11,7 @@ o.smartcase = true
 o.relativenumber = true
 o.showmatch = true
 o.showmode = false
-o.mouse='nicr'
-o.mouse='a'
+o.mouse = 'a'
 o.incsearch = true
 o.tabstop = 4
 o.shiftwidth = 4
@@ -23,7 +22,9 @@ o.swapfile = false
 
 
 -- block comment on new line after pressing enter or o
-vim.cmd[[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
+vim.cmd [[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
+
+
 
 o.termguicolors = true
 
@@ -33,60 +34,21 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('kanagawa-wave')
+vim.cmd.colorscheme('rose-pine-main')
+-- vim.cmd.colorscheme('gruvbox')
 
 
---omnisharp shortcuts for coc replacements
-vim.cmd[[
-augroup omnisharp_commands
-autocmd!
-  autocmd FileType cs nmap <silent> <buffer> gd <Plug>(omnisharp_go_to_definition)
-  autocmd FileType cs nmap <silent> <buffer> gr <Plug>(omnisharp_find_usages)
-  autocmd FileType cs nmap <silent> <buffer> <s-k> <Plug>(omnisharp_documentation)
-  autocmd FileType cs nmap <silent> <buffer> <Leader>fs <Plug>(omnisharp_find_symbol)
-  autocmd FileType cs nmap <silent> <buffer> <Leader>ufx <Plug>(omnisharp_fix_usings)
-
-  autocmd FileType cs nmap <silent> <buffer> <Leader>ac <Plug>(omnisharp_code_actions)
-  autocmd FileType cs xmap <silent> <buffer> <Leader>ac <Plug>(omnisharp_code_actions)
-
-  autocmd FileType cs nmap <silent> <buffer> <Leader>os= <Plug>(omnisharp_code_format)
-
-  autocmd FileType cs nmap <silent> <buffer> <Leader>rn <Plug>(omnisharp_rename)
-
-  autocmd FileType cs nmap <silent> <buffer> <Leader>osre <Plug>(omnisharp_restart_server)
-  autocmd FileType cs nmap <silent> <buffer> <Leader>osst <Plug>(omnisharp_start_server)
-  autocmd FileType cs nmap <silent> <buffer> <Leader>ossp <Plug>(omnisharp_stop_server)
-" ... other omnisharp-vim mappings
-augroup END
-]]
-
-
-vim.cmd[[
-let g:OmniSharp_popup_options = {
-\ 'winblend': 0,
-\ 'winhl': 'Normal:Normal,FloatBorder:Normal',
-\ 'border': 'rounded'
-\}
-]]
-
-
--- g.OmniSharp_start_without_solution = true
-vim.cmd[[let g:OmniSharp_server_use_net6 = 0]]
-vim.cmd[[let g:OmniSharp_server_use_mono = 1]]
-vim.cmd[[let g:OmniSharp_loglevel = 'DEBUG' ]]
-
-vim.cmd[[let g:ale_linters = {'cs': ['OmniSharp']}]]
 
 -- to continue file where you left of
-vim.cmd[[
+vim.cmd [[
 if has("autocmd")
   au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
   \| exe "normal! g'\"" | endif
   endif
   ]]
 
-  -- coc options
-  vim.cmd[[
+-- coc options
+vim.cmd [[
 
   " May need for Vim (not Neovim) since coc.nvim calculates byte offset by count
   " utf-8 byte sequence
@@ -160,8 +122,8 @@ if has("autocmd")
       nmap <leader>rn <Plug>(coc-rename)
 
       " Formatting selected code
-      xmap <leader>f  <Plug>(coc-format-selected)
-      nmap <leader>f  <Plug>(coc-format-selected)
+      " xmap <leader>f  <Plug>(coc-format-selected)
+      " nmap <leader>f  <Plug>(coc-format-selected)
 
       augroup mygroup
       autocmd!

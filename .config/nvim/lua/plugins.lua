@@ -15,29 +15,22 @@ return require("packer").startup(function(use)
     }
     use 'jiangmiao/auto-pairs'
     use 'ryanoasis/vim-devicons'
-    use ('nvim-treesitter/nvim-treesitter', {run = 'TSUpdate'})
-    use "HiPhish/nvim-ts-rainbow2"
-    use 'xiyaowong/nvim-transparent'
+    use('nvim-treesitter/nvim-treesitter', { run = 'TSUpdate' })
     use 'nvim-tree/nvim-web-devicons'
     use 'nvim-treesitter/nvim-treesitter-context'
-    use {"lukas-reineke/indent-blankline.nvim",
-    require("indent_blankline").setup {
-        -- for example, context is off by default, use this to turn it on
-        show_current_context = true,
-        show_current_context_start = false,
-        }   
-    }
-    use {'NvChad/nvim-colorizer.lua',
-        require 'colorizer'.setup{
+
+    use { 'NvChad/nvim-colorizer.lua',
+        require 'colorizer'.setup {
             user_default_options = {
-                names = false,
+                names = true,
             }
-        }   
+        }
+
     }
     use {
         'goolord/alpha-nvim',
-        config = function ()
-            require'alpha'.setup(require'alpha.themes.dashboard'.config)
+        config = function()
+            require 'alpha'.setup(require 'alpha.themes.dashboard'.config)
         end
     }
 
@@ -45,18 +38,18 @@ return require("packer").startup(function(use)
 
 
 
+
     ------------------------------------------------------core
-        ---------------coc and autocompletion
-        use { 'neoclide/coc.nvim', branch='release' }
-        use 'lervag/vimtex'
-        use 'OmniSharp/omnisharp-vim'
-        use 'dense-analysis/ale'
+    ---------------coc and autocompletion
+    use { 'neoclide/coc.nvim', branch = 'release' }
 
-        use {
-            'nvim-telescope/telescope.nvim', tag = '0.1.1',
-             requires = {'nvim-lua/plenary.nvim'} 
+    use {
+        'nvim-telescope/telescope.nvim', tag = '0.1.1',
+        requires = { 'nvim-lua/plenary.nvim' }
 
-        }
+    }
+
+    use { 'vim-test/vim-test' }
 
 
     use {
@@ -74,24 +67,19 @@ return require("packer").startup(function(use)
 
     use "github/copilot.vim"
 
-    use 'sbdchd/neoformat'
-
     use {
-         'numToStr/Comment.nvim',
+        'numToStr/Comment.nvim',
         config = function()
             require('Comment').setup()
         end
     }
-   
-    use 'mg979/vim-visual-multi'
 
-    use {"m4xshen/hardtime.nvim", require("hardtime").setup()}
+    use 'mg979/vim-visual-multi'
     use 'honza/vim-snippets'
 
-
-        ----------------------------- tpope
-        use 'tpope/vim-surround'
-        use 'tpope/vim-repeat'
+    ----------------------------- tpope
+    use 'tpope/vim-surround'
+    use 'tpope/vim-repeat'
 
 
 
@@ -107,9 +95,7 @@ return require("packer").startup(function(use)
     use 'NLKNguyen/papercolor-theme'
     use 'rafi/awesome-vim-colorschemes'
     use({
-      'glepnir/zephyr-nvim',
-      requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
+        'glepnir/zephyr-nvim',
+        requires = { 'nvim-treesitter/nvim-treesitter', opt = true },
     })
-
-
 end)

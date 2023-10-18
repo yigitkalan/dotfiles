@@ -9,8 +9,8 @@ local api = require('nvim-tree.api')
 -- map('n', '<leader>pv', vim.cmd.Ex)
 map('n', '<space>', '<nop>')
 
-map('n', '<leader>pf', builtin.find_files)
 map('n', '<leader>pg', builtin.live_grep)
+map('n', '<leader>pf', builtin.find_files)
 map('n', '<leader>si', ':so $MYVIMRC<cr>')
 
 
@@ -37,17 +37,26 @@ map('v', 'J', ":m '>+1<cr>gv=gv")
 map("x", "<leader>p", [["_dP]])
 
 -- make arrows for split navigation
-map('n','<up>', '<c-w>k')
-map('n','<down>', '<c-w>j')
-map('n','<right>', '<c-w>l')
-map('n','<left>', '<c-w>h')
+map('n','<Up>', '<c-w>k')
+map('n','<Down>', '<c-w>j')
+map('n','<Right>', '<c-w>l')
+map('n','<Left>', '<c-w>h')
+
 
 -- split navigarion
 map('n','<a-k>', '<c-w>k')
 map('n','<a-j>', '<c-w>j')
 map('n','<a-l>', '<c-w>l')
 map('n','<a-h>', '<c-w>h')
+-- map('n', '<leader>scss',':set makeprg=sass\\ --watch\\ %<cr>:make<cr>')
 
 
-map('n','<leader>sd', ':CocList diagnostics<CR>')
+map('n',"<leader>tt", ":TestNearest<cr>")
+map('n',"<leader>tf", ":TestFile<cr>")
+map('n',"<leader>tl",":TestLast<cr>")
+
+map('n','<leader>di', ':CocList diagnostics<CR>')
+map('n','<leader>o', ':CocList outline<CR>')
+map('n','<leader>re', '<Plug>(coc-rename)')
+map('n', '<a-f>', ':CocCommand editor.action.formatDocument<cr>')
 

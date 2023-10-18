@@ -6,8 +6,6 @@ require'nvim-treesitter.configs'.setup {
         -- disable = { "jsx", "cpp" },
         -- Which query to use for finding delimiters
         query = 'rainbow-parens',
-        -- Highlight the entire buffer all at once
-        strategy = require 'ts-rainbow'.strategy.global,
     },
     -- A list of parser names, or "all" (the five listed parsers should always be installed)
     ensure_installed = { "c_sharp", "cpp", "c","python","dart",
