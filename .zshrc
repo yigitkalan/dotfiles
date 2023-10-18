@@ -5,22 +5,27 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
 #
-export EDITOR=nvim
-export VISUAL=nvim
 
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-
-#ANDROID
 export ANDROID=$HOME/Android
 export ANDROID_SDK=$ANDROID/Sdk
 export EMULATOR=$ANDROID/emulator
 export PATH=$ANDROID_SDK:$EMULATOR:$PATH
 export PATH=$ANDROID/cmdline-tools/latest/bin:$PATH
 
-# Flutter
 export FLUTTER=$ANDROID/flutter
 export PATH=$FLUTTER/bin:$PATH
+
+export EDITOR=nvim
+export VISUAL=nvim
+export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
+
+
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+export PATH=JAVA_HOME:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
@@ -137,6 +142,9 @@ alias univim="nvim --listen /tmp/nvimsocket"
 #open bluetooth
 alias startBl='sudo systemctl start bluetooth'
 
+alias fzg='cd $(find * -type d | fzf)'
+alias fzo='find * -type f | fzf | xargs nvim'
+
 
 # #connect to qcy-t7
 # alias connectSound="until bluetoothctl connect FC:58:FA:AC:D3:6F; do  echo ...  ; sleep 1; done"
@@ -161,6 +169,9 @@ alias clearswaps="rm -rf ~/.local/state/nvim/swap/*"
 alias wconnect="nmcli device wifi connect"
 alias wlist="nmcli device wifi list"
 
+alias liveweb="live-server . ; sass --watch . "
+
 
 eval "$(starship init zsh)"
+pfetch
 #neofetch
