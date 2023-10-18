@@ -36,7 +36,7 @@ floating_modifier $mod
 
 # start a terminal
 # bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Return exec alacritty -o font.size=16
+bindsym $mod+Return exec alacritty -o font.size=9
 # kill focused window
 bindsym $mod+q kill
 
@@ -115,7 +115,7 @@ bindsym $mod+a focus parent
 
 hide_edge_borders both
 gaps inner 8
-gaps top 35
+gaps top 45
 
 smart_borders on
 smart_borders no_gaps
@@ -213,7 +213,7 @@ bindsym $mod+shift+p exec brave
 
 # Screenshots
 bindsym Print exec --no-startup-id maim -o "$HOME/Pictures/screenshots/$(date).png"
-bindsym $mod+Print exec --no-startup-id maim -o --window $(xdotool getactivewindow) "/home/$USER/Pictures/screenshots/$(date).png"
+bindsym $mod+Print exec --no-startup-id maim -o --window $(xdotool getactivewindow) "$HOME/Pictures/screenshots/$(date).png"
 bindsym Shift+Print exec --no-startup-id maim -o --select "$HOME/Pictures/screenshots/$(date).png"
 
 
@@ -222,14 +222,19 @@ bindsym Ctrl+Print exec --no-startup-id maim -o | xclip -selection clipboard -t 
 bindsym Ctrl+$mod+Print exec --no-startup-id maim -o --window $(xdotool getactivewindow) | xclip -selection clipboard -t image/png
 bindsym Ctrl+Shift+Print exec --no-startup-id maim -o --select | xclip -selection clipboard -t image/png
 
-#for volumekeys
+#for keyboard brightness
+bindsym XF86KbdBrightnessDown exec --no-startup-id brightnessctl --device='rgb:kbd_backlight' set 10%-
+
+bindsym XF86KbdBrightnessUp exec --no-startup-id brightnessctl --device='rgb:kbd_backlight' set 10%+
+
+#for brightnesskeys
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl --min-val=2 -q set 5%-
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl -q set 5%+
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id amixer set Master 5%+ && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id amixer set Master 5%- && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
@@ -239,6 +244,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 #picom conf
 exec_always picom  --config /home/sy/.config/picom/picom.conf
 
+exec_always --no-startup-id lxpolkit
 
 set $bg-color               #46575e
 set $inactive-bg-color      #1a1a1c
