@@ -20,7 +20,7 @@ FORMAT="{{ title }} - {{ artist }}"
 update_hooks() {
     while IFS= read -r id
     do
-        polybar-msg -p "$id" hook spotify-play-pause $2 1>/dev/null 2>&1
+        polybar-msg -p "$id" hook music-play-pause $2 1>/dev/null 2>&1
     done < <(echo "$1")
 }
 
@@ -30,18 +30,18 @@ EXIT_CODE=$?
 if [ $EXIT_CODE -eq 0 ]; then
     STATUS=$PLAYERCTL_STATUS
 else
-    STATUS="No player is running"
+    STATUS=" ..."
 fi
 
 if [ "$1" == "--status" ]; then
     echo "$STATUS"
 else
     if [ "$STATUS" = "Stopped" ]; then
-        echo "No music is playing"
+        echo " ..."
     elif [ "$STATUS" = "Paused"  ]; then
         update_hooks "$PARENT_BAR_PID" 2
         playerctl --player=$PLAYER metadata --format "$FORMAT"
-    elif [ "$STATUS" = "No player is running"  ]; then
+    elif [ "$STATUS" = " ..."  ]; then
         echo " ..."
     else
         update_hooks "$PARENT_BAR_PID" 1
