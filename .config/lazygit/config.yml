@@ -1,0 +1,7 @@
+os:
+  edit: 'nvim' # as an example
+  editatline: 'nvim {{filename}} >/dev/null'
+  open: '{{editor}} +{{line}} -- {{filename}}'
+
+gui:
+  showIcons: true

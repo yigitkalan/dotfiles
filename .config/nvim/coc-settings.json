@@ -1,0 +1,72 @@
+{
+    "diagnostic.errorSign": "❌",
+    "diagnostic.warningSign": "👉",
+    "workspace.ignoredFolders": [
+        "$HOME",
+        "$HOME/.cargo/**",
+        "$HOME/.rustup/**"
+    ],
+    "outline.autoPreview": true,
+    "diagnostic.checkCurrentLine": true,
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "/usr/lib/jvm/java-17-openjdk",
+            "default": true
+        }
+    ],
+   "html-css-support.styleSheets": [
+        "/style.css",
+        "style.css",
+        "node_modules/bootstrap/dist/css/bootstrap.css",
+        "https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css",
+        "src/app/globals.css"
+    ],
+    "suggest.completionItemKindLabels": {
+        "method": "  ",
+        "function": "  ",
+        "variable": "[]",
+        "field": "  ",
+        "typeParameter": "<>",
+        "constant": "  ",
+        "class": " פּ ",
+        "interface": " 蘒",
+        "struct": "  ",
+        "event": "  ",
+        "operator": "  ",
+        "module": "  ",
+        "property": "  ",
+        "enum": " 練",
+        "reference": "  ",
+        "keyword": "  ",
+        "file": "  ",
+        "folder": " ﱮ ",
+        "color": "  ",
+        "unit": " 塞 ",
+        "snippet": "  ",
+        "text": "  ",
+        "constructor": "  ",
+        "value": "  ",
+        "enumMember": "  "
+    },
+    "coc.preferences.formatOnSave": false,
+    "Lua.diagnostics.globals": [
+        "vim"
+    ],
+    "suggest.floatConfig": {
+        "border": true,
+        "rounded": true
+    },
+    "diagnostic.floatConfig": {
+        "border": true,
+        "rounded": true
+    },
+    "signature.floatConfig": {
+        "border": true,
+        "rounded": true
+    },
+    "hover.floatConfig": {
+        "border": true,
+        "rounded": true
+    }
+}
