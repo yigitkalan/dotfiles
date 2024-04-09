@@ -111,6 +111,11 @@ _G.packer_plugins = {
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/copilot.vim",
     url = "https://github.com/github/copilot.vim"
   },
+  ["csharpls-extended-lsp.nvim"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/csharpls-extended-lsp.nvim",
+    url = "https://github.com/Decodetalkers/csharpls-extended-lsp.nvim"
+  },
   ["kanagawa.nvim"] = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/kanagawa.nvim",
@@ -145,6 +150,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
     url = "https://github.com/nvim-tree/nvim-web-devicons"
+  },
+  ["omnisharp-vim"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/omnisharp-vim",
+    url = "https://github.com/OmniSharp/omnisharp-vim"
   },
   ["oxocarbon.nvim"] = {
     loaded = true,

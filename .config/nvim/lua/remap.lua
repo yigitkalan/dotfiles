@@ -42,13 +42,6 @@ map('n', '<Down>', '<c-w>j')
 map('n', '<Right>', '<c-w>l')
 map('n', '<Left>', '<c-w>h')
 
-
--- split navigarion
-map('n', '<C-k>', '<c-w>k')
-map('n', '<C-j>', '<c-w>j')
-map('n', '<C-l>', '<c-w>l')
-map('n', '<C-h>', '<c-w>h')
-
 map('n', '<a-j>', '<c-w>j')
 map('n', '<a-k>', '<c-w>k')
 map('n', '<a-l>', '<c-w>l')
@@ -76,3 +69,25 @@ map('n', '<a-f>', ':CocCommand editor.action.formatDocument<cr>')
 map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")
 -- map('n', '<leader>ha', ":lua require(\"harpoon.mark\").add_file()<cr>")
 -- map('n', '<leader>ht', ":lua require(\"harpoon.ui\").toggle_quick_menu()<cr>")
+
+
+vim.cmd [[
+augroup omnisharp_commands
+  autocmd!
+
+  autocmd FileType cs nmap <silent> <buffer> gd <Plug>(omnisharp_go_to_definition)
+  autocmd FileType cs nmap <silent> <buffer> gy <Plug>(omnisharp_go_to_type_definition)
+  autocmd FileType cs nmap <silent> <buffer> gi <Plug>(omnisharp_find_implementations)
+  autocmd FileType cs nmap <silent> <buffer> gr <Plug>(omnisharp_find_usages)
+  autocmd FileType cs nmap <silent> <buffer> K  <Plug>(omnisharp_documentation)
+  autocmd FileType cs nmap <silent> <buffer> <leader>f <Plug>(omnisharp_code_format)
+  autocmd FileType cs nmap <silent> <buffer> <leader>ac <Plug>(omnisharp_code_actions)
+  autocmd FileType cs nmap <silent> <buffer> <leader>re <Plug>(omnisharp_rename)
+  autocmd FileType cs nmap <silent> <buffer> <a-\> <Plug>(omnisharp_signature_help)
+  autocmd FileType cs imap <silent> <buffer> <a-\> <Plug>(omnisharp_signature_help)
+  
+  " ... other omnisharp-vim mappings
+augroup END
+
+]]
+

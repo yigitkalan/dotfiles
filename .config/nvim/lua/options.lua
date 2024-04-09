@@ -21,7 +21,7 @@ o.updatetime = 50
 o.swapfile = false
 
 o.undofile = true
-o.undodir ='/home/sy/.vim/undo'
+o.undodir = '/home/sy/.vim/undo'
 
 g.blamer_enabled = true
 g.blamer_show_in_visual_modes = false
@@ -31,9 +31,11 @@ vim.cmd([[
 let g:tmux_navigator_no_mappings = 1
 ]])
 
+
 -- block comment on new line after pressing enter or o
 vim.cmd [[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
 
+vim.cmd [[nnoremap gd <cmd>lua require('csharp_ls_extended').lsp_definitions()<cr>]]
 
 
 o.termguicolors = true
@@ -45,9 +47,19 @@ g.ale_set_highlights = 1
 g.transparent_enabled = true
 
 vim.cmd.colorscheme('catppuccin-mocha')
--- vim.cmd.colorscheme('gruvbox')
 
-
+g.OmniSharp_server_use_net6 = true
+vim.cmd [[
+let g:OmniSharp_popup_options = {
+\ 'winblend': 30,
+\ 'winhl': 'Normal:Normal,FloatBorder:Special',
+\ 'border': 'rounded'
+\}
+let g:OmniSharp_popup_mappings = {
+\ 'sigNext': '<C-n>',
+\ 'sigPrev': '<C-p>',
+\}
+]]
 
 -- to continue file where you left of
 vim.cmd [[

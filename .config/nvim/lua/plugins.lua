@@ -42,11 +42,14 @@ return require("packer").startup(function(use)
     ------------------------------------------------------core
     ---------------coc and autocompletion
     use { 'neoclide/coc.nvim', branch = 'release' }
+    use "OmniSharp/omnisharp-vim"
+
 
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
 
     }
+
 
     use { 'vim-test/vim-test' }
 
@@ -67,6 +70,8 @@ return require("packer").startup(function(use)
 
     use "github/copilot.vim"
     use "debugloop/telescope-undo.nvim"
+
+    use "Decodetalkers/csharpls-extended-lsp.nvim"
 
     use {
         'numToStr/Comment.nvim',
