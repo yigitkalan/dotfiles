@@ -196,6 +196,11 @@ _G.packer_plugins = {
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/tokyonight.nvim",
     url = "https://github.com/folke/tokyonight.nvim"
   },
+  ultisnips = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/ultisnips",
+    url = "https://github.com/SirVer/ultisnips"
+  },
   ["vim-cyberpunk"] = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/vim-cyberpunk",

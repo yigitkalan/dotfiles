@@ -49,6 +49,8 @@ g.transparent_enabled = true
 vim.cmd.colorscheme('catppuccin-mocha')
 
 g.OmniSharp_server_use_net6 = true
+g.OmniSharp_want_snippet = true
+g.OmniSharp_completion_without_overloads = true
 vim.cmd [[
 let g:OmniSharp_popup_options = {
 \ 'winblend': 0,

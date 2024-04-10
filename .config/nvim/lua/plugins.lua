@@ -68,6 +68,8 @@ return require("packer").startup(function(use)
     use "christoomey/vim-tmux-navigator"
     use "akinsho/toggleterm.nvim"
 
+    use "SirVer/ultisnips"
+
     use "github/copilot.vim"
     use "debugloop/telescope-undo.nvim"
 
