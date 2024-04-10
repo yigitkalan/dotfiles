@@ -6,7 +6,7 @@
 
 # Import additional configuration files
 import = [
-    "~/.config/alacritty/themes/themes/ayu_dark.toml"
+    "~/.config/alacritty/themes/themes/rose-pine.toml"
 ]
 
 # Shell program and its arguments
@@ -96,7 +96,7 @@ multiplier = 3  # Default: 3
 [font]
 
 # Normal font style
-normal = { family = "Hack Nerd Font", style = "Regular" }  # Default for Linux/BSD: "monospace", Regular
+normal = { family = "Firacode Nerd Font", style = "Regular" }  # Default for Linux/BSD: "monospace", Regular
 
 # Bold font style
 bold = { style = "Bold" }  # Inherits family from normal, Default style: Bold

@@ -36,7 +36,7 @@ floating_modifier $mod
 
 # start a terminal
 # bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Return exec alacritty -o font.size=11
+bindsym $mod+Return exec kitty 
 # bindsym $mod+Return exec warp-terminal 
 # kill focused window
 bindsym $mod+q kill
@@ -61,7 +61,7 @@ for_window [title="Steam - News"] floating enable
 for_window [floating] move position center
 
 #new way to get rid of title or borders
-default_border pixel 0
+default_border pixel 3
 default_floating_border pixel 0
 
 
@@ -259,7 +259,7 @@ set $inactive-bg-color      #1a1a1c
 set $text-color             #ffffff
 set $inactive-text-color    #575757
 set $urgent-bg-color        #ff1900
-set $border-color           #ff0062
+set $border-color           #ffffff
 
 # class                 border              backgr.             text                indicator           child_border
 client.focused          $border-color            $bg-color           $text-color    $border-color             $border-color 
