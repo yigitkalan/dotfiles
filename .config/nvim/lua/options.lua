@@ -51,8 +51,8 @@ vim.cmd.colorscheme('catppuccin-mocha')
 g.OmniSharp_server_use_net6 = true
 vim.cmd [[
 let g:OmniSharp_popup_options = {
-\ 'winblend': 30,
-\ 'winhl': 'Normal:Normal,FloatBorder:Special',
+\ 'winblend': 0,
+\ 'winhl': 'Normal:Normal,FloatBorder:Normal',
 \ 'border': 'rounded'
 \}
 let g:OmniSharp_popup_mappings = {
