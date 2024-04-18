@@ -139,7 +139,7 @@ source $ZSH/oh-my-zsh.sh
 #
 # Example aliases
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias sdn="shutdown now"
+alias sdn="systemctl poweroff"
 alias cl="clear"
 alias rm="rm -i"
 alias open="xdg-open"
@@ -175,6 +175,5 @@ alias tks='tmux kill-session -t'
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
-clear
 # pfetch
 #neofetch

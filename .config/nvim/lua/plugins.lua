@@ -42,7 +42,7 @@ return require("packer").startup(function(use)
     ------------------------------------------------------core
     ---------------coc and autocompletion
     use { 'neoclide/coc.nvim', branch = 'release' }
-    use "OmniSharp/omnisharp-vim"
+    -- use "OmniSharp/omnisharp-vim"
 
 
     use {
@@ -60,8 +60,6 @@ return require("packer").startup(function(use)
             'nvim-tree/nvim-web-devicons', -- optional
         },
     }
-
-
 
 
     ------------------------------------------------utils

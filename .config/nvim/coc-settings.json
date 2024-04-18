@@ -81,6 +81,7 @@
         "csharp-ls": {
             "command": "csharp-ls",
             "filetypes": [
+                "cs"
             ],
             "rootPatterns": [
                 "*.sln",

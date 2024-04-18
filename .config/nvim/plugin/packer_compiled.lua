@@ -151,11 +151,6 @@ _G.packer_plugins = {
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/nvim-web-devicons",
     url = "https://github.com/nvim-tree/nvim-web-devicons"
   },
-  ["omnisharp-vim"] = {
-    loaded = true,
-    path = "/home/sy/.local/share/nvim/site/pack/packer/start/omnisharp-vim",
-    url = "https://github.com/OmniSharp/omnisharp-vim"
-  },
   ["oxocarbon.nvim"] = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/oxocarbon.nvim",

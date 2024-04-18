@@ -35,13 +35,20 @@ let g:tmux_navigator_no_mappings = 1
 -- block comment on new line after pressing enter or o
 vim.cmd [[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
 
+vim.cmd [[
+autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType typescript setlocal shiftwidth=2 tabstop=2
+autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2
+]]
+
+
 vim.cmd [[nnoremap gd <cmd>lua require('csharp_ls_extended').lsp_definitions()<cr>]]
 
 
 o.termguicolors = true
 
 -- g.AutoPairsShortcutJump = 'a-e'
-g.copilot_enabled = false
+g.copilot_enabled = true
 g.ale_set_highlights = 1
 
 g.transparent_enabled = true
@@ -49,7 +56,7 @@ g.transparent_enabled = true
 vim.cmd.colorscheme('catppuccin-mocha')
 
 g.OmniSharp_server_use_net6 = true
-g.OmniSharp_want_snippet = true
+g.OmniSharp_want_snippet = false
 g.OmniSharp_completion_without_overloads = true
 vim.cmd [[
 let g:OmniSharp_popup_options = {
@@ -61,7 +68,16 @@ let g:OmniSharp_popup_mappings = {
 \ 'sigNext': '<C-n>',
 \ 'sigPrev': '<C-p>',
 \}
+
+let g:OmniSharp_fzf_options = { 'right': '30%' }
 ]]
+
+
+-- vim.cmd([[
+-- let g:ale_linters = {
+-- \ 'cs': ['OmniSharp']
+-- \}
+-- ]])
 
 -- to continue file where you left of
 vim.cmd [[

@@ -61,7 +61,7 @@ for_window [title="Steam - News"] floating enable
 for_window [floating] move position center
 
 #new way to get rid of title or borders
-default_border pixel 3
+default_border pixel 0
 default_floating_border pixel 0
 
 
@@ -237,8 +237,8 @@ bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl -q set 5%+
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl -- set-sink-volume 0 +5% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl -- set-sink-volume 0 -5% && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl  set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl  set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
@@ -272,6 +272,7 @@ client.background       #ffffff
 
 #polybar launch script
 exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+#for gui password popups
 exec_always --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 
 # Start i3bar to display a workspace bar (plus the system information i3status
