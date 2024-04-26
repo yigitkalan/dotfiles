@@ -139,7 +139,7 @@ source $ZSH/oh-my-zsh.sh
 #
 # Example aliases
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias sdn="systemctl poweroff"
+# alias sdn="systemctl poweroff"
 alias cl="clear"
 alias rm="rm -i"
 alias open="xdg-open"
