@@ -32,6 +32,11 @@ let g:tmux_navigator_no_mappings = 1
 ]])
 
 
+-- coc fzf settings
+vim.cmd([[
+let g:fzf_layout = { 'window': { 'width': 0.6, 'height': 0.7 } }
+]])
+
 -- block comment on new line after pressing enter or o
 vim.cmd [[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
 
@@ -53,7 +58,7 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('catppuccin-mocha')
+vim.cmd.colorscheme('catppuccin-macchiato')
 
 g.OmniSharp_server_use_net6 = true
 g.OmniSharp_want_snippet = false
@@ -141,8 +146,10 @@ vim.cmd [[
     " GoTo code navigation
     nmap <silent> gd <Plug>(coc-definition)
     nmap <silent> gy <Plug>(coc-type-definition)
-    nmap <silent> gm <Plug>(coc-implementation)
+    nmap <silent> gi <Plug>(coc-implementation)
     nmap <silent> gr <Plug>(coc-references)
+    nmap <silent> <leader>o <Plug>(coc-outline)
+    nmap <silent> <leader>di <Plug>(coc-diagnostic)
 
     " Use K to show documentation in preview window
     nnoremap <silent> K :call ShowDocumentation()<CR>
