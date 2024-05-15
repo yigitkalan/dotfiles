@@ -61,6 +61,7 @@ map('n', "<C-l>", ":TmuxNavigateRight<cr>")
 -- COC REMAPS
 map('n', '<leader>re', '<Plug>(coc-rename)')
 map('n', '<a-f>', ':CocCommand editor.action.formatDocument<cr>')
+map('n', '<leader>o', ':CocFzfList outline<cr>')
 
 map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")
 -- map('n', '<leader>ha', ":lua require(\"harpoon.mark\").add_file()<cr>")

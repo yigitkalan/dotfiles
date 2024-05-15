@@ -148,7 +148,7 @@ vim.cmd [[
     nmap <silent> gy <Plug>(coc-type-definition)
     nmap <silent> gi <Plug>(coc-implementation)
     nmap <silent> gr <Plug>(coc-references)
-    nmap <silent> <leader>o <Plug>(coc-outline)
+    " nmap <silent> <leader>o <Plug>(coc-outline)
     nmap <silent> <leader>di <Plug>(coc-diagnostic)
 
     " Use K to show documentation in preview window
