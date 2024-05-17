@@ -74,8 +74,6 @@ return require("packer").startup(function(use)
     use "github/copilot.vim"
     use "debugloop/telescope-undo.nvim"
 
-    use "Decodetalkers/csharpls-extended-lsp.nvim"
-
     use {
         'numToStr/Comment.nvim',
         config = function()

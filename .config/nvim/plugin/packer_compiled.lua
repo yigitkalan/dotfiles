@@ -96,6 +96,11 @@ _G.packer_plugins = {
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/catppuccin",
     url = "https://github.com/catppuccin/nvim"
   },
+  ["coc-fzf"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/coc-fzf",
+    url = "https://github.com/antoinemadec/coc-fzf"
+  },
   ["coc.nvim"] = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/coc.nvim",
@@ -110,6 +115,16 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/sy/.local/share/nvim/site/pack/packer/start/csharpls-extended-lsp.nvim",
     url = "https://github.com/Decodetalkers/csharpls-extended-lsp.nvim"
+  },
+  fzf = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/fzf",
+    url = "https://github.com/junegunn/fzf"
+  },
+  ["fzf.vim"] = {
+    loaded = true,
+    path = "/home/sy/.local/share/nvim/site/pack/packer/start/fzf.vim",
+    url = "https://github.com/junegunn/fzf.vim"
   },
   ["kanagawa.nvim"] = {
     loaded = true,

@@ -47,7 +47,6 @@ autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2
 ]]
 
 
-vim.cmd [[nnoremap gd <cmd>lua require('csharp_ls_extended').lsp_definitions()<cr>]]
 
 
 o.termguicolors = true
