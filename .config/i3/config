@@ -47,6 +47,9 @@ bindsym $mod+q kill
 bindsym $mod+d exec --no-startup-id rofi -show drun 
 bindsym $mod+shift+d exec --no-startup-id rofi -show emoji 
 
+exec --no-startup-id greenclip daemon>/dev/null
+bindsym $mod+c exec --no-startup-id rofi -modi "clipboard:greenclip print" -show clipboard
+
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
 # .desktop file. It is a wrapper around dmenu, so you need that installed.

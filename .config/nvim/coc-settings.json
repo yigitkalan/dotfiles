@@ -92,5 +92,7 @@
                 ".hg/"
             ]
         }
-    }
+    },
+
+    "rust-analyzer.check.command": "clippy"
 }
