@@ -162,6 +162,8 @@ alias clearswaps="rm -rf ~/.local/state/nvim/swap/*"
 
 alias wconnect="nmcli device wifi connect"
 alias wlist="nmcli device wifi list"
+alias won="nmcli radio wifi on"
+alias woff="nmcli radio wifi off"
 
 alias livehere="live-server . & ; sass --watch . & "
 
