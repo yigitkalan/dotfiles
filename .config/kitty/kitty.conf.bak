@@ -6,7 +6,7 @@
 #: individual font faces and even specify special fonts for particular
 #: characters.
 
-font_family      Firacode Nerd Font
+font_family      Hack Nerd Font
 # bold_font        auto
 # italic_font      auto
 # bold_italic_font auto
@@ -24,7 +24,7 @@ font_family      Firacode Nerd Font
 #:     italic_font      Operator Mono Book Italic
 #:     bold_italic_font Operator Mono Medium Italic
 
-font_size 16.0
+font_size 14.0
 
 #: Font size (in pts).
 
@@ -1129,7 +1129,7 @@ window_padding_width 5
 
 #: The foreground and background colors.
 
-background_opacity 0.99
+background_opacity 0.8
 
 #: The opacity of the background. A number between zero and one, where
 #: one is opaque and zero is fully transparent. This will only work if
@@ -2481,6 +2481,6 @@ background_opacity 0.99
 
 
 # BEGIN_KITTY_THEME
-# Kaolin Dark
+# Batman
 include current-theme.conf
 # END_KITTY_THEME

@@ -178,6 +178,8 @@ alias cat="echo use bat instead"
 
 alias pacclean="sudo pacman -Rcs $(pacman -Qdtq)"
 
+alias reboot="sudo reboot"
+
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
 # pfetch

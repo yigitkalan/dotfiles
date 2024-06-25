@@ -57,7 +57,7 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('catppuccin-macchiato')
+vim.cmd.colorscheme('tokyonight')
 
 g.OmniSharp_server_use_net6 = true
 g.OmniSharp_want_snippet = false
