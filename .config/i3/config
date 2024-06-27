@@ -232,6 +232,8 @@ bindsym Ctrl+$mod+Print exec --no-startup-id maim -o --window $(xdotool getactiv
 bindsym Ctrl+Shift+Print exec --no-startup-id maim -o --select | xclip -selection clipboard -t image/png
 
 #for keyboard brightness
+bindsym XF86KbdLightOnOff exec --no-startup-id brightnessctl --device='rgb:kbd_backlight' set 0
+
 bindsym XF86KbdBrightnessDown exec --no-startup-id brightnessctl --device='rgb:kbd_backlight' set 10%-
 
 bindsym XF86KbdBrightnessUp exec --no-startup-id brightnessctl --device='rgb:kbd_backlight' set 10%+
@@ -250,14 +252,12 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 #set wallpaper with feh 
 #exec_always feh --bg-fill $HOME/Pictures/wallpaper/943149.jpg
 
-bindsym XF86TouchpadToggle exec --no-startup-id /home/sy/.utils/toggle_toucpad.sh
+bindsym XF86TouchpadToggle exec --no-startup-id /home/sy/.utils/toggle_touchpad.sh
        
 
 
 #picom conf
-exec_always picom  --config /home/sy/.config/picom/picom.conf
-
-exec_always --no-startup-id lxpolkit
+exec_always picom --config /home/sy/.config/picom/picom.conf
 
 set $bg-color               #46575e
 set $inactive-bg-color      #1a1a1c
