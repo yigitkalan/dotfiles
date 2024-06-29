@@ -1,0 +1,43 @@
+@import url("/home/sy/.cache/wal/colors-waybar.css");
+
+* {
+}
+
+window {
+    font-size: 24px;
+    font-family: "FiraCode Nerd Font Medium";
+    background-color: rgba(26,26,26, 1);
+    border-radius: 10;
+    color: white;
+    border: 2px solid @color2;
+}
+
+
+#entry {
+    padding: 0.25em;
+    border-radius: 0px;
+}
+
+
+#entry:selected{ 
+    background: linear-gradient(90deg, @color1, @color3);
+}
+
+#text:selected{ 
+    color: white;
+    border: none
+}
+
+#input{ 
+    background-color: rgba(26,26,26, 1);
+    border: 2px solid @color2;
+    color: white;    outline: none;
+    padding: 0.25em;
+    border-radius: 10px 10px 0px 0px; 
+    box-shadow: none;
+}
+
+image{ 
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+}
