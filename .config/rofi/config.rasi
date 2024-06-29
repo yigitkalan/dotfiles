@@ -18,8 +18,7 @@
 configuration {
     show-icons:      true;
     display-drun:    "Applications";
-    display-emoji:   "Emoji";
-    modi:            "drun,emoji,window,";
+    modi:            "drun,window,";
     disable-history: false;
 }
 
