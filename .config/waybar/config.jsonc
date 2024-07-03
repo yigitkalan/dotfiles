@@ -1,0 +1,112 @@
+{
+	"layer": "top",
+	"modules-left": ["custom/launcher", "custom/updates","hyprland/window"],
+	"modules-center": ["hyprland/workspaces"],
+	"modules-right": ["backlight","pulseaudio", "battery", "hyprland/language", "memory",  "network", "clock", "tray","custom/powermenu"],
+	
+"pulseaudio": {
+    "format": "{icon}    {volume}% ",
+    "format-bluetooth": "{icon}    {volume}% ",
+    "format-muted": " ",
+    "format-icons": {
+        "headphone": "",
+        "hands-free": "",
+        "headset": "",
+        "phone": "",
+        "phone-muted": "",
+        "portable": "",
+        "car": "",
+        "default": ["", ""]
+    },
+    "scroll-step": 1,
+	"on-click":"pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "ignored-sinks": ["Easy Effects Sink"]
+},
+
+"network": {
+    "format": "{ifname}",
+    "format-wifi": "   {essid}",
+    "format-ethernet": "{ipaddr}/{cidr} 󰈀",
+    "format-disconnected": "", //An empty format will hide the module.
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+    "tooltip-format-ethernet": "{ifname} 󰈀",
+    "tooltip-format-disconnected": "Disconnected",
+    "max-length": 8
+},
+	"backlight": {
+		"tooltip": false,
+		"format": " {}%",
+		"interval":1,
+        "on-scroll-up": "brightnessctl  -q set 5%+",
+		"on-scroll-down": "brightnessctl --min-val=2 -q set 5%-"
+	},
+    "battery": {
+        "states": {
+            "full": 99,
+            "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}   {capacity}%",
+        "format-charging": "  {capacity}%",
+        "format-alt": "{icon}   {time}",
+        "format-full": "{icon}   100%",
+        "format-icons": ["", "", "", "", ""]
+    },
+	"tray":{
+		"icon-size":18,
+		"spacing": 10
+	},
+    "clock": {
+        "format": " {:%H:%M}",
+        "format-alt": "{:%A, %B %d, %Y (%R)} ",
+    },
+"cpu": {
+    "interval": 10,
+    "format": "   {}% ",
+    "max-length": 10
+},
+    "memory": {
+        "interval": 30,
+        "format": "   {}%",
+        "max-length": 10
+    },
+    "custom/media": {
+        "interval": 30,
+        "format": "{icon} {}",
+        "return-type": "json",
+        "max-length": 20,
+        "format-icons": {
+            "spotify": " ",
+            "default": " "
+        },
+        "escape": true,
+        "exec": "$HOME/.config/system_scripts/mediaplayer.py 2> /dev/null",
+        "on-click": "playerctl play-pause"
+
+    },
+    
+    "custom/launcher":{
+        "format": " ",
+        "on-click": "wofi --show drun",
+    },
+    "custom/powermenu":{
+        "format": " ",
+        "on-click": "wlogout",
+        "tooltip": false
+    },
+    "custom/updates":{
+        "format": "󰏔   {}",
+        "exec": "checkupdates | wc -l",
+        "interval": 60,
+        "on-click": "kitty -e  yay",
+    },
+    "hyprland/window": {
+        "format": "{class}",
+        "separate-outputs": true,
+        "icon": true,
+        "max-length": 30
+    },
+    "hyprland/language": {
+    }
+}
