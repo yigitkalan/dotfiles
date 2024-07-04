@@ -174,9 +174,7 @@ alias tmn='tmux new-session -s '
 alias tka='tmux kill-session -a '
 alias tks='tmux kill-session -t'
 
-alias cat="echo use bat instead"
-
-alias pacclean="sudo pacman -Rcs $(pacman -Qdtq)"
+alias pacclean="sudo pacman -R $(pacman -Qdtq)"
 
 alias reboot="sudo reboot"
 
