@@ -13,7 +13,7 @@
 {
     "label" : "logout",
     "action" : "hyprctl dispatch exit",
-    "text" : "LogoutqQ",
+    "text" : "Logout",
     "keybind" : "e"
 }
 {

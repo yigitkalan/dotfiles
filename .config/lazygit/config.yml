@@ -4,4 +4,4 @@ os:
   open: '{{editor}} +{{line}} -- {{filename}}'
 
 gui:
-  showIcons: true
+  nerdFontsVersion: "3"
