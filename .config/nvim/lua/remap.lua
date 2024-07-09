@@ -58,8 +58,6 @@ map('n', "<C-l>", ":TmuxNavigateRight<cr>")
 
 
 
--- COC REMAPS
-map('n', '<leader>re', '<Plug>(coc-rename)')
-map('n', '<leader>o', ':CocFzfList outline<cr>')
+map('n', '<a-f>', ':LspZeroFormat <cr>')
 
 map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")

@@ -7,6 +7,8 @@ require	"configs.nvimtree-config"
 require "configs.lualine-config"
 require "configs.alpha-config"
 require "configs.undo-config"
+require "configs.lsp-config"
+require "configs.cmp-config"
 
 
 require "configs.toggleterm-config"
