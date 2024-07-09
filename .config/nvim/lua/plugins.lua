@@ -34,11 +34,8 @@ return require("packer").startup(function(use)
 
     ------------------------------------------------------core
     ---------------coc and autocompletion
-    use { 'neoclide/coc.nvim', branch = 'release' }
     use { 'junegunn/fzf' }
     use { 'junegunn/fzf.vim' }
-    use { 'antoinemadec/coc-fzf' }
-    -- use "OmniSharp/omnisharp-vim"
 
 
     use {
