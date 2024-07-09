@@ -6,28 +6,15 @@
 #
 #
 
-export WECHALLUSER="syigitkalan"
-export WECHALLTOKEN="17C2F-868D4-CCBC9-A50A7-CC8C0-1C19C"
-
-export ANDROID=$HOME/Android
-export ANDROID_SDK=$ANDROID/Sdk
-export EMULATOR=$ANDROID/emulator
-export PATH=$ANDROID_SDK:$EMULATOR:$PATH
-export PATH=$ANDROID/cmdline-tools/latest/bin:$PATH
-
-export FLUTTER=$ANDROID/flutter
-export PATH=$FLUTTER/bin:$PATH
 
 export PATH=$HOME/.pub-cache/bin:$PATH
 
+export GOPATH=$HOME/work/go/gopath/
 export EDITOR=nvim
 export VISUAL=nvim
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 export FZF_DEFAULT_COMMAND='rg --files  --ignore-file /home/sy/.ignore  2> /dev/null '
 
-
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-export PATH=JAVA_HOME:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
