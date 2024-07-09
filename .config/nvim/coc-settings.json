@@ -1,4 +1,8 @@
 {
+    "coc.source.around.priority": -10,
+    "coc.source.buffer.priorty": -10,
+    "coc.source.around.enable": false,
+    "coc.source.buffer.enable": false,
     "diagnostic.errorSign": "❌",
     "diagnostic.warningSign": "👉",
     "workspace.ignoredFolders": [
