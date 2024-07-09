@@ -34,9 +34,25 @@ return require("packer").startup(function(use)
 
     ------------------------------------------------------core
     ---------------coc and autocompletion
-    use { 'junegunn/fzf' }
-    use { 'junegunn/fzf.vim' }
+    use {
+        'VonHeikemen/lsp-zero.nvim',
+        branch = 'v3.x',
+        requires = {
+            --- Uncomment the two plugins below if you want to manage the language servers from neovim
+            { 'williamboman/mason.nvim' },
+            { 'williamboman/mason-lspconfig.nvim' },
 
+            { 'neovim/nvim-lspconfig' },
+            { 'hrsh7th/nvim-cmp' },
+            { 'hrsh7th/cmp-nvim-lsp' },
+            { 'L3MON4D3/LuaSnip' },
+        }
+    }
+    use { "onsails/lspkind.nvim" }
+    use { "ibhagwan/fzf-lua",
+        -- optional for icon support
+        requires = { "nvim-tree/nvim-web-devicons" }
+    }
 
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
@@ -70,6 +86,7 @@ return require("packer").startup(function(use)
             require('Comment').setup()
         end
     }
+    use { 'stevearc/dressing.nvim' }
 
     use 'mg979/vim-visual-multi'
     use 'honza/vim-snippets'
@@ -77,7 +94,6 @@ return require("packer").startup(function(use)
     ----------------------------- tpope
     use 'tpope/vim-surround'
     use 'tpope/vim-repeat'
-
 
 
 
@@ -89,4 +105,3 @@ return require("packer").startup(function(use)
     use({ 'rose-pine/neovim', as = 'rose-pine' })
     use "rebelot/kanagawa.nvim"
 end)
-
