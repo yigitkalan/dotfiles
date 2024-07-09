@@ -33,12 +33,6 @@ let g:tmux_navigator_no_mappings = 1
 ]])
 
 
-
--- coc fzf settings
-vim.cmd([[
-let g:fzf_layout = { 'window': { 'width': 0.6, 'height': 0.7 } }
-]])
-
 -- block comment on new line after pressing enter or o
 vim.cmd [[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
 
@@ -48,36 +42,34 @@ autocmd FileType typescript setlocal shiftwidth=2 tabstop=2
 autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2
 ]]
 
-
-
 o.termguicolors = true
-  require("colorizer").setup {
-      filetypes = { "*" },
-      user_default_options = {
-        RGB = true, -- #RGB hex codes
-        RRGGBB = true, -- #RRGGBB hex codes
-        names = false, -- "Name" codes like Blue or blue
-        RRGGBBAA = false, -- #RRGGBBAA hex codes
-        AARRGGBB = false, -- 0xAARRGGBB hex codes
-        rgb_fn = true, -- CSS rgb() and rgba() functions
-        hsl_fn = false, -- CSS hsl() and hsla() functions
-        css = false, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-        css_fn = false, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+require("colorizer").setup {
+    filetypes = { "*" },
+    user_default_options = {
+        RGB = true,          -- #RGB hex codes
+        RRGGBB = true,       -- #RRGGBB hex codes
+        names = false,       -- "Name" codes like Blue or blue
+        RRGGBBAA = false,    -- #RRGGBBAA hex codes
+        AARRGGBB = false,    -- 0xAARRGGBB hex codes
+        rgb_fn = true,       -- CSS rgb() and rgba() functions
+        hsl_fn = false,      -- CSS hsl() and hsla() functions
+        css = false,         -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+        css_fn = false,      -- Enable all CSS *functions*: rgb_fn, hsl_fn
         -- Available modes for `mode`: foreground, background,  virtualtext
         mode = "background", -- Set the display mode.
         -- Available methods are false / true / "normal" / "lsp" / "both"
         -- True is same as normal
-        tailwind = false, -- Enable tailwind colors
+        tailwind = false,                                -- Enable tailwind colors
         -- parsers can contain values used in |user_default_options|
         sass = { enable = false, parsers = { "css" }, }, -- Enable sass colors
         virtualtext = "■",
         -- update color values even if buffer is not focused
         -- example use: cmp_menu, cmp_docs
         always_update = false
-      },
-      -- all the sub-options of filetypes apply to buftypes
-      buftypes = {},
-  }
+    },
+    -- all the sub-options of filetypes apply to buftypes
+    buftypes = {},
+}
 
 -- g.AutoPairsShortcutJump = 'a-e'
 g.copilot_enabled = true
@@ -94,3 +86,37 @@ if has("autocmd")
   \| exe "normal! g'\"" | endif
   endif
   ]]
+
+
+-- -- comment this if you rather prefer visual text for diagnostics
+-- vim.diagnostic.config({
+--     virtual_text = false, -- Disable inline diagnostics
+--     signs = true,
+--     underline = true,
+--     update_in_insert = false,
+--     severity_sort = true,
+--     float = {
+--         focusable = false,
+--         style = "minimal",
+--         border = "rounded",
+--         source = true,
+--         header = "",
+--         prefix = "",
+--     },
+-- })
+-- -- Show diagnostics in a floating window when hovering
+-- vim.o.updatetime = 250
+-- vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+
+
+-- for diagnostics icons
+local signs = {
+    { name = "DiagnosticSignError", text = "" },
+    { name = "DiagnosticSignWarn", text = "" },
+    { name = "DiagnosticSignHint", text = "" },
+    { name = "DiagnosticSignInfo", text = "" },
+}
+
+for _, sign in ipairs(signs) do
+    vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
+end
