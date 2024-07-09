@@ -71,21 +71,6 @@
         "format": "   {}%",
         "max-length": 10
     },
-    "custom/media": {
-        "interval": 30,
-        "format": "{icon} {}",
-        "return-type": "json",
-        "max-length": 20,
-        "format-icons": {
-            "spotify": " ",
-            "default": " "
-        },
-        "escape": true,
-        "exec": "$HOME/.config/system_scripts/mediaplayer.py 2> /dev/null",
-        "on-click": "playerctl play-pause"
-
-    },
-    
     "custom/launcher":{
         "format": " ",
         "on-click": "wofi --show drun",
