@@ -2,4 +2,4 @@ Repository to keep and share my dotfiles and configurations for various tools an
 
 System: Arch Linux
 
-DE/WM: i3
+DE/WM: Hyprland
