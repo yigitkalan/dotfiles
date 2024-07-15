@@ -58,6 +58,5 @@ map('n', "<C-l>", ":TmuxNavigateRight<cr>")
 
 
 
-map('n', '<a-f>', ':LspZeroFormat <cr>')
 
 map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")
