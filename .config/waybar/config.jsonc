@@ -1,8 +1,8 @@
 {
 	"layer": "top",
-	"modules-left": ["custom/launcher", "custom/updates","hyprland/window"],
+	"modules-left": ["custom/launcher", "custom/updates","hyprland/window","tray"],
 	"modules-center": ["hyprland/workspaces"],
-	"modules-right": ["backlight","pulseaudio", "battery", "hyprland/language", "memory",  "network", "clock", "tray","custom/powermenu"],
+	"modules-right": ["backlight","pulseaudio", "battery", "hyprland/language", "memory",  "network", "clock", "custom/powermenu"],
 	
 "pulseaudio": {
     "format": "{icon}    {volume}% ",
@@ -26,7 +26,7 @@
 "network": {
     "format": "{ifname}",
     "format-wifi": "   {essid}",
-    "format-ethernet": "{ipaddr}/{cidr} 󰈀",
+    "format-ethernet": "󰈀  Ethernet",
     "format-disconnected": "", //An empty format will hide the module.
     "tooltip-format-wifi": "{essid} ({signalStrength}%)",
     "tooltip-format-ethernet": "{ifname} 󰈀",
@@ -58,7 +58,7 @@
 		"spacing": 10
 	},
     "clock": {
-        "format": " {:%H:%M}",
+        "format": "  {:%H:%M}",
         "format-alt": "{:%A, %B %d, %Y (%R)} ",
     },
 "cpu": {

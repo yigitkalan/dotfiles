@@ -119,6 +119,7 @@ window#waybar.empty #window {
 	transition: none;
 	color: black;
 	background: @color2;
+    font-weight: bold;
 }
 
 #memory {
@@ -150,7 +151,7 @@ window#waybar.empty #window {
 	padding-right: 10px;
 	transition: none;
 	color: white;
-	background: #2073ab;
+	background: #2b5aa6;
 }
 
 #custom-launcher {
