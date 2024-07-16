@@ -12,7 +12,7 @@ lsp_zero.on_attach(function(client, bufnr)
             local opts = { buffer = event.buf }
 
             vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-            vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+            -- vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
             vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
             vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
             vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
@@ -29,8 +29,24 @@ lsp_zero.on_attach(function(client, bufnr)
     })
     local opts = { buffer = bufnr, remap = false }
 
+    vim.keymap.set("n", "gd", function()
+        fzf_lua.lsp_definitions({
+            jump_to_single_result = true,
+            winopts = {
+                height = 0.8,
+                width = 0.9,
+                preview = {
+                    hidden = 'nohidden',
+                    vertical = 'up:50%',
+                },
+            },
+        })
+    end, opts)
+
     vim.keymap.set("n", "gr", function()
         fzf_lua.lsp_references({
+            jump_to_single_result = true,
+            ignore_current_line = true,
             winopts = {
                 height = 0.8,
                 width = 0.9,
@@ -57,6 +73,7 @@ lsp_zero.on_attach(function(client, bufnr)
 
     vim.keymap.set("n", "<leader>ws", function()
         fzf_lua.lsp_workspace_symbols({
+            sync = true,
             winopts = {
                 height = 0.8,
                 width = 0.9,

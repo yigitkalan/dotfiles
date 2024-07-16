@@ -5,6 +5,7 @@ local lspkind = require('lspkind')
 -- Configure nvim-cmp
 local cmp_config = lsp_zero.defaults.cmp_config({
     mapping = cmp.mapping.preset.insert({
+        ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<Tab>'] = cmp.mapping(function(fallback)

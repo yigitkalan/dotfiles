@@ -89,24 +89,47 @@ if has("autocmd")
 
 
 -- -- comment this if you rather prefer visual text for diagnostics
--- vim.diagnostic.config({
---     virtual_text = false, -- Disable inline diagnostics
---     signs = true,
---     underline = true,
---     update_in_insert = false,
---     severity_sort = true,
---     float = {
---         focusable = false,
---         style = "minimal",
---         border = "rounded",
---         source = true,
---         header = "",
---         prefix = "",
---     },
--- })
--- -- Show diagnostics in a floating window when hovering
--- vim.o.updatetime = 250
--- vim.cmd [[autocmd CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
+vim.diagnostic.config({
+    virtual_text = false, -- Disable inline diagnostics
+    signs = true,
+    underline = true,
+    update_in_insert = false,
+    severity_sort = true,
+    float = {
+        focusable = false,
+        max_width = 80,
+        style = "minimal",
+        border = "rounded",
+        source = true,
+        header = "",
+        prefix = "",
+    },
+})
+-- Show diagnostics in a floating window when hovering
+vim.o.updatetime = 250
+
+-- open diagnostics only if there is no floating window open
+vim.api.nvim_create_autocmd({ "CursorHold" }, {
+    pattern = "*",
+    callback = function()
+        for _, winid in pairs(vim.api.nvim_tabpage_list_wins(0)) do
+            if vim.api.nvim_win_get_config(winid).zindex then
+                return
+            end
+        end
+        vim.diagnostic.open_float({
+            focusable = false,
+            scope = "line",
+            close_events = {
+                "CursorMoved",
+                "CursorMovedI",
+                "BufHidden",
+                "InsertCharPre",
+                "WinLeave",
+            },
+        })
+    end
+})
 
 
 -- for diagnostics icons
