@@ -1,6 +1,15 @@
 local lsp_zero = require('lsp-zero')
 local fzf_lua = require('fzf-lua')
 
+fzf_lua.setup({
+    keymap = {
+        fzf = {
+            ["tab"] = "down",
+            ["shift-tab"] = "up",
+        },
+    },
+})
+
 lsp_zero.on_attach(function(client, bufnr)
     -- see :help lsp-zero-keybindings
     -- to learn the available actions
@@ -73,7 +82,6 @@ lsp_zero.on_attach(function(client, bufnr)
 
     vim.keymap.set("n", "<leader>ws", function()
         fzf_lua.lsp_workspace_symbols({
-            sync = true,
             winopts = {
                 height = 0.8,
                 width = 0.9,

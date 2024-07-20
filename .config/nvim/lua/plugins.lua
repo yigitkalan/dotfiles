@@ -26,6 +26,11 @@ return require("packer").startup(function(use)
             require 'alpha'.setup(require 'alpha.themes.dashboard'.config)
         end
     }
+    use { "onsails/lspkind.nvim" }
+    use { "ibhagwan/fzf-lua",
+        -- optional for icon support
+        requires = { "nvim-tree/nvim-web-devicons" }
+    }
 
 
 
@@ -47,11 +52,6 @@ return require("packer").startup(function(use)
             { 'hrsh7th/cmp-nvim-lsp' },
             { 'L3MON4D3/LuaSnip' },
         }
-    }
-    use { "onsails/lspkind.nvim" }
-    use { "ibhagwan/fzf-lua",
-        -- optional for icon support
-        requires = { "nvim-tree/nvim-web-devicons" }
     }
 
     use {
