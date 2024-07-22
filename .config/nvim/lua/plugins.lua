@@ -54,6 +54,9 @@ return require("packer").startup(function(use)
         }
     }
 
+    use {'Hoffs/omnisharp-extended-lsp.nvim'}
+    use "ray-x/lsp_signature.nvim"
+
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
 

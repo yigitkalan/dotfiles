@@ -9,6 +9,7 @@ require "configs.alpha-config"
 require "configs.undo-config"
 require "configs.lsp-config"
 require "configs.cmp-config"
+require "configs.mason-config"
 
 
 require "configs.toggleterm-config"
