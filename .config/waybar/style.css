@@ -152,6 +152,7 @@ window#waybar.empty #window {
 	transition: none;
 	color: white;
 	background: #2b5aa6;
+    border: solid 2px black;
 }
 
 #custom-launcher {
