@@ -20,6 +20,7 @@
     },
     "scroll-step": 1,
 	"on-click":"pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "on-click-right": "pavucontrol",
     "ignored-sinks": ["Easy Effects Sink"]
 },
 
@@ -55,7 +56,8 @@
     },
 	"tray":{
 		"icon-size":18,
-		"spacing": 10
+		"spacing": 10,
+        "show-passive-items": true,
 	},
     "clock": {
         "format": "  {:%H:%M}",
@@ -84,7 +86,7 @@
         "format": "󰏔   {}",
         "exec": "checkupdates | wc -l",
         "interval": 60,
-        "on-click": "kitty -e  yay",
+        "on-click": "kitty -e yay",
     },
     "hyprland/window": {
         "format": "{class}",
