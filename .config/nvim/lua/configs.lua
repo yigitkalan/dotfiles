@@ -13,5 +13,3 @@ require "configs.mason-config"
 
 
 require "configs.toggleterm-config"
-
--- require	"configs.lsp-config"

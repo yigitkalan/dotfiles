@@ -31,10 +31,12 @@ return require("packer").startup(function(use)
         -- optional for icon support
         requires = { "nvim-tree/nvim-web-devicons" }
     }
-
-
-
-
+    use({
+        'Bekaboo/dropbar.nvim',
+        requires = {
+            'nvim-telescope/telescope-fzf-native.nvim'
+        }
+    })
 
 
     ------------------------------------------------------core
@@ -54,12 +56,18 @@ return require("packer").startup(function(use)
         }
     }
 
-    use {'Hoffs/omnisharp-extended-lsp.nvim'}
-    use "ray-x/lsp_signature.nvim"
+    -- for metadata definitions etc...
+    use { 'Hoffs/omnisharp-extended-lsp.nvim' }
+
+    use {
+        "ray-x/lsp_signature.nvim",
+        config = function()
+            require "lsp_signature".setup({})
+        end
+    }
 
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
-
     }
 
 

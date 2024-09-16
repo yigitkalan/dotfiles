@@ -24,17 +24,36 @@ local function set_fzf_keymaps(bufnr)
 
     for _, mapping in ipairs(fzf_commands) do
         vim.keymap.set("n", mapping.key, function()
-            fzf_lua[mapping.cmd]({
-                jump_to_single_result = true,
-                winopts = {
-                    height = 0.8,
-                    width = 0.9,
-                    preview = {
-                        hidden = 'nohidden',
-                        vertical = 'up:50%',
+            -- if code action width and height is smaller
+            if mapping.cmd == "lsp_code_actions" then
+                fzf_lua[mapping.cmd]({
+                    winopts = {
+                        height = 0.3,
+                        width = 0.4,
+                        preview = {
+                            hidden = 'hidden',
+                            vertical = 'up:50%',
+                        },
+                        -- Position at the cursor
+                        relative = 'cursor',
+                        row = 1,
+                        col = 0,
                     },
-                },
-            })
+                })
+                return
+            else
+                fzf_lua[mapping.cmd]({
+                    jump_to_single_result = true,
+                    winopts = {
+                        height = 0.7,
+                        width = 0.8,
+                        preview = {
+                            hidden = 'nohidden',
+                            vertical = 'up:50%',
+                        },
+                    },
+                })
+            end
         end, opts)
     end
 end
@@ -43,7 +62,7 @@ lsp_zero.on_attach(function(client, bufnr)
     -- see :help lsp-zero-keybindings
     -- to learn the available actions
     -- lsp_zero.default_keymaps({ buffer = bufnr })
-    require "lsp_signature".setup(client)
+
 
     vim.api.nvim_create_autocmd('LspAttach', {
         desc = 'LSP actions',
@@ -68,6 +87,7 @@ lsp_zero.on_attach(function(client, bufnr)
     set_fzf_keymaps(bufnr)
 
 
+    -- Check if omnisharp is currently running
     local has_omnisharp = false
     local clients = vim.lsp.get_clients({ bufnr = bufnr })
     for _, c in ipairs(clients) do
@@ -84,5 +104,3 @@ lsp_zero.on_attach(function(client, bufnr)
         vim.keymap.set('n', 'gt', '<cmd>lua require("omnisharp_extended").lsp_type_definition()<cr>', opts)
     end
 end)
-
-

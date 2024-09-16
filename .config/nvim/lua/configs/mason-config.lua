@@ -16,12 +16,9 @@ require('mason-lspconfig').setup({
         function(server_name)
             require('lspconfig')[server_name].setup({})
         end,
-        -- require 'lspconfig'.csharp_ls.setup {},
-        require 'lspconfig'.gopls.setup {},
-        require 'lspconfig'.tsserver.setup {},
-        require 'lspconfig'.lua_ls.setup {},
         require 'lspconfig'.omnisharp.setup {
-            cmd = { "dotnet", "/home/sy/Downloads/omnisharp/Omnisharp.exe" },
+            -- your omnisharp path
+            cmd = { "dotnet", "/home/sy/Documents/omnisharp/Omnisharp.exe" },
 
             settings = {
                 FormattingOptions = {

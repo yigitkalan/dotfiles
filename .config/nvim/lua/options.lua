@@ -28,9 +28,6 @@ g.blamer_show_in_visual_modes = false
 g.blamer_show_in_insert_modes = false
 
 
-vim.cmd([[
-let g:tmux_navigator_no_mappings = 1
-]])
 
 
 -- block comment on new line after pressing enter or o
@@ -77,7 +74,7 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('tokyonight')
+vim.cmd.colorscheme('rose-pine-moon')
 
 -- to continue file where you left of
 vim.cmd [[
@@ -137,7 +134,7 @@ local signs = {
     { name = "DiagnosticSignError", text = "" },
     { name = "DiagnosticSignWarn", text = "" },
     { name = "DiagnosticSignHint", text = "" },
-    { name = "DiagnosticSignInfo", text = "" },
+    { name = "DiagnosticSignInfo", text = "" }
 }
 
 for _, sign in ipairs(signs) do

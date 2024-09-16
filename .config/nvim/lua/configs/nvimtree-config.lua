@@ -130,7 +130,7 @@ filters = {
     dotfiles = false,
     git_clean = false,
     no_buffer = false,
-    custom = {"*.meta"},
+    custom = {"*.meta", "*.asset","*.unity","*.bin"},
     exclude = {},
 },
 filesystem_watchers = {
