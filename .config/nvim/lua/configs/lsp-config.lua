@@ -61,7 +61,6 @@ end
 lsp_zero.on_attach(function(client, bufnr)
     -- see :help lsp-zero-keybindings
     -- to learn the available actions
-    -- lsp_zero.default_keymaps({ buffer = bufnr })
 
 
     vim.api.nvim_create_autocmd('LspAttach', {
@@ -70,16 +69,13 @@ lsp_zero.on_attach(function(client, bufnr)
             local opts = { buffer = event.buf }
             vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
             vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-            vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+            vim.keymap.set('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
             vim.keymap.set('n', '<leader>re', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
             vim.keymap.set({ 'n', 'x' }, '<a-f>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
             vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
             vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
             vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
 
-            require("lsp_signature").on_attach({
-                -- ... setup options here ...
-            }, bufnr)
         end
 
     })
@@ -96,7 +92,7 @@ lsp_zero.on_attach(function(client, bufnr)
             break
         end
     end
-    -- Custom keybindings for Omnisharp
+    -- Custom keybindings for Omnisharp and override
     if has_omnisharp then
         vim.keymap.set('n', 'gd', '<cmd>lua require("omnisharp_extended").lsp_definition()<cr>', opts)
         vim.keymap.set('n', 'gr', '<cmd>lua require("omnisharp_extended").lsp_references()<cr>', opts)

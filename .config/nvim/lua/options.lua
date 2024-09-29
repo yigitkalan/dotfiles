@@ -28,8 +28,6 @@ g.blamer_show_in_visual_modes = false
 g.blamer_show_in_insert_modes = false
 
 
-
-
 -- block comment on new line after pressing enter or o
 vim.cmd [[autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o]]
 
@@ -87,7 +85,7 @@ if has("autocmd")
 
 -- -- comment this if you rather prefer visual text for diagnostics
 vim.diagnostic.config({
-    virtual_text = false, -- Disable inline diagnostics
+    virtual_text = true, -- Disable inline diagnostics
     signs = true,
     underline = true,
     update_in_insert = false,
@@ -102,6 +100,7 @@ vim.diagnostic.config({
         prefix = "",
     },
 })
+
 -- Show diagnostics in a floating window when hovering
 vim.o.updatetime = 250
 
