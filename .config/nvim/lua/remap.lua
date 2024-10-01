@@ -60,6 +60,7 @@ map('n', "<C-l>", ":TmuxNavigateRight<cr>")
 
 
 map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")
+map("n", "<leader>sd", require("lsp_lines").toggle)
 
-
+map("n", "g?", ":lua vim.diagnostic.open_float()<cr>")
 

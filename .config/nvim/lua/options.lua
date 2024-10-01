@@ -85,7 +85,10 @@ if has("autocmd")
 
 -- -- comment this if you rather prefer visual text for diagnostics
 vim.diagnostic.config({
-    virtual_text = true, -- Disable inline diagnostics
+    -- use virtual_lines with toggle remap
+    virtual_lines = false,
+
+    virtual_text = false, -- Disable inline diagnostics
     signs = true,
     underline = true,
     update_in_insert = false,
@@ -101,33 +104,6 @@ vim.diagnostic.config({
     },
 })
 
--- Show diagnostics in a floating window when hovering
-vim.o.updatetime = 250
-
--- open diagnostics only if there is no floating window open
-vim.api.nvim_create_autocmd({ "CursorHold" }, {
-    pattern = "*",
-    callback = function()
-        for _, winid in pairs(vim.api.nvim_tabpage_list_wins(0)) do
-            if vim.api.nvim_win_get_config(winid).zindex then
-                return
-            end
-        end
-        vim.diagnostic.open_float({
-            focusable = false,
-            scope = "line",
-            close_events = {
-                "CursorMoved",
-                "CursorMovedI",
-                "BufHidden",
-                "InsertCharPre",
-                "WinLeave",
-            },
-        })
-    end
-})
-
-
 -- for diagnostics icons
 local signs = {
     { name = "DiagnosticSignError", text = "" },
@@ -135,9 +111,37 @@ local signs = {
     { name = "DiagnosticSignHint", text = "" },
     { name = "DiagnosticSignInfo", text = "" }
 }
-
 for _, sign in ipairs(signs) do
     vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
 end
+
+
+---- commented out because of the choice the choice of using lsp_lines + floating keymap
+-- open diagnostics only if there is no floating window open
+-- vim.api.nvim_create_autocmd({ "CursorHold" }, {
+--     pattern = "*",
+--     callback = function()
+--         for _, winid in pairs(vim.api.nvim_tabpage_list_wins(0)) do
+--             if vim.api.nvim_win_get_config(winid).zindex then
+--                 return
+--             end
+--         end
+--         vim.diagnostic.open_float({
+--             focusable = false,
+--             scope = "line",
+--             close_events = {
+--                 "CursorMoved",
+--                 "CursorMovedI",
+--                 "BufHidden",
+--                 "InsertCharPre",
+--                 "WinLeave",
+--             },
+--         })
+--     end
+-- })
+
+-- Show diagnostics in a floating window when hovering
+vim.o.updatetime = 250
+
 
 
