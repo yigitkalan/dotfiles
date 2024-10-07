@@ -11,7 +11,8 @@ require('rose-pine').setup({
 
 	--- @usage string hex value or named color from rosepinetheme.com/palette
 	groups = {
-		-- background = '#0f0f0f',
+        -- comment below line if you want the same background as terminal
+		-- background = '#0f0e17',
 		background_nc = '_experimental_nc',
 		panel = 'surface',
 		panel_nc = 'base',
