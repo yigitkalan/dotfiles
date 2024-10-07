@@ -57,10 +57,18 @@ map('n', "<C-k>", ":TmuxNavigateUp<cr>")
 map('n', "<C-l>", ":TmuxNavigateRight<cr>")
 
 
+map('n', "<leader>ht", ":lua require(\"harpoon.ui\").toggle_quick_menu()<cr>")
+map('n', "<leader>ha", ":lua require(\"harpoon.mark\").add_file()<cr>")
+
+local harpoon_ui = require("harpoon.ui")
+for i = 1, 9 do
+    map('n', "<leader>h" .. i, function()
+        harpoon_ui.nav_file(i)
+    end)
+end
 
 
 map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")
-map("n", "<leader>sd", require("lsp_lines").toggle)
 
 map("n", "g?", ":lua vim.diagnostic.open_float()<cr>")
 

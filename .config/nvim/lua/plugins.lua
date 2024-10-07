@@ -95,16 +95,14 @@ return require("packer").startup(function(use)
     use 'mg979/vim-visual-multi'
     use 'honza/vim-snippets'
 
+
+    ----------------------------- prime
+    use 'ThePrimeagen/vim-be-good'
+    use 'ThePrimeagen/harpoon'
+
     ----------------------------- tpope
     use 'tpope/vim-surround'
     use 'tpope/vim-repeat'
-
-    use({
-        "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-        config = function()
-            require("lsp_lines").setup()
-        end,
-    })
 
 
 
