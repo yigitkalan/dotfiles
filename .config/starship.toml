@@ -1,5 +1,7 @@
+format = """ $directory( $git_branch)( $git_status) $character"""
+
 [character]
-success_symbol = "[](bold green)"
+success_symbol = "[❯](bold green)"
 error_symbol = "[✖](red) "
 vimcmd_symbol = '[V](bold green) '
 
@@ -21,6 +23,9 @@ symbol = " "
 
 [directory]
 read_only = " 󰌾"
+format = "[$path]($style)"
+truncation_length = 1
+truncation_symbol = "../"
 
 [docker_context]
 symbol = " "
@@ -36,6 +41,7 @@ symbol = " "
 
 [git_branch]
 symbol = " "
+format = 'on [$symbol$branch(:$remote_branch)]($style)'
 
 [golang]
 symbol = " "
