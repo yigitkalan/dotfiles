@@ -1,46 +1,65 @@
 {
-	"layer": "top",
-	"modules-left": ["tray","custom/launcher", "custom/updates","hyprland/window"],
-	"modules-center": ["hyprland/workspaces"],
-	"modules-right": ["backlight","pulseaudio", "battery", "hyprland/language", "memory",  "network", "clock", "custom/powermenu"],
-	
-"pulseaudio": {
-    "format": "{icon}    {volume}% ",
-    "format-bluetooth": "{icon}    {volume}% ",
-    "format-muted": " ",
-    "format-icons": {
-        "headphone": "",
-        "hands-free": "",
-        "headset": "",
-        "phone": "",
-        "phone-muted": "",
-        "portable": "",
-        "car": "",
-        "default": ["", ""]
+    "layer": "bottom",
+    "modules-left": [
+        "tray",
+        "custom/launcher",
+        "custom/updates",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "hyprland/workspaces"
+    ],
+    "modules-right": [
+        "backlight",
+        "pulseaudio",
+        "battery",
+        "hyprland/language",
+        "memory",
+        "network",
+        "clock",
+        "custom/powermenu"
+    ],
+    "pulseaudio": {
+        "format": "{icon}    {volume}% ",
+        "format-bluetooth": "{icon}    {volume}% ",
+        "format-muted": " ",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "phone-muted": "",
+            "portable": "",
+            "car": "",
+            "default": [
+                "",
+                ""
+            ]
+        },
+        "scroll-step": 1,
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-click-right": "pavucontrol",
+        "ignored-sinks": [
+            "Easy Effects Sink"
+        ]
     },
-    "scroll-step": 1,
-	"on-click":"pactl set-sink-mute @DEFAULT_SINK@ toggle",
-    "on-click-right": "pavucontrol",
-    "ignored-sinks": ["Easy Effects Sink"]
-},
-
-"network": {
-    "format": "{ifname}",
-    "format-wifi": "   {essid}",
-    "format-ethernet": "󰈀  Ethernet",
-    "format-disconnected": "", //An empty format will hide the module.
-    "tooltip-format-wifi": "{essid} ({signalStrength}%)",
-    "tooltip-format-ethernet": "{ifname} 󰈀",
-    "tooltip-format-disconnected": "Disconnected",
-    "max-length": 8
-},
-	"backlight": {
-		"tooltip": false,
-		"format": " {}%",
-		"interval":1,
+    "network": {
+        "format": "{ifname}",
+        "format-wifi": "   {essid}",
+        "format-ethernet": "󰈀  Ethernet",
+        "format-disconnected": "", //An empty format will hide the module.
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+        "tooltip-format-ethernet": "{ifname} 󰈀",
+        "tooltip-format-disconnected": "Disconnected",
+        "max-length": 8
+    },
+    "backlight": {
+        "tooltip": false,
+        "format": " {}%",
+        "interval": 1,
         "on-scroll-up": "brightnessctl  -q set 5%+",
-		"on-scroll-down": "brightnessctl --min-val=2 -q set 5%-"
-	},
+        "on-scroll-down": "brightnessctl --min-val=2 -q set 5%-"
+    },
     "battery": {
         "states": {
             "full": 99,
@@ -52,41 +71,41 @@
         "format-charging": "  {capacity}%",
         "format-alt": "{icon}   {time}",
         "format-full": "{icon}   100%",
-        "format-icons": ["", "", "", "", ""]
+        "format-icons": [
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
     },
-	"tray":{
-		"icon-size":18,
-		"spacing": 10,
+    "tray": {
+        "icon-size": 18,
+        "spacing": 10,
         "show-passive-items": true,
-	},
+    },
     "clock": {
         "format": "  {:%H:%M}",
         "format-alt": "{:%A, %B %d, %Y (%R)} ",
     },
-"cpu": {
-    "interval": 10,
-    "format": "   {}% ",
-    "max-length": 10
-},
+    "cpu": {
+        "interval": 10,
+        "format": "   {}% ",
+        "max-length": 10
+    },
     "memory": {
         "interval": 30,
         "format": "   {}%",
         "max-length": 10
     },
-    "custom/launcher":{
+    "custom/launcher": {
         "format": " ",
-        "on-click": "wofi --show drun",
+        "on-click": "wofi --show drun"
     },
-    "custom/powermenu":{
+    "custom/powermenu": {
         "format": " ",
         "on-click": "wlogout",
         "tooltip": false
-    },
-    "custom/updates":{
-        "format": "󰏔   {}",
-        "exec": "checkupdates | wc -l",
-        "interval": 60,
-        "on-click": "kitty -e yay",
     },
     "hyprland/window": {
         "format": "{class}",
@@ -95,5 +114,20 @@
         "max-length": 30
     },
     "hyprland/language": {
+        "format": "󰌌  {}",
+        "format-en": "EN",
+        "format-tr": "TR"
+        // "format-en": "🇬🇧",
+        // "format-tr": "🇹🇷"
+    },
+    "custom/updates": {
+        "format": "{} {icon} ",
+        "return-type": "json",
+        "format-icons": {
+            "has-updates": "󱍷",
+            "updated": "󰂪"
+        },
+        "exec-if": "which waybar-module-pacman-updates",
+        "exec": "waybar-module-pacman-updates --interval-seconds 5 --network-interval-seconds 300"
     }
 }

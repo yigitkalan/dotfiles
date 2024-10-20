@@ -72,7 +72,7 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('rose-pine-moon')
+vim.cmd.colorscheme('github_dark_default')
 
 -- to continue file where you left of
 vim.cmd [[

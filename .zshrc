@@ -12,8 +12,9 @@ export PATH=$HOME/.pub-cache/bin:$PATH
 export GOPATH=$HOME/work/go/gopath/
 export EDITOR=nvim
 export VISUAL=nvim
+export LIBVA_DRIVER_NAME=nvidia
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-export FZF_DEFAULT_COMMAND='rg --files  --ignore-file /home/sy/.ignore  2> /dev/null '
+export FZF_DEFAULT_COMMAND='rg --files  --ignore-file $HOME/.ignore  2> /dev/null '
 
 
 # Path to your oh-my-zsh installation.
@@ -28,6 +29,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.dotnet/tools:$PATH
+export PATH=$HOME/.cargo/bin:$PATH
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
@@ -164,8 +166,13 @@ alias tks='tmux kill-session -t'
 alias pacclean="sudo pacman -R $(pacman -Qdtq)"
 
 alias reboot="sudo reboot"
+alias performant="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia $1"
+
+
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
+
+
 # pfetch
 #neofetch

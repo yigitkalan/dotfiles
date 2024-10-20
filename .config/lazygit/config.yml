@@ -1,7 +1,14 @@
 os:
-  edit: 'nvim' # as an example
+  edit: 'nvim {{filename}}' # as an example
   editatline: 'nvim {{filename}} >/dev/null'
-  open: '{{editor}} +{{line}} -- {{filename}}'
+  open: '{{editor}} {{filename}}'
 
 gui:
   nerdFontsVersion: "3"
+
+customCommands:
+  - key: O
+    context: commits
+    description: open files in commit
+    command: git diff -z --name-only {{.SelectedLocalCommit.ParentRefName}} {{.SelectedLocalCommit.Sha}} | xargs -0 code --
+    subprocess: true

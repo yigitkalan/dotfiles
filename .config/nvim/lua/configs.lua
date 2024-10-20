@@ -10,6 +10,7 @@ require "configs.undo-config"
 require "configs.lsp-config"
 require "configs.cmp-config"
 require "configs.mason-config"
-
+require "configs.gitsigns-config"
+require "configs.github-theme-config"
 
 require "configs.toggleterm-config"

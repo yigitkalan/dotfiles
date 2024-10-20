@@ -95,17 +95,25 @@ return require("packer").startup(function(use)
     use 'mg979/vim-visual-multi'
     use 'honza/vim-snippets'
 
-
-    ----------------------------- prime
-    use 'ThePrimeagen/vim-be-good'
     use 'ThePrimeagen/harpoon'
 
-    ----------------------------- tpope
-    use 'tpope/vim-surround'
     use 'tpope/vim-repeat'
 
-
-
+    use({
+        "kylechui/nvim-surround",
+        tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+        config = function()
+            require("nvim-surround").setup({
+                -- Configuration here, or leave empty to use defaults
+            })
+        end
+    })
+    use({
+        'lewis6991/gitsigns.nvim',
+        config = function()
+            require('gitsigns').setup()
+        end
+    })
     ----------------------------------------------- colorschemes
     use { 'nyoom-engineering/oxocarbon.nvim' }
     use 'thedenisnikulin/vim-cyberpunk'
@@ -113,4 +121,6 @@ return require("packer").startup(function(use)
     use 'folke/tokyonight.nvim'
     use({ 'rose-pine/neovim', as = 'rose-pine' })
     use "rebelot/kanagawa.nvim"
+    use "slugbyte/lackluster.nvim"
+    use({ 'projekt0n/github-nvim-theme' })
 end)
