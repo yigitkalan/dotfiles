@@ -18,7 +18,7 @@ require('mason-lspconfig').setup({
         end,
         require 'lspconfig'.omnisharp.setup {
             -- your omnisharp path
-            cmd = { "dotnet", "/home/sy/Documents/omnisharp/Omnisharp.exe" },
+            cmd = { "dotnet", "$HOME/.local/bin/omnisharp/Omnisharp.exe" },
 
             settings = {
                 FormattingOptions = {
