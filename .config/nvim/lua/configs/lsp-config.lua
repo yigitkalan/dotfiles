@@ -19,7 +19,7 @@ local function set_fzf_keymaps(bufnr)
         { key = "gt",         cmd = "lsp_typedefs" },
         { key = "<leader>fs", cmd = "lsp_document_symbols" },
         { key = "<leader>ws", cmd = "lsp_workspace_symbols" },
-        { key = "<leader>ac", cmd = "lsp_code_actions" },
+        { key = "<leader>ca", cmd = "lsp_code_actions" },
     }
 
     for _, mapping in ipairs(fzf_commands) do
@@ -28,8 +28,8 @@ local function set_fzf_keymaps(bufnr)
             if mapping.cmd == "lsp_code_actions" then
                 fzf_lua[mapping.cmd]({
                     winopts = {
-                        height = 0.3,
-                        width = 0.4,
+                        height = 0.4,
+                        width = 0.5,
                         preview = {
                             hidden = 'hidden',
                             vertical = 'up:50%',
@@ -59,8 +59,7 @@ local function set_fzf_keymaps(bufnr)
 end
 
 lsp_zero.on_attach(function(client, bufnr)
-    -- see :help lsp-zero-keybindings
-    -- to learn the available actions
+    -- see :help lsp-zero-keybindings to learn the available actions
 
 
     vim.api.nvim_create_autocmd('LspAttach', {

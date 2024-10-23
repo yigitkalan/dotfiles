@@ -2,26 +2,27 @@ local lsp_zero = require('lsp-zero')
 local cmp = require('cmp')
 local lspkind = require('lspkind')
 
+
 -- Configure nvim-cmp
 local cmp_config = lsp_zero.defaults.cmp_config({
     mapping = cmp.mapping.preset.insert({
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
-        ['<S-Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            else
-                fallback()
-            end
-        end, { 'i', 's' }),
+        -- ['<Tab>'] = cmp.mapping(function(fallback)
+        --     if cmp.visible() then
+        --         cmp.select_next_item()
+        --     else
+        --         fallback()
+        --     end
+        -- end, { 'i', 's' }),
+        -- ['<S-Tab>'] = cmp.mapping(function(fallback)
+        --     if cmp.visible() then
+        --         cmp.select_prev_item()
+        --     else
+        --         fallback()
+        --     end
+        -- end, { 'i', 's' }),
         ['<CR>'] = cmp.mapping.confirm({ select = true }),
     }),
     formatting = {

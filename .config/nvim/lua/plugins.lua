@@ -14,7 +14,6 @@ return require("packer").startup(function(use)
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     }
     use 'jiangmiao/auto-pairs'
-    use 'ryanoasis/vim-devicons'
     use('nvim-treesitter/nvim-treesitter', { run = 'TSUpdate' })
     use 'nvim-tree/nvim-web-devicons'
     use 'nvim-treesitter/nvim-treesitter-context'
@@ -63,10 +62,6 @@ return require("packer").startup(function(use)
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
     }
 
-
-    use { 'vim-test/vim-test' }
-
-
     use {
         'nvim-tree/nvim-tree.lua',
         requires = {
@@ -82,7 +77,6 @@ return require("packer").startup(function(use)
     use "SirVer/ultisnips"
 
     use "github/copilot.vim"
-    use "debugloop/telescope-undo.nvim"
 
     use {
         'numToStr/Comment.nvim',
@@ -92,12 +86,13 @@ return require("packer").startup(function(use)
     }
     use { 'stevearc/dressing.nvim' }
 
-    use 'mg979/vim-visual-multi'
     use 'honza/vim-snippets'
 
     use 'ThePrimeagen/harpoon'
 
-    use 'tpope/vim-repeat'
+    use 'mbbill/undotree'
+
+    use 'tpope/vim-fugitive'
 
     use({
         "kylechui/nvim-surround",

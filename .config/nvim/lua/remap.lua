@@ -16,7 +16,8 @@ map('n', '<leader>si', ':so $MYVIMRC<cr>')
 
 -- jk to escape
 map('i', 'jk', '<esc>')
-map('i', 'Jk', '<esc>') map('i', 'jK', '<esc>')
+map('i', 'Jk', '<esc>')
+map('i', 'jK', '<esc>')
 map('i', 'JK', '<esc>')
 
 map('c', 'jk', '<esc>')
@@ -24,8 +25,7 @@ map('c', 'jK', '<esc>')
 map('c', 'Jk', '<esc>')
 map('c', 'JK', '<esc>')
 
-map('n', '<leader>q', api.tree.toggle)
-map('n', '<leader>f', api.tree.focus)
+map('n', '<leader>nt', api.tree.toggle)
 
 
 -- move visually selected lines
@@ -46,29 +46,35 @@ map('n', '<a-k>', '<c-w>k')
 map('n', '<a-l>', '<c-w>l')
 map('n', '<a-h>', '<c-w>h')
 
--- TEST REMAPS
-map('n', "<leader>tt", ":TestNearest<cr>")
-map('n', "<leader>tf", ":TestFile<cr>")
-map('n', "<leader>tl", ":TestLast<cr>")
-
 map('n', "<C-h>", ":TmuxNavigateLeft<cr>")
 map('n', "<C-j>", ":TmuxNavigateDown<cr>")
 map('n', "<C-k>", ":TmuxNavigateUp<cr>")
 map('n', "<C-l>", ":TmuxNavigateRight<cr>")
 
 
-map('n', "<leader>ht", ":lua require(\"harpoon.ui\").toggle_quick_menu()<cr>")
-map('n', "<leader>ha", ":lua require(\"harpoon.mark\").add_file()<cr>")
+-- GITSIGNS
+map("n", "]c", ":Gitsigns next_hunk<cr>")
+map("n", "[c", ":Gitsigns prev_hunk<cr>")
+map("n", "<leader>hp", ":Gitsigns preview_hunk<cr>")
+map("n", "<leader>hs", ":Gitsigns stage_hunk<cr>")
+map("n", "<leader>hu", ":Gitsigns undo_stage_hunk<cr>")
+map("n", "<leader>hr", ":Gitsigns reset_hunk<cr>")
+map("n", "<leader>bt", ":Gitsigns toggle_current_line_blame<cr>")
 
+
+
+map('n', '<leader>u', vim.cmd.UndotreeToggle)
+
+-- HARPOON
+local ui = require("harpoon.ui")
+local mark = require("harpoon.mark")
+map('n', "<leader>ht", function() ui.toggle_quick_menu() end)
+map('n', "<leader>a", function() mark.add_file() end)
+map('n', "<a-]>", function() ui.nav_next() end)
+map('n', "<a-[>", function() ui.nav_prev() end)
 local harpoon_ui = require("harpoon.ui")
 for i = 1, 9 do
-    map('n', "<leader>h" .. i, function()
+    map('n', "<a-" .. i .. ">", function()
         harpoon_ui.nav_file(i)
     end)
 end
-
-
-map("n", "<leader>u", ":lua require(\"telescope\").extensions.undo.undo()<cr>")
-
-map("n", "g?", ":lua vim.diagnostic.open_float()<cr>")
-

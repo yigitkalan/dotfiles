@@ -20,15 +20,14 @@ require('github-theme').setup({
       numbers = 'NONE',
       operators = 'NONE',
       strings = 'NONE',
-      types = 'NONE',
-    },
+      types = 'NONE', },
     inverse = {                -- Inverse highlight for different types
       match_paren = false,
       visual = false,
       search = false,
     },
     darken = {                 -- Darken floating windows and sidebar-like windows
-      floats = true,
+      floats = false,
       sidebars = {
         enable = true,
         list = {},             -- Apply dark background to specific windows
@@ -43,5 +42,3 @@ require('github-theme').setup({
   groups = {},
 })
 
--- setup must be called before loading
-vim.cmd('colorscheme github_dark')
