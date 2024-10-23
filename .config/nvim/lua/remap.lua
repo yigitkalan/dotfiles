@@ -10,8 +10,7 @@ local api = require('nvim-tree.api')
 map('n', '<space>', '<nop>')
 
 map('n', '<leader>pg', builtin.live_grep)
-map('n', '<leader>pf', builtin.find_files)
-map('n', '<leader>si', ':so $MYVIMRC<cr>')
+map('n', '<c-p>', builtin.find_files)
 
 
 -- jk to escape

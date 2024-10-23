@@ -26,10 +26,6 @@ return require("packer").startup(function(use)
         end
     }
     use { "onsails/lspkind.nvim" }
-    use { "ibhagwan/fzf-lua",
-        -- optional for icon support
-        requires = { "nvim-tree/nvim-web-devicons" }
-    }
     use({
         'Bekaboo/dropbar.nvim',
         requires = {

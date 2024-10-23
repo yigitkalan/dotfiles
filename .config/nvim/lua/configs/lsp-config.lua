@@ -1,62 +1,4 @@
 local lsp_zero = require('lsp-zero')
-local fzf_lua = require('fzf-lua')
-
-fzf_lua.setup({
-    keymap = {
-        fzf = {
-            ["tab"] = "down",
-            ["shift-tab"] = "up",
-        },
-    },
-})
-
-local function set_fzf_keymaps(bufnr)
-    local opts = { buffer = bufnr, remap = false }
-    local fzf_commands = {
-        { key = "gd",         cmd = "lsp_definitions" },
-        { key = "gr",         cmd = "lsp_references" },
-        { key = "gi",         cmd = "lsp_implementations" },
-        { key = "gt",         cmd = "lsp_typedefs" },
-        { key = "<leader>fs", cmd = "lsp_document_symbols" },
-        { key = "<leader>ws", cmd = "lsp_workspace_symbols" },
-        { key = "<leader>ca", cmd = "lsp_code_actions" },
-    }
-
-    for _, mapping in ipairs(fzf_commands) do
-        vim.keymap.set("n", mapping.key, function()
-            -- if code action width and height is smaller
-            if mapping.cmd == "lsp_code_actions" then
-                fzf_lua[mapping.cmd]({
-                    winopts = {
-                        height = 0.4,
-                        width = 0.5,
-                        preview = {
-                            hidden = 'hidden',
-                            vertical = 'up:50%',
-                        },
-                        -- Position at the cursor
-                        relative = 'cursor',
-                        row = 1,
-                        col = 0,
-                    },
-                })
-                return
-            else
-                fzf_lua[mapping.cmd]({
-                    jump_to_single_result = true,
-                    winopts = {
-                        height = 0.7,
-                        width = 0.8,
-                        preview = {
-                            hidden = 'nohidden',
-                            vertical = 'up:50%',
-                        },
-                    },
-                })
-            end
-        end, opts)
-    end
-end
 
 lsp_zero.on_attach(function(client, bufnr)
     -- see :help lsp-zero-keybindings to learn the available actions
@@ -66,21 +8,27 @@ lsp_zero.on_attach(function(client, bufnr)
         desc = 'LSP actions',
         callback = function(event)
             local opts = { buffer = event.buf }
-            vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
-            vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
-            vim.keymap.set('i', '<c-s>', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
-            vim.keymap.set('n', '<leader>re', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
-            vim.keymap.set({ 'n', 'x' }, '<a-f>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
-            vim.keymap.set('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
-            vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>', opts)
-            vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>', opts)
+            local builtin = require('telescope.builtin')
+            vim.keymap.set('n', 'gd', function() builtin.lsp_definitions() end, opts)
+            vim.keymap.set('n', 'gr', function() builtin.lsp_references() end, opts)
+            vim.keymap.set('n', 'gi', function() builtin.lsp_implementations() end, opts)
+            vim.keymap.set('n', 'gt', function() builtin.lsp_type_definitions() end, opts)
+            vim.keymap.set('n', '<leader>fs', function() builtin.lsp_document_symbols() end, opts)
+            vim.keymap.set('n', '<leader>ws', function() builtin.lsp_workspace_symbols() end, opts)
+            vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, opts)
+            vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end, opts)
+            vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end, opts)
+            vim.keymap.set('i', '<c-s>', function() vim.lsp.buf.signature_help() end, opts)
+            vim.keymap.set('n', '<leader>re', function() vim.lsp.buf.rename() end, opts)
+            vim.keymap.set({ 'n', 'x' }, '<a-f>', function() vim.lsp.buf.format({ async = true }) end, opts)
+            vim.keymap.set('n', 'gl', function() vim.diagnostic.open_float() end, opts)
+            vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, opts)
+            vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, opts)
 
         end
 
     })
     local opts = { buffer = bufnr, remap = false }
-    set_fzf_keymaps(bufnr)
-
 
     -- Check if omnisharp is currently running
     local has_omnisharp = false
