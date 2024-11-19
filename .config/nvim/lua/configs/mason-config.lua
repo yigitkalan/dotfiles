@@ -20,6 +20,13 @@ require('mason-lspconfig').setup({
             -- your omnisharp path
             cmd = { "dotnet", "$HOME/.local/bin/omnisharp/Omnisharp.exe" },
 
+            handlers = {
+                ["textDocument/definition"] = require('omnisharp_extended').telescope_lsp_definition({ jump_type = "vsplit" }),
+                ["textDocument/typeDefinition"] = require('omnisharp_extended').type_definition_handler,
+                ["textDocument/references"] = require('omnisharp_extended').references_handler,
+                ["textDocument/implementation"] = require('omnisharp_extended').implementation_handler,
+            },
+
             settings = {
                 FormattingOptions = {
                     -- Enables support for reading code style, naming convention and analyzer
