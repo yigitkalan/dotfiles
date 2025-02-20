@@ -16,10 +16,10 @@ lsp_zero.on_attach(function(client, bufnr)
         vim.keymap.set('n', 'gi', '<cmd>lua require("omnisharp_extended").lsp_implementation()<cr>')
         vim.keymap.set('n', 'gt', '<cmd>lua require("omnisharp_extended").lsp_type_definition()<cr>')
     else
-        vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, opts)
-        vim.keymap.set('n', 'gr', function() vim.lsp.buf.references() end, opts)
-        vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation() end, opts)
-        vim.keymap.set('n', 'gt', function() vim.lsp.buf.type_definition() end, opts)
+        vim.keymap.set('n', 'gd', function() builtin.lsp_definitions() end, opts)
+        vim.keymap.set('n', 'gr', function() builtin.lsp_references() end, opts)
+        vim.keymap.set('n', 'gi', function() builtin.lsp_implementations() end, opts)
+        vim.keymap.set('n', 'gt', function() builtin.lsp_type_definitions() end, opts)
     end
 
     vim.keymap.set('n', '<leader>fs', function() builtin.lsp_document_symbols() end, opts)

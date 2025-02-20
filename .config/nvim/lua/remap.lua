@@ -10,7 +10,7 @@ local api = require('nvim-tree.api')
 map('n', '<space>', '<nop>')
 
 map('n', '<leader>pg', builtin.live_grep)
-map('n', '<c-p>', builtin.find_files)
+map('n', '<leader>pf', builtin.find_files)
 
 
 -- jk to escape
@@ -24,7 +24,7 @@ map('c', 'jK', '<esc>')
 map('c', 'Jk', '<esc>')
 map('c', 'JK', '<esc>')
 
-map('n', '<leader>nt', api.tree.toggle)
+map('n', '<leader>q', api.tree.toggle)
 
 
 -- move visually selected lines

@@ -42,7 +42,7 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('github_dark_default')
+vim.cmd.colorscheme('catppuccin-mocha')
 
 -- remove ugly background of the floating window borders
 vim.api.nvim_set_hl(0, "FloatBorder", { bg = "NONE" })

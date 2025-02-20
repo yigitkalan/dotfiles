@@ -33,6 +33,7 @@ return require("packer").startup(function(use)
         }
     })
 
+    use { 'stevearc/dressing.nvim' }
 
     ------------------------------------------------------core
     ---------------coc and autocompletion
@@ -80,7 +81,6 @@ return require("packer").startup(function(use)
             require('Comment').setup()
         end
     }
-    use { 'stevearc/dressing.nvim' }
 
     use 'honza/vim-snippets'
 
