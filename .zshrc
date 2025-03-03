@@ -9,6 +9,8 @@
 
 export PATH=$HOME/.pub-cache/bin:$PATH
 
+export PATH=~/.npm-global/bin:$PATH
+
 export GOPATH=$HOME/work/go/gopath/
 export EDITOR=nvim
 export VISUAL=nvim
@@ -167,7 +169,6 @@ alias pacclean="sudo pacman -R $(pacman -Qdtq)"
 
 alias reboot="sudo reboot"
 alias performant="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia $1"
-
 
 
 eval "$(starship init zsh)"
