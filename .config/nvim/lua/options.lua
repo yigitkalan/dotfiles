@@ -22,7 +22,7 @@ o.swapfile = false
 
 o.undofile = true
 o.undodir = '/home/sy/.vim/undo'
-
+o.guicursor = "n-i:block-blinkwait1000-blinkon500-blinkoff500,i-ci-ve:ver25,r-cr:hor20,o:hor50";
 
 
 -- block comment on new line after pressing enter or o
@@ -37,12 +37,12 @@ autocmd FileType typescriptreact setlocal shiftwidth=2 tabstop=2
 o.termguicolors = true
 
 -- g.AutoPairsShortcutJump = 'a-e'
-g.copilot_enabled = true
+g.copilot_enabled = false
 g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('catppuccin-mocha')
+vim.cmd.colorscheme('tokyonight-night')
 
 -- remove ugly background of the floating window borders
 vim.api.nvim_set_hl(0, "FloatBorder", { bg = "NONE" })

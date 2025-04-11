@@ -1,7 +1,6 @@
 {
     "layer": "bottom",
     "modules-left": [
-        "tray",
         "custom/launcher",
         "custom/updates",
         "hyprland/window"
@@ -82,11 +81,11 @@
     "tray": {
         "icon-size": 18,
         "spacing": 10,
-        "show-passive-items": true,
+        "show-passive-items": true
     },
     "clock": {
         "format": "  {:%H:%M}",
-        "format-alt": "{:%A, %B %d, %Y (%R)} ",
+        "format-alt": "{:%A, %B %d, %Y (%R)} "
     },
     "cpu": {
         "interval": 10,

@@ -15,21 +15,21 @@ require "telescope".setup {
         lsp_document_symbols = {
             previewer = false,
             layout_config = {
-                width = 0.4,  -- Adjust the width as needed
+                width = 0.5,  -- Adjust the width as needed
                 height = 0.7, -- Adjust the height as needed
             }
         },
         lsp_workspace_symbols = {
             previewer = false,
             layout_config = {
-                width = 0.4,  -- Adjust the width as needed
+                width = 0.5,  -- Adjust the width as needed
                 height = 0.7, -- Adjust the height as needed
             }
         },
         find_files = {
             previewer = false,
             layout_config = {
-                width = 0.4,  -- Adjust the width as needed
+                width = 0.5,  -- Adjust the width as needed
                 height = 0.7, -- Adjust the height as needed
             } },
         live_grep = {

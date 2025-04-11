@@ -7,17 +7,17 @@
 #
 
 
-export PATH=$HOME/.pub-cache/bin:$PATH
 
-export PATH=~/.npm-global/bin:$PATH
-
-export GOPATH=$HOME/work/go/gopath/
+export GOPATH=$HOME/work/go/gopath/bin
 export EDITOR=nvim
 export VISUAL=nvim
 export LIBVA_DRIVER_NAME=nvidia
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 export FZF_DEFAULT_COMMAND='rg --files  --ignore-file $HOME/.ignore  2> /dev/null '
 
+export PATH=$HOME/.pub-cache/bin:$PATH
+export PATH=~/.npm-global/bin:$PATH
+export PATH=$GOPATH:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -168,7 +168,12 @@ alias tks='tmux kill-session -t'
 alias pacclean="sudo pacman -R $(pacman -Qdtq)"
 
 alias reboot="sudo reboot"
-alias performant="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia $1"
+# alias performant="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia $1"
+
+
+alias performant="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only GBM_BACKEND=nvidia-drm WLR_DRM_DEVICES=/dev/dri/card1"
+
+alias bfilter="wlsunset"
 
 
 eval "$(starship init zsh)"
