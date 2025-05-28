@@ -52,7 +52,7 @@
     ],
     "suggest.floatConfig": {
         "border": true,
-        "rounded": true,
+        "rounded": true
 
     },
     "diagnostic.floatConfig": {

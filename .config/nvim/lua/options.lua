@@ -55,7 +55,6 @@ if has("autocmd")
   endif
   ]]
 
-
 -- -- comment this if you rather prefer visual text for diagnostics
 vim.diagnostic.config({
     -- use virtual_lines with toggle remap

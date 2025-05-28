@@ -8,6 +8,10 @@ local api = require('nvim-tree.api')
 
 -- map('n', '<leader>pv', vim.cmd.Ex)
 map('n', '<space>', '<nop>')
+vim.keymap.del('n', 'grn')
+vim.keymap.del('n', 'grr')
+vim.keymap.del('n', 'gri')
+vim.keymap.del('n', 'gra')
 
 map('n', '<leader>pg', builtin.live_grep)
 map('n', '<leader>pf', builtin.find_files)
