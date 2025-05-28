@@ -1,4 +1,4 @@
 #!/bin/bash
-killall wofi
+killall rofi
 
-bemoji -tcn
+rofi -modi emoji -show emoji

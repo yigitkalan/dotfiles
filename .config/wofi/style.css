@@ -1,6 +1,7 @@
 @import url("/home/sy/.cache/wal/colors-waybar.css");
 
 * {
+    background-color: transparent
 }
 
 window {

@@ -1,4 +1,4 @@
 #!/bin/bash
-killall wofi
+killall rofi
 
-clipman pick -t wofi
+cliphist list | rofi -dmenu | cliphist decode | wl-copy

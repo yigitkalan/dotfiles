@@ -18,7 +18,7 @@
 configuration {
     show-icons:      true;
     display-drun:    "Applications";
-    modi:            "drun,window,";
+    modi:            "drun,window,emoji";
     disable-history: false;
 }
 
@@ -135,3 +135,5 @@ element-text, element-icon {
     background-color: inherit;
     text-color: inherit;
 }
+
+@theme "/home/sy/.local/share/rofi/themes/spotlight-dark.rasi"
