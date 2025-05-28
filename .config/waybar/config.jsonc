@@ -3,7 +3,8 @@
     "modules-left": [
         "custom/launcher",
         "custom/updates",
-        "hyprland/window"
+        "hyprland/window",
+        "tray"
     ],
     "modules-center": [
         "hyprland/workspaces"
