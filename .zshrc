@@ -168,7 +168,9 @@ alias tks='tmux kill-session -t'
 alias pacclean="sudo pacman -R $(pacman -Qdtq)"
 
 alias reboot="sudo reboot"
-# alias performant="__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia $1"
+
+alias startdpi="sudo systemctl start zapret"
+alias stopdpi="sudo systemctl stop zapret"
 
 
 #Instead use a shell script

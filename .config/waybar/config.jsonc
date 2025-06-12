@@ -20,9 +20,9 @@
         "custom/powermenu"
     ],
     "pulseaudio": {
-        "format": "{icon}    {volume}% ",
-        "format-bluetooth": "{icon}    {volume}% ",
-        "format-muted": " ",
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "{icon} {volume}%",
+        "format-muted": " 0%",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -45,8 +45,8 @@
     },
     "network": {
         "format": "{ifname}",
-        "format-wifi": "   {essid}",
-        "format-ethernet": "󰈀  Ethernet",
+        "format-wifi": "  {essid}",
+        "format-ethernet": "󰈀",
         "format-disconnected": "", //An empty format will hide the module.
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
         "tooltip-format-ethernet": "{ifname} 󰈀",
@@ -67,10 +67,10 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{icon}   {capacity}%",
-        "format-charging": "  {capacity}%",
-        "format-alt": "{icon}   {time}",
-        "format-full": "{icon}   100%",
+        "format": "{icon} {capacity}%",
+        "format-charging": " {capacity}%",
+        "format-alt": "{icon} {time}",
+        "format-full": "{icon} 100%",
         "format-icons": [
             "",
             "",
@@ -85,25 +85,47 @@
         "show-passive-items": true
     },
     "clock": {
-        "format": "  {:%H:%M}",
-        "format-alt": "{:%A, %B %d, %Y (%R)} "
+        "format": " {:%H:%M}",
+        "format-alt": "{:%A, %B %d, %Y (%R)}",
+        "tooltip": true,
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "mode-mon-col": 3,
+            "weeks-pos": "left",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#ffead3'><b>{}</b></span>",
+                "days": "<span color='#ecc6d9'><b>{}</b></span>",
+                "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+                "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+                "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-click-right": "mode"
+            // "on-scroll-up": "shift_up",
+            // "on-scroll-down": "shift_down"
+        }
     },
     "cpu": {
         "interval": 10,
-        "format": "   {}% ",
+        "format": " {}% ",
         "max-length": 10
     },
     "memory": {
         "interval": 30,
-        "format": "   {}%",
+        "format": " {}%",
         "max-length": 10
     },
     "custom/launcher": {
-        "format": " ",
-        "on-click": "wofi --show drun"
+        "format": "",
+        "on-click": "rofi -show drun",
+        "tooltip": true,
+        "tooltip-format": "Launcher"
     },
     "custom/powermenu": {
-        "format": " ",
+        "format": "",
         "on-click": "wlogout",
         "tooltip": false
     },
@@ -114,14 +136,14 @@
         "max-length": 30
     },
     "hyprland/language": {
-        "format": "󰌌  {}",
+        "format": "󰌌 {}",
         "format-en": "EN",
         "format-tr": "TR"
         // "format-en": "🇬🇧",
         // "format-tr": "🇹🇷"
     },
     "custom/updates": {
-        "format": "{} {icon} ",
+        "format": "{} {icon}",
         "return-type": "json",
         "format-icons": {
             "has-updates": "󱍷",
