@@ -46,7 +46,7 @@
     "network": {
         "format": "{ifname}",
         "format-wifi": "  {essid}",
-        "format-ethernet": "󰈀",
+        "format-ethernet": "󰈀 eth",
         "format-disconnected": "", //An empty format will hide the module.
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
         "tooltip-format-ethernet": "{ifname} 󰈀",

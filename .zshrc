@@ -6,7 +6,10 @@
 #
 #
 
-
+#Step 1) install with dotnet install scripts
+#Step 2) symlink of dotnet in /usr/bin/ and /usr/local/bin
+export DOTNET_ROOT=/home/sy/.dotnet
+export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
 
 export GOPATH=$HOME/work/go/gopath/bin
 export EDITOR=nvim
@@ -30,7 +33,6 @@ export ZSH="$HOME/.oh-my-zsh"
 
 
 export PATH=$HOME/.local/bin:$PATH
-export PATH=$HOME/.dotnet/tools:$PATH
 export PATH=$HOME/.cargo/bin:$PATH
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load

@@ -1,9 +1,29 @@
 local lsp_zero = require('lsp-zero')
 local builtin = require('telescope.builtin')
 
+local function maybe_start_godot_server()
+    local cwd = vim.fn.getcwd()
+    local base_paths = { '', '/../' }
+
+    for _, path in ipairs(base_paths) do
+        local root = cwd .. path
+        if vim.uv.fs_stat(root .. '/project.godot') then
+            local sock = root .. '/server.pipe'
+            if not vim.uv.fs_stat(sock) then
+                vim.fn.serverstart(sock)
+            end
+            break
+        end
+    end
+end
+
 lsp_zero.on_attach(function(client, bufnr)
     -- see :help lsp-zero-keybindings to learn the available actions
 
+    -- Godot LSP enable
+    vim.lsp.enable('gdscript')
+    maybe_start_godot_server()
+    --server {project}/server.pipe --remote-send "<C-\><C-N>:e {file}<CR>:call cursor({line}+1,{col})<CR>"
 
     local opts = { buffer = bufnr, remap = false }
     if client.name == "GitHub Copilot" then
@@ -25,7 +45,7 @@ lsp_zero.on_attach(function(client, bufnr)
     vim.keymap.set('n', '<leader>fs', function() builtin.lsp_document_symbols() end, opts)
     vim.keymap.set('n', '<leader>ws', function() builtin.lsp_workspace_symbols() end, opts)
     vim.keymap.set('n', '<leader>wd', function() builtin.diagnostics() end, opts)
-    vim.keymap.set('n', 'K', function() vim.lsp.buf.hover({ border = "rounded" }) end, opts)
+    vim.keymap.set('n', 'K', function() vim.lsp.buf.hover({ border = "rounded", max_width = 80 }) end, opts)
     vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end, opts)
     vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end, opts)
     vim.keymap.set('i', '<c-s>', function() vim.lsp.buf.signature_help({ border = "rounded" }) end, opts)

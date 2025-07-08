@@ -55,6 +55,8 @@ return require("packer").startup(function(use)
     -- for metadata definitions etc...
     use { 'Hoffs/omnisharp-extended-lsp.nvim' }
 
+    use { 'habamax/vim-godot'}
+
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
     }
