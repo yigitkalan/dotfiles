@@ -5,6 +5,7 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 #
 #
+export XDG_DATA_DIRS="/usr/local/share:/usr/share"
 
 #Step 1) install with dotnet install scripts
 #Step 2) symlink of dotnet in /usr/bin/ and /usr/local/bin

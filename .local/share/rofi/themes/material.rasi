@@ -34,10 +34,10 @@ configuration {
   padding: 0;
   spacing: 0;
 
-  bg: #2E3440;
-  bg-alt: #3B4252;
-  fg: #81A1C1;
-  fg-alt: #EBCB8B;
+  bg: #151515;
+  bg-alt: #232323;
+  fg: #FFFFFF;
+  fg-alt: #424242;
 
   background-color: @bg;
   text-color: @fg;
@@ -80,8 +80,9 @@ element-icon {
 
 element-text {
   padding: 10px 0;
+  text-color: @fg-alt;
 }
 
 element-text selected {
-  text-color: @fg-alt;
+  text-color: @fg;
 }

@@ -33,7 +33,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 setxkbmap -option caps:escape
-setxkbmap -layout us,tr -option grp:alt_shift_toggle
+# setxkbmap -layout us,tr -option grp:alt_shift_toggle
 nitrogen --restore %
 xrdb -merge ~/.Xresources 
 exec i3

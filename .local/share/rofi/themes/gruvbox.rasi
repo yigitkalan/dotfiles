@@ -34,10 +34,10 @@ configuration {
   padding: 0;
   spacing: 0;
 
-  bg: #2E3440;
-  bg-alt: #3B4252;
-  fg: #81A1C1;
-  fg-alt: #EBCB8B;
+  bg: #282828;
+  bg-alt: #3c3836;
+  fg: #fbf1c7;
+  blue: #83a598;
 
   background-color: @bg;
   text-color: @fg;
@@ -63,7 +63,7 @@ entry {
 
 prompt {
   background-color: inherit;
-  padding: 12px;
+  padding: 12px 16px 12px 12px;
 }
 
 listview {
@@ -71,17 +71,13 @@ listview {
 }
 
 element {
-  children: [element-icon, element-text];
-}
-
-element-icon {
-  padding: 10px 10px;
+  children: [element-text];
 }
 
 element-text {
-  padding: 10px 0;
+  padding: 10px;
 }
 
 element-text selected {
-  text-color: @fg-alt;
+  text-color: @blue;
 }

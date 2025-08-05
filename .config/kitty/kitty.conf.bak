@@ -6,10 +6,10 @@
 #: individual font faces and even specify special fonts for particular
 #: characters.
 
-font_family      Hack Nerd Font
-# bold_font        auto
-# italic_font      auto
-# bold_italic_font auto
+font_family      FiraCode Nerd Font
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
 
 #: You can specify different fonts for the bold/italic/bold-italic
 #: variants. To get a full list of supported fonts use the `kitty
@@ -24,7 +24,7 @@ font_family      Hack Nerd Font
 #:     italic_font      Operator Mono Book Italic
 #:     bold_italic_font Operator Mono Medium Italic
 
-font_size 14.0
+font_size 16.0
 
 #: Font size (in pts).
 
@@ -820,7 +820,7 @@ shell_integration no-cursor
 #: that setting a non-zero window_margin_width overrides this and
 #: causes all borders to be drawn.
 
-# window_margin_width 0
+window_margin_width 0
 
 #: The window margin (in pts) (blank area outside the border). A
 #: single value sets all four sides. Two values set the vertical and
@@ -836,7 +836,7 @@ shell_integration no-cursor
 #: horizontal and bottom. Four values set top, right, bottom and left.
 
 window_padding_width 0
-window_padding_width 5
+window_padding_width 0
 
 #: The window padding (in pts) (blank area between the text and the
 #: window border). A single value sets all four sides. Two values set
@@ -851,7 +851,7 @@ window_padding_width 5
 #: set the vertical and horizontal sides. Three values set top,
 #: horizontal and bottom. Four values set top, right, bottom and left.
 
-# placement_strategy center
+placement_strategy center
 
 #: When the window size is not an exact multiple of the cell size, the
 #: cell area of the terminal window will have some extra padding on
@@ -2480,7 +2480,8 @@ background_opacity 0.8
 
 
 
+# include ~/.cache/wal/colors-kitty.conf
 # BEGIN_KITTY_THEME
-# Batman
+# Base2Tone Forest Dark
 include current-theme.conf
 # END_KITTY_THEME

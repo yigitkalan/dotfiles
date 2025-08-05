@@ -8,18 +8,18 @@
  */
 
 configuration {
-  font: "JetBrainsMono Nerd Font Medium 10";
+  font: "Iosevka Nerd Font Medium 12";
 
   drun {
-    display-name: "";
+    display-name: "[^.^]";
   }
 
   run {
-    display-name: "";
+    display-name: "[°.°]";
   }
 
   window {
-    display-name: "";
+    display-name: "[*.*]";
   }
 
   timeout {
@@ -34,10 +34,10 @@ configuration {
   padding: 0;
   spacing: 0;
 
-  bg: #2E3440;
-  bg-alt: #3B4252;
-  fg: #81A1C1;
-  fg-alt: #EBCB8B;
+  bg: #151515;
+  bg-alt: #232323;
+  fg: #FFFFFF;
+  fg-alt: #424242;
 
   background-color: @bg;
   text-color: @fg;
@@ -52,17 +52,14 @@ mainbox {
 }
 
 inputbar {
-  background-color: @bg-alt;
   children: [prompt, entry];
 }
 
 entry {
-  background-color: inherit;
-  padding: 12px 3px;
+  padding: 12px 0;
 }
 
 prompt {
-  background-color: inherit;
   padding: 12px;
 }
 
@@ -71,17 +68,14 @@ listview {
 }
 
 element {
-  children: [element-icon, element-text];
-}
-
-element-icon {
-  padding: 10px 10px;
+  children: [element-text];
 }
 
 element-text {
-  padding: 10px 0;
+  padding: 12px;
+  text-color: @fg-alt;
 }
 
 element-text selected {
-  text-color: @fg-alt;
+  text-color: @fg;
 }

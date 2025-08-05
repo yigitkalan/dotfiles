@@ -34,10 +34,10 @@ configuration {
   padding: 0;
   spacing: 0;
 
-  bg: #2E3440;
-  bg-alt: #3B4252;
-  fg: #81A1C1;
-  fg-alt: #EBCB8B;
+  bg: #282a36;
+  fg: #f8f8f2;
+  blue: #6272a4;
+  purple: #bd93f9;
 
   background-color: @bg;
   text-color: @fg;
@@ -48,11 +48,11 @@ window {
 }
 
 mainbox {
-  children: [inputbar, listview];
+  children: [inputbar, message, listview];
 }
 
 inputbar {
-  background-color: @bg-alt;
+  background-color: @blue;
   children: [prompt, entry];
 }
 
@@ -72,6 +72,7 @@ listview {
 
 element {
   children: [element-icon, element-text];
+  text-color: @blue;
 }
 
 element-icon {
@@ -80,8 +81,9 @@ element-icon {
 
 element-text {
   padding: 10px 0;
+  text-color: inherit;
 }
 
 element-text selected {
-  text-color: @fg-alt;
+  text-color: @purple;
 }

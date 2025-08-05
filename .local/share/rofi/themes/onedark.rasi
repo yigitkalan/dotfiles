@@ -8,7 +8,7 @@
  */
 
 configuration {
-  font: "JetBrainsMono Nerd Font Medium 10";
+  font: "Iosevka Nerd Font Medium 12";
 
   drun {
     display-name: "";
@@ -34,16 +34,22 @@ configuration {
   padding: 0;
   spacing: 0;
 
-  bg: #2E3440;
-  bg-alt: #3B4252;
-  fg: #81A1C1;
-  fg-alt: #EBCB8B;
+  bg: #282C34;
+	fg: #ABB2BF;
+	blue: #61AFEF;
+	blue-alt: #61AFEF15;
+	red: #E06C75;
+  red-alt: #E06C7515;
 
   background-color: @bg;
   text-color: @fg;
 }
 
 window {
+  border: 2px;
+  border-color: @blue-alt;
+  border-radius: 6px;
+  padding: 6px;
   transparency: "real";
 }
 
@@ -52,36 +58,38 @@ mainbox {
 }
 
 inputbar {
-  background-color: @bg-alt;
-  children: [prompt, entry];
+  border: 0 0 0 2px;
+  border-color: @blue;
+  border-radius: 6px;
+  children: [entry];
+  margin: 0 0 6px 0;
 }
 
 entry {
-  background-color: inherit;
-  padding: 12px 3px;
-}
-
-prompt {
-  background-color: inherit;
-  padding: 12px;
+  background-color: @blue-alt;
+  padding: 10px;
+  text-color: @blue;
 }
 
 listview {
-  lines: 8;
+  lines: 10;
 }
 
 element {
-  children: [element-icon, element-text];
+  border: 0 0 0 2px;
+  children: [element-text];
 }
 
-element-icon {
-  padding: 10px 10px;
+element selected {
+  border-color: @red;
+  border-radius: 6px;
 }
 
 element-text {
-  padding: 10px 0;
+  padding: 10px;
 }
 
 element-text selected {
-  text-color: @fg-alt;
+  background-color: @red-alt;
+  text-color: @red;
 }
