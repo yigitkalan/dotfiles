@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# File: ~/.config/i3blocks/ssid
+# Description: Display current Wi-Fi SSID or "eth" if Ethernet is connected for i3blocks
+
+# Default to first wireless interface if not specified
+if [[ -z "$WIRELESS_INTERFACE" ]]; then
+    WIRELESS_INTERFACE=$(ls /sys/class/net | grep -m1 '^w' || echo "wlan0")
+fi
+
+# Default to first Ethernet interface if not specified
+if [[ -z "$ETHERNET_INTERFACE" ]]; then
+    ETHERNET_INTERFACE=$(ls /sys/class/net | grep -m1 '^e' || echo "eth0")
+fi
+
+# Check if Ethernet interface exists and is up
+if [[ -d /sys/class/net/"${ETHERNET_INTERFACE}" && "$(cat /sys/class/net/"${ETHERNET_INTERFACE}"/operstate)" == "up" ]]; then
+    echo "eth"
+    echo "eth"
+    echo "#00FF00" # Green for Ethernet connected
+    exit 0
+fi
+
+# Check if wireless interface exists and is wireless
+if [[ ! -d /sys/class/net/"${WIRELESS_INTERFACE}"/wireless ]]; then
+    echo "No Wi-Fi"
+    echo "No Wi-Fi"
+    echo "#FF0000" # Red for no wireless interface
+    exit 0
+fi
+
+# Check if wireless interface is up
+if [[ "$(cat /sys/class/net/"${WIRELESS_INTERFACE}"/operstate)" != "up" ]]; then
+    echo "Disconnected"
+    echo "Disconnected"
+    echo "#FFFF00" # Yellow for disconnected
+    exit 0
+fi
+
+# Get SSID using iw
+SSID=$(iw dev "$WIRELESS_INTERFACE" link | awk '/SSID/ {print $2}' 2>/dev/null)
+
+if [[ -z "$SSID" ]]; then
+    echo "No SSID"
+    echo "No SSID"
+    echo "#FF0000" # Red for no SSID
+    exit 0
+fi
+
+# Output for i3blocks
+echo "$SSID"       # Full text
+echo "$SSID"       # Short text
+echo "#00FF00"     # Green for connected

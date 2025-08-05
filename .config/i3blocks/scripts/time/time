@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# File: ~/.config/i3blocks/time
+# Description: Display current time and date for i3blocks
+
+# Format: HH:MM DD/MM/YYYY
+date "+%H:%M %d/%m/%Y"
+
+# Output for i3blocks
+# Full text: time and date
+# Short text: time only
+echo "$(date '+%H:%M %d/%m/%Y')"
+echo "$(date '+%H:%M')"
+# echo "#FFFFFF" # White color

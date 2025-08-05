@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# File: ~/.config/i3blocks/keyboard_layout
+# Description: Display current keyboard layout for i3blocks
+
+# Try to get current layout using xkb-switch
+layout=$(xkb-switch -p 2>/dev/null)
+
+if [[ $? -ne 0 || -z "$layout" ]]; then
+    # Fallback to setxkbmap if xkb-switch fails or isn't installed
+    output=$(setxkbmap -query 2>/dev/null)
+    if [[ $? -ne 0 ]]; then
+        echo "ERR"
+        echo "ERR"
+        echo "#FF0000" # Red for error
+        exit 1
+    fi
+    layout=$(echo "$output" | awk '/^layout/{print $2}' | cut -d',' -f1)
+    variant=$(echo "$output" | awk '/^variant/{print $2}' | cut -d',' -f1)
+    [[ -n "$variant" ]] && layout="$layout ($variant)"
+fi
+
+# If layout is still empty, set default message
+if [[ -z "$layout" ]]; then
+    layout="none"
+fi
+
+# Output for i3blocks
+echo "$layout"       # Full text
+echo "$layout"       # Short text
+echo "#FFFFFF"       # White color
