@@ -180,6 +180,8 @@ alias stopdpi="sudo systemctl stop zapret"
 
 alias bfilter="wlsunset"
 
+alias backupNotes="rclone copy ~/Documents/notes/ ProtonDrive:Notes/ --progress"
+
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"

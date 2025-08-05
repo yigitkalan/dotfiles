@@ -49,7 +49,7 @@ window#waybar.empty #window {
     border-radius: 8px;
     padding: 0.3rem 1.0rem;
     background-color: @color1;
-    color: white;
+    color: black;
 }
 
 #workspaces button.urgent {
@@ -206,8 +206,8 @@ window#waybar.empty #window {
     padding: 0.3rem 0.6rem;
     margin: 0.4rem 0.25rem;
     border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
+    background-color: @color1;
+    color: black;
 }
 
 #custom-launcher {
