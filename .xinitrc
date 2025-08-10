@@ -34,6 +34,6 @@ fi
 
 setxkbmap -option caps:escape
 # setxkbmap -layout us,tr -option grp:alt_shift_toggle
-nitrogen --restore %
+# nitrogen --restore %
 xrdb -merge ~/.Xresources 
 exec i3

@@ -7,10 +7,10 @@
 #
 export XDG_DATA_DIRS="/usr/local/share:/usr/share"
 
-#Step 1) install with dotnet install scripts
-#Step 2) symlink of dotnet in /usr/bin/ and /usr/local/bin
-export DOTNET_ROOT=/home/sy/.dotnet
-export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+# #Step 1) install with dotnet install scripts
+# #Step 2) symlink of dotnet in /usr/bin/ and /usr/local/bin
+# export DOTNET_ROOT=/home/sy/.dotnet
+# export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
 
 export GOPATH=$HOME/work/go/gopath/bin
 export EDITOR=nvim
