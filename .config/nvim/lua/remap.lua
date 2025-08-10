@@ -81,3 +81,11 @@ for i = 1, 9 do
         harpoon_ui.nav_file(i)
     end)
 end
+
+
+local dap = require("dap")
+map('n', "<F5>",function() dap.continue() end )
+map('n', '<F10>', function() dap.step_over() end)
+map('n', '<F11>', function() dap.step_into() end)
+map('n', '<F12>', function() dap.step_out() end)
+map('n', '<Leader>dt', function() dap.toggle_breakpoint() end)

@@ -10,7 +10,6 @@ require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
     sync_root_with_cwd = false,
     reload_on_bufenter = false,
     respect_buf_cwd = false,
-    on_attach = "default",
     select_prompts = false,
     view = {
         centralize_selection = false,
@@ -224,6 +223,23 @@ require("nvim-tree").setup { -- BEGIN_DEFAULT_OPTS
             watcher = false,
         },
     },
+    -- on_attach = "default",
+    on_attach = function(bufnr)
+        local api = require('nvim-tree.api')
+
+        -- Apply default nvim-tree keybindings
+        api.config.mappings.default_on_attach(bufnr)
+
+        local function opts(desc)
+            return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        end
+
+        vim.keymap.set('n', 'A', function()
+            local node = api.tree.get_node_under_cursor()
+            local path = node.type == "directory" and node.absolute_path or vim.fs.dirname(node.absolute_path)
+            require("easy-dotnet").create_new_item(path)
+        end, opts('Create file from dotnet template'))
+    end
 }
 
 require 'treesitter-context'.setup {

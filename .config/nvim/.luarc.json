@@ -5,7 +5,8 @@
     "lua/?/init.lua"
   ],
   "diagnostics.globals": ["vim",
-        "fzf_lua_wrapper"],
+        "fzf_lua_wrapper",
+        "sources"],
   "workspace.checkThirdParty": false,
   "workspace.library": [
     "$VIMRUNTIME",

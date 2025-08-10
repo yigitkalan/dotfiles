@@ -83,9 +83,31 @@ local signs = {
     { name = "DiagnosticSignHint", text = "" },
     { name = "DiagnosticSignInfo", text = "" }
 }
-for _, sign in ipairs(signs) do
-    vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
-end
+-- Configure diagnostic signs using vim.diagnostic.config
+vim.diagnostic.config({
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = signs[1].text,
+            [vim.diagnostic.severity.WARN] = signs[2].text,
+            [vim.diagnostic.severity.INFO] = signs[3].text,
+            [vim.diagnostic.severity.HINT] = signs[4].text,
+        },
+        -- Optionally, set text highlight groups
+        texthl = {
+            [vim.diagnostic.severity.ERROR] = signs[1].name,
+            [vim.diagnostic.severity.WARN] = signs[2].name,
+            [vim.diagnostic.severity.INFO] = signs[3].name,
+            [vim.diagnostic.severity.HINT] = signs[4].name,
+        },
+        -- Optionally, set number highlight groups (if needed, can be empty as in your original code)
+        numhl = {
+            [vim.diagnostic.severity.ERROR] = "",
+            [vim.diagnostic.severity.WARN] = "",
+            [vim.diagnostic.severity.INFO] = "",
+            [vim.diagnostic.severity.HINT] = "",
+        },
+    },
+})
 
 
 -- open diagnostics only if there is no floating window open

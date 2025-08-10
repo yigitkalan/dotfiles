@@ -35,6 +35,21 @@ return require("packer").startup(function(use)
 
     use { 'stevearc/dressing.nvim' }
 
+
+    -------------------------------------------------debug
+    use {
+        'mfussenegger/nvim-dap',
+    }
+
+    -- Bridge between Mason and nvim-dap
+    use 'jay-babu/mason-nvim-dap.nvim'
+
+    -- UI for debugging
+    use { "rcarriga/nvim-dap-ui",
+    requires = {"mfussenegger/nvim-dap", "nvim-neotest/nvim-nio"} 
+    }
+
+
     ------------------------------------------------------core
     ---------------coc and autocompletion
     use {
@@ -52,10 +67,29 @@ return require("packer").startup(function(use)
         }
     }
 
+    use {
+        "GustavEikaas/easy-dotnet.nvim",
+        requires = { "nvim-lua/plenary.nvim", 'nvim-telescope/telescope.nvim', },
+        config = function()
+            require("easy-dotnet").setup({
+                picker = "telescope"
+            })
+        end
+    }
+
+    use {
+        "ibhagwan/fzf-lua",
+        -- optional for icon support
+        requires = { "nvim-tree/nvim-web-devicons" },
+        -- or if using mini.icons/mini.nvim
+        -- dependencies = { "echasnovski/mini.icons" },
+        opts = {}
+    }
+
     -- for metadata definitions etc...
     use { 'Hoffs/omnisharp-extended-lsp.nvim' }
 
-    use { 'habamax/vim-godot'}
+    use { 'habamax/vim-godot' }
 
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }

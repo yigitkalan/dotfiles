@@ -2,9 +2,15 @@ local lsp_zero = require('lsp-zero')
 local cmp = require('cmp')
 local lspkind = require('lspkind')
 
-
+cmp.register_source("easy-dotnet", require("easy-dotnet").package_completion_source)
 -- Configure nvim-cmp
 local cmp_config = lsp_zero.defaults.cmp_config({
+
+    sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'easy-dotnet' },
+    }),
+
     mapping = cmp.mapping.preset.insert({
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-n>'] = cmp.mapping.select_next_item(),
