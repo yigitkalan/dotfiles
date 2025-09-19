@@ -67,6 +67,8 @@ return require("packer").startup(function(use)
         }
     }
 
+    use {"seblyng/roslyn.nvim"}
+
     use {
         "GustavEikaas/easy-dotnet.nvim",
         requires = { "nvim-lua/plenary.nvim", 'nvim-telescope/telescope.nvim', },
@@ -86,11 +88,6 @@ return require("packer").startup(function(use)
         opts = {}
     }
 
-    -- for metadata definitions etc...
-    use { 'Hoffs/omnisharp-extended-lsp.nvim' }
-
-    use { 'habamax/vim-godot' }
-
     use {
         'nvim-telescope/telescope.nvim', requires = { 'nvim-lua/plenary.nvim' }
     }
@@ -106,8 +103,6 @@ return require("packer").startup(function(use)
     ------------------------------------------------utils
     use "christoomey/vim-tmux-navigator"
     use "akinsho/toggleterm.nvim"
-
-    use "SirVer/ultisnips"
 
     use "github/copilot.vim"
 
@@ -142,6 +137,9 @@ return require("packer").startup(function(use)
         end
     })
     ----------------------------------------------- colorschemes
+
+    use 'Mofiqul/vscode.nvim'
+    use 'realbucksavage/riderdark.vim'
     use { 'nyoom-engineering/oxocarbon.nvim' }
     use 'thedenisnikulin/vim-cyberpunk'
     use { "catppuccin/nvim", as = "catppuccin" }

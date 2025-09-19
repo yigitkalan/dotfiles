@@ -59,7 +59,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
                     cwd = function()
                         local dll = ensure_dll()
                         return dll.relative_project_path
-                    end
+                    end,
+                    justMyCode = false,
+                    stopAtEntry = false
                 },
                 {
                     type = "coreclr",
@@ -104,5 +106,8 @@ end
 dap.adapters.coreclr = {
     type = "executable",
     command = "netcoredbg",
+    options = {
+        detached = false,
+    },
     args = { "--interpreter=vscode" },
 }

@@ -8,8 +8,7 @@ require'nvim-treesitter.configs'.setup {
         query = 'rainbow-parens',
     },
     -- A list of parser names, or "all" (the five listed parsers should always be installed)
-    ensure_installed = { "c_sharp", "cpp", "c","python","dart",
-    "java", "lua", "vim",  "query", "make","sql", "javascript"},
+    ensure_installed = { "c_sharp", "python","lua", "vim", "sql", "javascript"},
 
     -- Install parsers synchronously (only applied to `ensure_installed`)
     sync_install = false,

@@ -43,10 +43,24 @@ local cmp_config = lsp_zero.defaults.cmp_config({
     },
     preselect = cmp.PreselectMode.Item,
     completion = {
-        completeopt = 'menu,menuone,noinsert'
+        completeopt = 'menu,menuone,noinsert',
+        delay = 0,    -- No delay
+        throttle = 0, -- No throttling
+        get_trigger_characters = function(trigger_characters)
+            return trigger_characters
+        end,
+    },
+    performance = {
+        debounce = 0,                 -- No debouncing
+        throttle = 0,                 -- No throttling
+        fetching_timeout = 200,       -- Faster timeout
+        confirm_resolve_timeout = 80, -- Faster resolve
+        async_budget = 1,             -- Process more items per cycle
+        max_view_entries = 10,
     },
     window = {
         completion = cmp.config.window.bordered({
+            maxheight = 10,
             winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
             border = 'rounded',
         }),

@@ -42,7 +42,38 @@ g.ale_set_highlights = 1
 
 g.transparent_enabled = true
 
-vim.cmd.colorscheme('tokyonight-night')
+-- Function to detect "frontend-ness"
+local function is_frontend_project()
+  -- Look for typical frontend files
+  local patterns = { "package.json", "tsconfig.json", "vite.config.*", "next.config.*" }
+
+  -- Check if any exist in the cwd
+  for _, pattern in ipairs(patterns) do
+    if #vim.fn.glob(pattern) > 0 then
+      return true
+    end
+  end
+
+  -- Also check if there are any TS/TSX files
+  if #vim.fn.glob("**/*.ts", 0, 1) > 0 or #vim.fn.glob("**/*.tsx", 0, 1) > 0 then
+    return true
+  end
+
+  return false
+end
+
+-- Auto-apply on startup
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    if is_frontend_project() then
+      vim.cmd.colorscheme("catppuccin-mocha")  
+    else
+    -- else use cattpuccin
+    vim.cmd.colorscheme("vscode")
+    end
+    
+  end,
+})
 
 -- remove ugly background of the floating window borders
 vim.api.nvim_set_hl(0, "FloatBorder", { bg = "NONE" })
@@ -135,3 +166,16 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
 
 -- Show diagnostics in a floating window when hovering
 vim.o.updatetime = 250
+
+
+-- Use PowerShell in Neovim on Windows
+if vim.loop.os_uname().sysname == "Windows_NT" then
+  local shell = (vim.fn.executable("pwsh.exe") == 1) and "pwsh.exe" or "powershell.exe"
+
+  vim.opt.shell = shell
+  vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
+  vim.opt.shellpipe  = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
+  vim.opt.shellredir = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
+end
