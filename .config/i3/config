@@ -33,7 +33,7 @@ tiling_drag modifier titlebar
 # Start XDG autostart .desktop files
 exec --no-startup-id dex --autostart --environment i3
 
-exec --no-startup-id setxkbmap -layout us,tr
+exec_always --no-startup-id setxkbmap -layout us,tr
 
 # Clipboard manager
 exec --no-startup-id greenclip daemon >/dev/null
@@ -183,7 +183,7 @@ bindsym $mod+Mod1+l exec i3lock --nofork --color=#111111
 # Window Rules
 ###############################################################################
 for_window [floating] move position center
-for_window [class="discord"] move to workspace $ws3
+for_window [class="discord"] move to workspace $ws4
 for_window [class="zen"] move to workspace $ws2
 
 ###############################################################################
