@@ -2,14 +2,14 @@ backend = "glx";
 
 # Shadows
 shadow = false;
-shadow-radius = 17;
-shadow-opacity = 1
-shadow-offset-x = -13;
-shadow-offset-y = -13;
-shadow-exclude = [
-    "class_g = 'Polybar'",
-    "class_g = 'firefox'",
-]
+# shadow-radius = 17;
+# shadow-opacity = 1
+# shadow-offset-x = -13;
+# shadow-offset-y = -13;
+# shadow-exclude = [
+#     "class_g = 'Polybar'",
+#     "class_g = 'firefox'",
+# ]
 
 
 # Opacity
@@ -25,7 +25,7 @@ opacity-rule = [
 
 
 #Blurring
-blur-background = true;
+blur-background = false;
 blur-background-exclude = [
     #for teams screen share
     "name *= 'rect-overlay'",

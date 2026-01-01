@@ -47,6 +47,9 @@ exec_always --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-ag
 # NetworkManager applet
 exec --no-startup-id nm-applet
 
+#picom
+exec --no-startup-id picom -b
+
 ###############################################################################
 # Keybindings
 ###############################################################################
