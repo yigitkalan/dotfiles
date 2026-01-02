@@ -121,14 +121,17 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
   end
 })
 
--- Auto-clean shada tmp files to prevent E138
-vim.api.nvim_create_autocmd("VimLeave", {
-  group = vim.api.nvim_create_augroup("CleanShada", { clear = true }),
-  callback = function()
-    local shada_dir = vim.fn.stdpath("data") .. "/shada"
-    local files = vim.fn.glob(shada_dir .. "/*.tmp.*", false, true)
-    for _, file in ipairs(files) do
-      vim.fn.delete(file)
+-- Auto-start the pipe listener for Godot
+local function start_godot_server()
+    local cwd = vim.fn.getcwd()
+    -- Only run this if we're actually in a Godot project
+    if vim.uv.fs_stat(cwd .. '/project.godot') then
+        local pipe_path = '/tmp/godot.pipe'
+        -- Clean up existing pipe on Linux to avoid "address already in use"
+        if vim.uv.fs_stat(pipe_path) then os.remove(pipe_path) end
+        vim.fn.serverstart(pipe_path)
     end
-  end,
-})
+end
+
+-- Execute it immediately
+start_godot_server()
