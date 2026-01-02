@@ -10,16 +10,18 @@ return {
 			"L3MON4D3/LuaSnip",
 		},
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			local lspconfig = require("lspconfig")
 
-			-- NEW WAY: Instead of require('lspconfig').gdscript.setup()
-			-- We use the built-in vim.lsp.config table
-			if vim.lsp.config then
-				vim.lsp.config.gdscript = {
-					capabilities = capabilities,
-				}
-			end
-
+			lspconfig.gdscript.setup({
+				-- This function runs when the LSP connects to a Godot file
+				on_attach = function(client, bufnr)
+					-- This is the "Proper" way to solve the white text issue.
+					-- It disables LSP Semantic Tokens so they don't fight with Treesitter.
+					client.server_capabilities.semanticTokensProvider = nil
+				end,
+				-- Ensure it's connecting to the Godot Editor
+				cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
+			})
 			-- Keymaps
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
@@ -87,7 +89,6 @@ return {
 	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
-			"onsails/lspkind.nvim",
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 			"hrsh7th/cmp-nvim-lsp",
@@ -95,7 +96,6 @@ return {
 		},
 		config = function()
 			local cmp = require("cmp")
-			local lspkind = require("lspkind")
 			require("luasnip.loaders.from_vscode").lazy_load()
 
 			cmp.setup({
@@ -115,16 +115,17 @@ return {
 					{ name = "luasnip" },
 					{ name = "easy-dotnet" },
 				}),
-				formatting = {
-					format = lspkind.cmp_format({
-						mode = "symbol_text",
-						maxwidth = 50,
-						ellipsis_char = "...",
-					}),
-				},
 				window = {
-					completion = cmp.config.window.bordered(),
-					documentation = cmp.config.window.bordered(),
+					-- This creates the border for the main completion menu
+					completion = cmp.config.window.bordered({
+						border = "rounded", -- Options: "single", "double", "shadow", "rounded"
+						winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+					}),
+					-- This creates the border for the documentation hover window
+					documentation = cmp.config.window.bordered({
+						border = "rounded",
+						winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+					}),
 				},
 			})
 		end,
@@ -160,6 +161,7 @@ return {
 			"mfussenegger/nvim-dap",
 			"rcarriga/nvim-dap-ui", -- Adds a nice UI for the debugger
 			"nvim-telescope/telescope.nvim", -- For your path completions
+			"nvim-treesitter/nvim-treesitter",
 		},
 		config = function()
 			require("godotdev").setup({
