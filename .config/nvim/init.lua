@@ -1,7 +1,3 @@
-require "plugins"
-
-require "configs"
-
-require "options"
-
-require "remap"
+require("config.options")
+require("config.keymaps")
+require("config.lazy")
