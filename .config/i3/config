@@ -54,7 +54,7 @@ exec --no-startup-id picom -b
 # Keybindings
 ###############################################################################
 # Terminal
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec ghostty
 
 # Window Management
 bindsym $mod+q kill

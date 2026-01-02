@@ -106,7 +106,7 @@ signal=12
 #separator=false
 
 [ssid]
-WIRELESS_INTERFACE=wlp0s20f3
+WIRELESS_INTERFACE=wlan0
 ETHERNET_INTERFACE=enp4s0
 interval=10
 
