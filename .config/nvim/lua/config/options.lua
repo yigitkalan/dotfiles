@@ -89,16 +89,16 @@ vim.diagnostic.config({
 	},
 })
 
-local signs = {
-	{ name = "DiagnosticSignError", text = "" },
-	{ name = "DiagnosticSignWarn", text = "" },
-	{ name = "DiagnosticSignHint", text = "" },
-	{ name = "DiagnosticSignInfo", text = "" },
-}
-
-for _, sign in ipairs(signs) do
-	vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })
-end
+vim.diagnostic.config({
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "",
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.HINT] = "",
+			[vim.diagnostic.severity.INFO] = "",
+		},
+	},
+})
 
 -- Open diagnostics on hover
 vim.api.nvim_create_autocmd({ "CursorHold" }, {
@@ -123,29 +123,29 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
 	end,
 })
 
--- Auto-start the pipe listener for Godot
-local function start_godot_server()
-	local cwd = vim.fn.getcwd()
-	-- Only run this if we're actually in a Godot project
-	if vim.uv.fs_stat(cwd .. "/project.godot") then
-		local pipe_path = "/tmp/godot.pipe"
-		-- Clean up existing pipe on Linux to avoid "address already in use"
-		if vim.uv.fs_stat(pipe_path) then
-			os.remove(pipe_path)
-		end
-		vim.fn.serverstart(pipe_path)
-	end
-end
-
--- Execute it immediately
-start_godot_server()
+-- -- Auto-start the pipe listener for Godot
+-- local function start_godot_server()
+-- 	local cwd = vim.fn.getcwd()
+-- 	-- Only run this if we're actually in a Godot project
+-- 	if vim.uv.fs_stat(cwd .. "/project.godot") then
+-- 		local pipe_path = "/tmp/godot.pipe"
+-- 		-- Clean up existing pipe on Linux to avoid "address already in use"
+-- 		if vim.uv.fs_stat(pipe_path) then
+-- 			os.remove(pipe_path)
+-- 		end
+-- 		vim.fn.serverstart(pipe_path)
+-- 	end
+-- end
+--
+-- -- Execute it immediately
+-- start_godot_server()
 
 -- This is the official, non-hacky way to tell Neovim what a Godot file is
-vim.filetype.add({
-	extension = {
-		gd = "gdscript",
-		tscn = "gdscript",
-		godot = "gdscript",
-		gdshader = "gdshader",
-	},
-})
+-- vim.filetype.add({
+-- 	extension = {
+-- 		-- gd = "gdscript",
+-- 		tscn = "godot_resource",
+-- 		godot = "godot_resource",
+-- 		gdshader = "gdshader",
+-- 	},
+-- })

@@ -10,18 +10,24 @@ return {
 			"L3MON4D3/LuaSnip",
 		},
 		config = function()
-			local lspconfig = require("lspconfig")
+			-- In your lspconfig file
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			lspconfig.gdscript.setup({
-				-- This function runs when the LSP connects to a Godot file
+			-- New Neovim 0.11 way to define the Godot config
+			vim.lsp.config("gdscript", {
+				-- MATCH THIS to your Godot Editor settings (TCP vs Pipe)
+				cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
+				capabilities = capabilities,
 				on_attach = function(client, bufnr)
-					-- This is the "Proper" way to solve the white text issue.
-					-- It disables LSP Semantic Tokens so they don't fight with Treesitter.
+					-- Disable semantic tokens to fix the "white text" issue
 					client.server_capabilities.semanticTokensProvider = nil
 				end,
-				-- Ensure it's connecting to the Godot Editor
-				cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
 			})
+
+			-- Actually start the client
+			vim.lsp.enable("gdscript")
+
+			-- ... rest of your mason-lspconfig and LspAttach autocmds
 			-- Keymaps
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
