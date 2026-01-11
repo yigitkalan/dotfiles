@@ -86,9 +86,6 @@ return {
 					-- ["omnisharp"] = function() ... end
 				},
 			})
-
-			-- Godot
-			-- lspconfig.gdscript.setup({ capabilities = capabilities })
 		end,
 	},
 
@@ -170,9 +167,7 @@ return {
 			"nvim-treesitter/nvim-treesitter",
 		},
 		config = function()
-			require("godotdev").setup({
-				godot_path = "godot", -- Ensure this is in your PATH
-			})
+			require("godotdev").setup({})
 		end,
 	},
 }
