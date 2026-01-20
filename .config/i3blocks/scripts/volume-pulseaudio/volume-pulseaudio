@@ -134,10 +134,7 @@ function print_block {
     VOL=$(echo "$VOL" | grep -o "[0-9]*%" | head -1 )
     VOL="${VOL%?}"
 
-    NAME=$(echo "$NAME" | sed \
-'s/.*<.*\.\(.*\)>.*/\1/; t;'\
-'s/.*<\(.*\)>.*/\1/; t;'\
-'s/.*/unknown/')
+    NAME=$(pacmd list-sinks | awk '/\* index:/{f=1} f && /name:/{print $2; exit}' | tr -d '<>')
 
     if [[ $USE_ALSA_NAME == 1 ]] ; then
         ALSA_NAME=$(pacmd list-sinks |\

@@ -26,6 +26,8 @@ o.undodir = vim.fn.stdpath("data") .. "/undo" -- Better to use stdpath
 o.guicursor = "n-i:block-blinkwait1000-blinkon500-blinkoff500,i-ci-ve:ver25,r-cr:hor20,o:hor50"
 o.termguicolors = true
 
+o.completeopt = { "menu", "menuone", "noselect" }
+
 vim.cmd.colorscheme("catppuccin-mocha")
 
 -- Disable some format options

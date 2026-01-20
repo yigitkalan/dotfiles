@@ -170,4 +170,42 @@ return {
 			require("godotdev").setup({})
 		end,
 	},
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		config = function()
+			require("copilot").setup({
+				-- Since you don't use nvim-cmp, you MUST enable these:
+				suggestion = {
+					enabled = true,
+					auto_trigger = true, -- Suggests as you type
+					debounce = 75,
+					keymap = {
+						accept = "<M-l>", -- Alt + l to accept suggestion
+						accept_word = false,
+						accept_line = false,
+						next = "<M-]>",
+						prev = "<M-[>",
+						dismiss = "<C-]>",
+					},
+				},
+				panel = {
+					enabled = true,
+					auto_refresh = false,
+					keymap = {
+						jump_prev = "[[",
+						jump_next = "]]",
+						accept = "<CR>",
+						refresh = "gr",
+						open = "<M-p>", -- Alt + p to open the full panel
+					},
+					layout = {
+						position = "bottom", -- | top | left | right
+						ratio = 0.4,
+					},
+				},
+			})
+		end,
+	},
 }

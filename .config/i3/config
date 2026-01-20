@@ -14,7 +14,7 @@ font pango:FiraCode Nerd Font Medium 10
 # Hide edge borders and set gaps
 # hide_edge_borders both
 gaps inner 8
-gaps outer 8
+gaps outer 0
 
 default_border pixel 2
 default_floating_border pixel 2
@@ -35,6 +35,10 @@ exec --no-startup-id nitrogen --restore
 
 exec_always --no-startup-id setxkbmap -layout us,tr
 
+#Kde connect
+exec --no-startup-id killall -q kdeconnectd; kdeconnectd
+exec --no-startup-id killall -q kdeconnect-indicator; sleep 2 && kdeconnect-indicator
+
 # Clipboard manager
 exec --no-startup-id greenclip daemon >/dev/null
 
@@ -48,7 +52,7 @@ exec_always --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-ag
 exec --no-startup-id nm-applet
 
 #picom
-exec_always --no-startup-id picom -b
+# exec_always --no-startup-id picom -b
 
 ###############################################################################
 # Keybindings
@@ -187,10 +191,10 @@ bindsym $mod+Mod1+l exec i3lock --nofork --color=#111111
 ###############################################################################
 for_window [floating] move position center
 for_window [instance="Godot_Engine"] floating enable, move position center
-for_window [class="party-game"] floating enable, move position center
 for_window [class="discord"] move to workspace $ws4
 for_window [class="vesktop"] move to workspace $ws4
 for_window [class="zen"] move to workspace $ws2
+for_window [class="obsidian"] move to workspace $ws6
 
 # Window Border Colors
 ###############################################################################
