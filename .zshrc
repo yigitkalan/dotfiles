@@ -13,9 +13,10 @@ export XDG_DATA_DIRS="/usr/local/share:/usr/share"
 # export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
 
 export GOPATH=$HOME/work/go/gopath/bin
-export EDITOR=nvim
-export VISUAL=nvim
-export LIBVA_DRIVER_NAME=nvidia
+export EDITOR="nvim"
+export VISUAL="nvim"
+export SYSTEMD_EDITOR="nvim"
+export LIBVA_DRIVER_NAME="nvidia"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 export FZF_DEFAULT_COMMAND='rg --files  --ignore-file $HOME/.ignore  2> /dev/null '
 
@@ -182,6 +183,8 @@ alias stopdpi="sudo systemctl stop zapret"
 alias bfilter="wlsunset"
 
 alias backupNotes="rclone copy ~/Documents/notes/ ProtonDrive:Notes/ --progress"
+
+alias sendphone='kdeconnect-cli -d $(kdeconnect-cli -l --id-only) --share $(fzf)'
 
 alias ls='lsd'
 
