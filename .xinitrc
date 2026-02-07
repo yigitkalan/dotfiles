@@ -34,14 +34,14 @@ fi
 
 setxkbmap -option caps:escape
 
-# 1. Start the lock screen manager in the background
-# This ensures the screen locks if idle
-xss-lock -- i3lock -n -c 000000 &
 
-# 2. IMMEDIATELY lock the screen now so it's secure upon boot
-i3lock -n -c 000000 &
+# sudo systemctl restart rustdesk &
 
-# setxkbmap -layout us,tr -option grp:alt_shift_toggle
+setxkbmap -layout us,tr -option grp:alt_shift_toggle
+
 # nitrogen --restore %
+
 xrdb -merge ~/.Xresources 
 exec i3
+
+

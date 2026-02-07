@@ -16,7 +16,7 @@ export GOPATH=$HOME/work/go/gopath/bin
 export EDITOR="nvim"
 export VISUAL="nvim"
 export SYSTEMD_EDITOR="nvim"
-export LIBVA_DRIVER_NAME="nvidia"
+# export LIBVA_DRIVER_NAME="nvidia"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 export FZF_DEFAULT_COMMAND='rg --files  --ignore-file $HOME/.ignore  2> /dev/null '
 
@@ -155,10 +155,10 @@ alias keyb="setxkbmap -layout"
 
 alias clearswaps="rm -rf ~/.local/state/nvim/swap/*"
 
-alias wconnect="nmcli device wifi connect"
-alias wlist="nmcli device wifi list"
-alias won="nmcli radio wifi on"
-alias woff="nmcli radio wifi off"
+alias wconnect='nmcli device wifi connect'
+alias wlist='nmcli device wifi list'
+alias won='nmcli radio wifi on'
+alias woff='nmcli radio wifi off'
 
 alias livehere="live-server . & ; sass --watch . & "
 
@@ -169,12 +169,14 @@ alias tmn='tmux new-session -s '
 alias tka='tmux kill-session -a '
 alias tks='tmux kill-session -t'
 
-alias pacclean="sudo pacman -R $(pacman -Qdtq)"
 
 alias reboot="sudo reboot"
 
 alias startdpi="sudo systemctl start zapret"
 alias stopdpi="sudo systemctl stop zapret"
+
+# alias pacclean='pacman -Qdtq | xargs -r sudo pacman -Rns'
+alias pacclean='pacman -Qdtq | xargs -r -o sudo pacman -Rns'
 
 
 #Instead use a shell script
