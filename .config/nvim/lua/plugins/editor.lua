@@ -4,12 +4,13 @@ return {
 		"nvim-telescope/telescope.nvim",
 		branch = "master",
 		dependencies = { "nvim-lua/plenary.nvim" },
-		keys = {
-			{ "<leader>pf", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-			{ "<leader>pg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-		},
 		config = function()
 			require("telescope").setup({
+				pickers = {
+					colorscheme = {
+						enable_preview = true,
+					},
+				},
 				defaults = {
 					file_ignore_patterns = { "node_modules", ".git", "%.uid$" },
 				},
@@ -87,14 +88,6 @@ return {
 		},
 	},
 
-	-- Undotree
-	{
-		"mbbill/undotree",
-		keys = {
-			{ "<leader>u", vim.cmd.UndotreeToggle, desc = "Toggle Undotree" },
-		},
-	},
-
 	-- Gitsigns
 	{
 		"lewis6991/gitsigns.nvim",
@@ -110,22 +103,6 @@ return {
 			{ "<leader>hr", ":Gitsigns reset_hunk<cr>", desc = "Reset Hunk" },
 			{ "<leader>bt", ":Gitsigns toggle_current_line_blame<cr>", desc = "Toggle Blame" },
 		},
-	},
-
-	-- Toggleterm
-	{
-		"akinsho/toggleterm.nvim",
-		version = "*",
-		cmd = "ToggleTerm",
-		keys = {
-			{ "<A-\\>", "<cmd>ToggleTerm<cr>", mode = { "n", "t" }, desc = "Toggle Terminal" },
-		},
-		config = function()
-			require("toggleterm").setup({
-				open_mapping = [[<c-\>]],
-				direction = "float",
-			})
-		end,
 	},
 
 	-- Fugitive

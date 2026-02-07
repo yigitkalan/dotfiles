@@ -53,7 +53,9 @@ return {
 					vim.keymap.set("n", "<leader>ws", function()
 						Snacks.picker.lsp_workspace_symbols()
 					end, opts)
-					vim.keymap.set("n", "<leader>wd", vim.diagnostic.setqflist, opts) -- Changed to setqflist or open_float
+					vim.keymap.set("n", "<leader>wd", function()
+						Snacks.picker.diagnostics()
+					end, opts) -- Changed to setqflist or open_float
 					vim.keymap.set("n", "K", function()
 						vim.lsp.buf.hover({ border = "rounded", max_width = 80 })
 					end, opts)

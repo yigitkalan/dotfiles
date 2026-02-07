@@ -6,7 +6,8 @@
   ],
   "diagnostics.globals": ["vim",
         "fzf_lua_wrapper",
-        "sources"],
+        "sources",
+        "Snacks"],
   "workspace.checkThirdParty": false,
   "workspace.library": [
     "$VIMRUNTIME",

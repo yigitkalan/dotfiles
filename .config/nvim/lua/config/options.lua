@@ -28,7 +28,7 @@ o.termguicolors = true
 
 o.completeopt = { "menu", "menuone", "noselect" }
 
-vim.cmd.colorscheme("catppuccin-mocha")
+vim.cmd.colorscheme("rose-pine-main")
 
 -- Disable some format options
 vim.api.nvim_create_autocmd("FileType", {

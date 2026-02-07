@@ -13,6 +13,9 @@ map("c", "jK", "<esc>", { silent = true })
 map("c", "Jk", "<esc>", { silent = true })
 map("c", "JK", "<esc>", { silent = true })
 
+-- Escape terminal mode
+map("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit Terminal Mode" })
+
 -- Move visually selected lines
 map("v", "K", ":m '<-2<cr>gv=gv", { silent = true })
 map("v", "J", ":m '>+1<cr>gv=gv", { silent = true })
@@ -30,20 +33,3 @@ map("n", "<a-j>", "<c-w>j", { silent = true })
 map("n", "<a-k>", "<c-w>k", { silent = true })
 map("n", "<a-l>", "<c-w>l", { silent = true })
 map("n", "<a-h>", "<c-w>h", { silent = true })
-
-vim.keymap.set("n", "<leader>gp", function()
-	require("telescope.builtin").find_files({
-		prompt_title = "Insert Godot Resource Path",
-		attach_mappings = function(_, map)
-			local actions = require("telescope.actions")
-			local action_state = require("telescope.actions.state")
-			map("i", "<CR>", function(prompt_bufnr)
-				local selection = action_state.get_selected_entry()
-				actions.close(prompt_bufnr)
-				local res_path = '"res://' .. selection.value .. '"'
-				vim.api.nvim_put({ res_path }, "c", true, true)
-			end)
-			return true
-		end,
-	})
-end, { desc = "Godot: Insert Resource Path" })

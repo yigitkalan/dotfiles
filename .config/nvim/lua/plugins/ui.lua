@@ -63,299 +63,6 @@ return {
 		end,
 	},
 
-	-- Nvim-tree
-	{
-		"nvim-tree/nvim-tree.lua",
-		lazy = false,
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		keys = {
-			{ "<leader>q", "<cmd>NvimTreeToggle<cr>", desc = "Toggle NvimTree" },
-		},
-		config = function()
-			require("nvim-tree").setup({
-				auto_reload_on_write = true,
-				disable_netrw = true,
-				hijack_cursor = false,
-				hijack_netrw = true,
-				hijack_unnamed_buffer_when_opening = false,
-				sort_by = "name",
-				root_dirs = {},
-				prefer_startup_root = false,
-				sync_root_with_cwd = false,
-				reload_on_bufenter = false,
-				respect_buf_cwd = false,
-				select_prompts = false,
-				view = {
-					centralize_selection = false,
-					cursorline = true,
-					debounce_delay = 15,
-					width = 35,
-					side = "right",
-					preserve_window_proportions = false,
-					number = false,
-					relativenumber = false,
-					signcolumn = "yes",
-					float = {
-						enable = false,
-						quit_on_focus_loss = true,
-						open_win_config = {
-							relative = "editor",
-							border = "rounded",
-							width = 30,
-							height = 30,
-							row = 1,
-							col = 1,
-						},
-					},
-				},
-				renderer = {
-					add_trailing = false,
-					group_empty = false,
-					highlight_git = false,
-					full_name = false,
-					highlight_opened_files = "none",
-					highlight_modified = "none",
-					root_folder_label = ":~:s?$?/..?",
-					indent_width = 2,
-					indent_markers = {
-						enable = false,
-						inline_arrows = true,
-						icons = {
-							corner = "└",
-							edge = "│",
-							item = "│",
-							bottom = "─",
-							none = " ",
-						},
-					},
-					icons = {
-						webdev_colors = true,
-						git_placement = "before",
-						modified_placement = "before",
-						padding = " ",
-						symlink_arrow = " ➛ ",
-						show = {
-							file = true,
-							folder = true,
-							folder_arrow = true,
-							git = true,
-							modified = true,
-						},
-						glyphs = {
-							default = "",
-							symlink = "",
-							bookmark = "",
-							modified = "●",
-							folder = {
-								arrow_closed = "",
-								arrow_open = "",
-								default = "",
-								open = "",
-								empty = "",
-								empty_open = "",
-								symlink = "",
-								symlink_open = "",
-							},
-							git = {
-								unstaged = "✗",
-								staged = "✓",
-								unmerged = "",
-								renamed = "➜",
-								untracked = "★",
-								deleted = "",
-								ignored = "◌",
-							},
-						},
-					},
-					special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
-					symlink_destination = true,
-				},
-				hijack_directories = {
-					enable = true,
-					auto_open = true,
-				},
-				update_focused_file = {
-					enable = true,
-					update_root = false,
-					ignore_list = {},
-				},
-				system_open = {
-					cmd = "",
-					args = {},
-				},
-				diagnostics = {
-					enable = true,
-					show_on_dirs = false,
-					show_on_open_dirs = true,
-					debounce_delay = 50,
-					severity = {
-						min = vim.diagnostic.severity.HINT,
-						max = vim.diagnostic.severity.ERROR,
-					},
-					icons = {
-						hint = "",
-						info = "",
-						warning = "",
-						error = "",
-					},
-				},
-				filters = {
-					dotfiles = false,
-					git_clean = false,
-					no_buffer = false,
-					custom = { "*.meta", "*.asset", "*.unity", "*.bin", "*.uid" },
-					exclude = {},
-				},
-				filesystem_watchers = {
-					enable = true,
-					debounce_delay = 50,
-					ignore_dirs = { "*.meta" },
-				},
-				git = {
-					enable = true,
-					ignore = false,
-					show_on_dirs = true,
-					show_on_open_dirs = true,
-					timeout = 400,
-				},
-				modified = {
-					enable = true,
-					show_on_dirs = true,
-					show_on_open_dirs = true,
-				},
-				actions = {
-					use_system_clipboard = true,
-					change_dir = {
-						enable = true,
-						global = false,
-						restrict_above_cwd = false,
-					},
-					expand_all = {
-						max_folder_discovery = 300,
-						exclude = {},
-					},
-					file_popup = {
-						open_win_config = {
-							col = 1,
-							row = 1,
-							relative = "cursor",
-							border = "shadow",
-							style = "minimal",
-						},
-					},
-					open_file = {
-						quit_on_open = false,
-						resize_window = true,
-						window_picker = {
-							enable = true,
-							picker = "default",
-							chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-							exclude = {
-								filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
-								buftype = { "nofile", "terminal", "help" },
-							},
-						},
-					},
-					remove_file = {
-						close_window = true,
-					},
-				},
-				trash = {
-					cmd = "gio trash",
-				},
-				live_filter = {
-					prefix = "[FILTER]: ",
-					always_show_folders = true,
-				},
-				tab = {
-					sync = {
-						open = false,
-						close = false,
-						ignore = {},
-					},
-				},
-				notify = {
-					threshold = vim.log.levels.INFO,
-				},
-				ui = {
-					confirm = {
-						remove = true,
-						trash = true,
-					},
-				},
-				log = {
-					enable = false,
-					truncate = false,
-					types = {
-						all = false,
-						config = false,
-						copy_paste = false,
-						dev = false,
-						diagnostics = false,
-						git = false,
-						profile = false,
-						watcher = false,
-					},
-				},
-				on_attach = function(bufnr)
-					local api = require("nvim-tree.api")
-					api.config.mappings.default_on_attach(bufnr)
-					local function opts(desc)
-						return {
-							desc = "nvim-tree: " .. desc,
-							buffer = bufnr,
-							noremap = true,
-							silent = true,
-							nowait = true,
-						}
-					end
-					vim.keymap.set("n", "A", function()
-						local node = api.tree.get_node_under_cursor()
-						local path = node.type == "directory" and node.absolute_path
-							or vim.fs.dirname(node.absolute_path)
-						require("easy-dotnet").create_new_item(path)
-					end, opts("Create file from dotnet template"))
-				end,
-			})
-		end,
-	},
-
-	-- Alpha (Dashboard)
-	{
-		"goolord/alpha-nvim",
-		config = function()
-			local alpha = require("alpha")
-			local dashboard = require("alpha.themes.dashboard")
-
-			-- Set header
-			dashboard.section.header.val = {
-				" ███╗   ██╗ ███████╗ ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗",
-				" ████╗  ██║ ██╔════╝██╔═══██╗ ██║   ██║ ██║ ████╗ ████║",
-				" ██╔██╗ ██║ █████╗  ██║   ██║ ██║   ██║ ██║ ██╔████╔██║",
-				" ██║╚██╗██║ ██╔══╝  ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║",
-				" ██║ ╚████║ ███████╗╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║",
-				" ╚═╝  ╚═══╝ ╚══════╝ ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝",
-			}
-
-			-- Set menu
-			dashboard.section.buttons.val = {
-				dashboard.button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
-				dashboard.button("f", "󰈞  > Find file", ":cd $HOME/ | Telescope find_files<CR>"),
-				dashboard.button("r", "  > Recent", ":Telescope oldfiles<CR>"),
-				dashboard.button("s", "  > Settings", ":e $MYVIMRC | cd %:p:h | pwd<CR>"),
-				dashboard.button("q", "󰅙  > Quit NVIM", ":qa<CR>"),
-			}
-
-			-- Send config to alpha
-			alpha.setup(dashboard.opts)
-
-			-- Disable folding on alpha buffer
-			vim.cmd([[
-        autocmd FileType alpha setlocal nofoldenable
-      ]])
-		end,
-	},
-
 	-- Icons
 	{ "nvim-tree/nvim-web-devicons", lazy = true },
 
@@ -365,9 +72,150 @@ return {
 		priority = 1000,
 		lazy = false,
 		opts = {
-			input = { enabled = true },
+			input = {
+				enabled = true,
+			},
 			picker = { enabled = true },
 			notifier = { enabled = true },
+			terminal = { enabled = true },
+			explorer = { enabled = true }, -- The "Picker-style" tree explorer
+			indent = {
+				enabled = true,
+				animate = {
+					enabled = false,
+				},
+			}, -- Better indent guides/scope
+			dashboard = {
+				enabled = true,
+				sections = {
+					-- Main Header (Static)
+					{ section = "header" },
+
+					-- Navigation Menu (Left/Center)
+					{ section = "keys", gap = 1, padding = 2 },
+
+					-- Git Intel (Right Pane - Only shows if in a Git Repo)
+					{
+						pane = 2,
+						section = "terminal",
+						title = "󰊢 Git Status",
+						cmd = "git status --short",
+						height = 10,
+						padding = 1,
+						ttl = 5,
+						-- This ensures it doesn't throw errors in non-git folders
+						enabled = function()
+							return Snacks.git.get_root() ~= nil
+						end,
+					},
+					{
+						pane = 2,
+						section = "terminal",
+						title = "󱖫 Recent Commits",
+						cmd = "git log -n 5 --oneline --color",
+						height = 8,
+						padding = 1,
+						ttl = 60,
+						enabled = function()
+							return Snacks.git.get_root() ~= nil
+						end,
+					},
+
+					-- Footer Info
+					{ section = "startup" },
+				},
+				preset = {
+					header = [[
+ ███╗   ██╗ ███████╗  ██████╗  ██╗   ██╗ ██╗ ███╗   ███╗
+ ████╗  ██║ ██╔════╝ ██╔═══██╗ ██║   ██║ ██║ ████╗ ████║
+ ██╔██╗ ██║ █████╗   ██║   ██║ ██║   ██║ ██║ ██╔████╔██║
+ ██║╚██╗██║ ██╔══╝   ██║   ██║ ╚██╗ ██╔╝ ██║ ██║╚██╔╝██║
+ ██║ ╚████║ ███████╗ ╚██████╔╝  ╚████╔╝  ██║ ██║ ╚═╝ ██║
+ ╚═╝  ╚═══╝ ╚══════╝  ╚═════╝    ╚═══╝   ╚═╝ ╚═╝     ╚═╝]],
+					keys = {
+						{ icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.picker.files()" },
+						{ icon = " ", key = "g", desc = "Live Grep", action = ":lua Snacks.picker.grep()" },
+						{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+						{ icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.picker.recent()" },
+						{ icon = "󰊢 ", key = "v", desc = "LazyGit", action = ":lua Snacks.lazygit()" },
+						{
+							icon = " ",
+							key = "s",
+							desc = "Settings",
+							action = ":lua Snacks.explorer({cwd = vim.fn.stdpath('config')})",
+						},
+						{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
+					},
+				},
+			},
+		},
+		keys = {
+			{
+				"<leader>u",
+				function()
+					Snacks.picker.undo()
+				end,
+				desc = "Undo History",
+			},
+			{
+				"<leader>pf",
+				function()
+					Snacks.picker.files()
+				end,
+				desc = "Find Files",
+			},
+			{
+				"<leader>pg",
+				function()
+					Snacks.picker.grep()
+				end,
+				desc = "Grep",
+			},
+			{
+				"<A-\\>",
+				function()
+					Snacks.terminal.toggle()
+				end,
+				mode = { "n", "t" }, -- This is the magic part
+				desc = "Toggle Terminal",
+			},
+
+			{
+				"<leader>q",
+				function()
+					Snacks.explorer()
+				end,
+				desc = "File Explorer",
+			},
+			-- GITHUB (Team Workflow)
+			{
+				"<leader>gi",
+				function()
+					Snacks.picker.gh_issue()
+				end,
+				desc = "GitHub Issues (open)",
+			},
+			{
+				"<leader>gI",
+				function()
+					Snacks.picker.gh_issue({ state = "all" })
+				end,
+				desc = "GitHub Issues (all)",
+			},
+			{
+				"<leader>gp",
+				function()
+					Snacks.picker.gh_pr()
+				end,
+				desc = "GitHub Pull Requests (open)",
+			},
+			{
+				"<leader>gP",
+				function()
+					Snacks.picker.gh_pr({ state = "all" })
+				end,
+				desc = "GitHub Pull Requests (all)",
+			},
 		},
 	},
 
