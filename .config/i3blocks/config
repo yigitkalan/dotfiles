@@ -36,7 +36,7 @@ markup=none
 # See the script for details.
 
 
-[volume-pulseaudio]
+[volume-pipewire]
 # label=VOL
 interval=once
 signal=10

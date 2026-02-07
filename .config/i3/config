@@ -52,7 +52,11 @@ exec_always --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-ag
 exec --no-startup-id nm-applet
 
 #picom
-# exec_always --no-startup-id picom -b
+exec_always --no-startup-id picom -b
+
+# for auto locking after startup
+# exec --no-startup-id i3lock -c 000000
+exec --no-startup-id "sleep 1 && i3lock -n -c 000000"
 
 ###############################################################################
 # Keybindings
@@ -199,12 +203,12 @@ for_window [class="obsidian"] move to workspace $ws6
 # Window Border Colors
 ###############################################################################
 # class                 border  bckgrd  text    indicator child_border
-client.focused          #9c7899 #985577 #ffffff #2e9ef4   #9c7899
-client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
-client.unfocused        #333333 #222222 #888888 #292d2e   #222222
-client.urgent           #2f343a #900000 #ffffff #900000   #900000
-client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
-client.background       #ffffff
+client.focused          #b4befe #b4befe #1e1e2e #f5e0dc   #b4befe
+client.focused_inactive #313244 #313244 #bac2de #313244   #313244
+client.unfocused        #1e1e2e #1e1e2e #a6adc8 #1e1e2e   #1e1e2e
+client.urgent           #f38ba8 #f38ba8 #1e1e2e #f38ba8   #f38ba8
+client.placeholder      #181825 #181825 #cdd6f4 #181825   #181825
+client.background       #1e1e2e
 
 ###############################################################################
 # Bar Configuration
@@ -213,12 +217,12 @@ bar {
     status_command SCRIPT_DIR=~/.config/i3blocks/scripts i3blocks
     tray_output primary
     colors {
-        background #222222
-        statusline #bbbbbb
-        separator  #666666
-        focused_workspace  #9c7899 #985577 #ffffff
-        active_workspace   #333333 #5f676a #ffffff
-        inactive_workspace #222222 #222222 #888888
-        urgent_workspace   #2f343a #900000 #ffffff
+        background #11111b
+        statusline #cdd6f4
+        separator  #45475a
+        focused_workspace  #b4befe #b4befe #11111b
+        active_workspace   #313244 #313244 #cdd6f4
+        inactive_workspace #11111b #11111b #a6adc8
+        urgent_workspace   #f38ba8 #f38ba8 #11111b
     }
 }

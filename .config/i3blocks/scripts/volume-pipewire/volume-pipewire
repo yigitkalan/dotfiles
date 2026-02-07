@@ -3,23 +3,23 @@
 
 set -a
 
-AUDIO_HIGH_SYMBOL=${AUDIO_HIGH_SYMBOL:-'  '}
+AUDIO_HIGH_SYMBOL=${AUDIO_HIGH_SYMBOL:-'󰕾 '}
 
 AUDIO_MED_THRESH=${AUDIO_MED_THRESH:-50}
-AUDIO_MED_SYMBOL=${AUDIO_MED_SYMBOL:-'  '}
+AUDIO_MED_SYMBOL=${AUDIO_MED_SYMBOL:-'󰖀 '}
 
 AUDIO_LOW_THRESH=${AUDIO_LOW_THRESH:-0}
-AUDIO_LOW_SYMBOL=${AUDIO_LOW_SYMBOL:-'  '}
+AUDIO_LOW_SYMBOL=${AUDIO_LOW_SYMBOL:-'󰕿 '}
 
-AUDIO_MUTED_SYMBOL=${AUDIO_MUTED_SYMBOL:-'  '}
+AUDIO_MUTED_SYMBOL=${AUDIO_MUTED_SYMBOL:-'󰖁 '}
 
 AUDIO_DELTA=${AUDIO_DELTA:-5}
 
 DEFAULT_COLOR=${DEFAULT_COLOR:-"#ffffff"}
 MUTED_COLOR=${MUTED_COLOR:-"#a0a0a0"}
 
-LONG_FORMAT=${LONG_FORMAT:-'${SYMB} ${VOL}% [${INDEX}:${NAME}]'}
-SHORT_FORMAT=${SHORT_FORMAT:-'${SYMB} ${VOL}% [${INDEX}]'}
+LONG_FORMAT=${LONG_FORMAT:-'${VOL}% ${SYMB} [${INDEX}:${NAME}]'}
+SHORT_FORMAT=${SHORT_FORMAT:-'${VOL}% ${SYMB}'}
 USE_ALSA_NAME=${USE_ALSA_NAME:-0}
 USE_DESCRIPTION=${USE_DESCRIPTION:-0}
 
@@ -47,7 +47,7 @@ while getopts F:Sf:adH:M:L:X:T:t:C:c:i:m:s:h opt; do
         m) MIXER="$OPTARG" ;;
         s) SCONTROL="$OPTARG" ;;
         h) printf \
-"Usage: volume-pulseaudio [-S] [-F format] [-f format] [-p] [-a|-d] [-H symb] [-M symb]
+"Usage: volume-pipewire [-S] [-F format] [-f format] [-p] [-a|-d] [-H symb] [-M symb]
         [-L symb] [-X symb] [-T thresh] [-t thresh] [-C color] [-c color] [-i inter] 
         [-m mixer] [-s scontrol] [-h]
 Options:
@@ -107,11 +107,11 @@ function set_default_playback_device_next {
 }
 
 case "$BLOCK_BUTTON" in
-    1) set_default_playback_device_next ;;
-    2) amixer -q -D $MIXER sset $SCONTROL $CAPABILITY toggle ;;
-    3) set_default_playback_device_next -1 ;;
-    4) amixer -q -D $MIXER sset $SCONTROL $CAPABILITY $AUDIO_DELTA%+ ;;
-    5) amixer -q -D $MIXER sset $SCONTROL $CAPABILITY $AUDIO_DELTA%- ;;
+    1) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;               # Left click: Toggle mute
+    2) set_default_playback_device_next ;;                        # Middle click: Switch device
+    3) pavucontrol & ;;                                           # Right click: Open pavucontrol
+    4) pactl set-sink-volume @DEFAULT_SINK@ +$AUDIO_DELTA% ;;    # Scroll Up: Volume up
+    5) pactl set-sink-volume @DEFAULT_SINK@ -$AUDIO_DELTA% ;;    # Scroll Down: Volume down
 esac
 
 function print_format {
