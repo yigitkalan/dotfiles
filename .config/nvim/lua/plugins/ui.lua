@@ -142,7 +142,13 @@ return {
 							icon = " ",
 							key = "s",
 							desc = "Settings",
-							action = ":lua Snacks.explorer({cwd = vim.fn.stdpath('config')})",
+							action = function()
+								local config_path = vim.fn.stdpath("config")
+								-- 1. Change Neovim's actual working directory
+								vim.api.nvim_set_current_dir(config_path)
+								-- 2. Open the Snacks explorer in that new directory
+								Snacks.explorer({ cwd = config_path })
+							end,
 						},
 						{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
 					},

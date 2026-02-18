@@ -125,17 +125,32 @@ vim.api.nvim_create_autocmd({ "CursorHold" }, {
 	end,
 })
 
--- Auto-start the pipe listener for Godot
 local function start_godot_server()
-	local cwd = vim.fn.getcwd()
-	-- Only run this if we're actually in a Godot project
-	if vim.uv.fs_stat(cwd .. "/project.godot") then
-		local pipe_path = "/tmp/godot.pipe"
-		-- Clean up existing pipe on Linux to avoid "address already in use"
-		if vim.uv.fs_stat(pipe_path) then
-			os.remove(pipe_path)
+	local uv = vim.uv or vim.loop
+	local cwd = uv.cwd()
+
+	-- Check if we're in a Godot project
+	if uv.fs_stat(cwd .. "/project.godot") then
+		local pipe_path
+
+		if vim.fn.has("win32") == 1 then
+			-- Windows Named Pipe
+			pipe_path = [[\\.\pipe\godot-nvim]]
+		else
+			-- Linux/macOS Unix Domain Socket
+			pipe_path = "/tmp/godot.pipe"
+
+			-- Clean up existing socket on Unix to avoid "address already in use"
+			if uv.fs_stat(pipe_path) then
+				os.remove(pipe_path)
+			end
 		end
-		vim.fn.serverstart(pipe_path)
+
+		-- Start the server
+		local ok, err = pcall(vim.fn.serverstart, pipe_path)
+		if not ok then
+			vim.notify("Failed to start Godot server: " .. tostring(err), vim.log.levels.ERROR)
+		end
 	end
 end
 
