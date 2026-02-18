@@ -1,31 +1,44 @@
 return {
 	{
-	"nvim-treesitter/nvim-treesitter",
-        branch = "main", 
-        build = ":TSUpdate",
-        config = function()
-            local install = require("nvim-treesitter.install")
-            
-            -- Force GCC and disable the fallback to cl.exe
-            install.compilers = { "gcc" }
-            install.prefer_git = false -- Sometimes helps Windows pathing issues
+		"nvim-treesitter/nvim-treesitter",
+		branch = "main",
+		build = ":TSUpdate",
+		config = function()
+			local install = require("nvim-treesitter.install")
 
-            local ts = require("nvim-treesitter")
-            ts.setup({})
+			-- Force GCC and disable the fallback to cl.exe
+			install.compilers = { "gcc" }
+			install.prefer_git = false -- Sometimes helps Windows pathing issues
 
-            ts.install({
-                "c_sharp", "python", "gdscript", "godot_resource",
-                "lua", "vim", "vimdoc", "sql", "javascript",
-                "typescript", "html", "css",
-            })
+			local ts = require("nvim-treesitter")
+			ts.setup({})
 
-            -- Highlighting
-            vim.api.nvim_create_autocmd("FileType", {
-                callback = function()
-                    pcall(vim.treesitter.start)
-                end,
-            })
-        end,
+			ts.install({
+				"c_sharp",
+				"python",
+				"gdscript",
+				"godot_resource",
+				"lua",
+				"vim",
+				"vimdoc",
+				"sql",
+				"javascript",
+				"typescript",
+				"html",
+				"css",
+				"markdown",
+				"markdown_inline",
+				"json",
+				"yaml",
+			})
+
+			-- Highlighting
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function()
+					pcall(vim.treesitter.start)
+				end,
+			})
+		end,
 	},
 
 	-- Rainbow Delimiters (Replacement for p00f/nvim-ts-rainbow)

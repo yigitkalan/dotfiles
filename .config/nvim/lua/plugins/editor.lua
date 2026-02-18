@@ -21,8 +21,11 @@ return {
 	-- FZF Lua
 	{
 		"ibhagwan/fzf-lua",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {},
+		dependencies = { "mini.icons" }, -- Changed from devicons
+		opts = {
+			-- fzf-lua auto-detects mini.icons, but you can be explicit:
+			file_icons = "mini",
+		},
 	},
 
 	-- Harpoon

@@ -26,6 +26,19 @@ o.undodir = vim.fn.stdpath("data") .. "/undo" -- Better to use stdpath
 o.guicursor = "n-i:block-blinkwait1000-blinkon500-blinkoff500,i-ci-ve:ver25,r-cr:hor20,o:hor50"
 o.termguicolors = true
 
+-- Fold options
+o.foldmethod = "expr"
+o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+o.foldcolumn = "1" -- Show the fold column
+o.foldlevel = 99 -- Keep all folds open by default when opening a file
+o.foldlevelstart = 99
+o.foldenable = true
+-- za	Toggle the fold at the cursor (Open if closed, close if open).
+-- zc	Close the fold at the cursor.
+-- zo	Open the fold at the cursor.
+-- zM	Close all folds in the file (great for a bird's-eye view).
+-- zR	Open all folds in the file (back to normal).
+
 o.completeopt = { "menu", "menuone", "noselect" }
 
 vim.cmd.colorscheme("rose-pine-main")

@@ -18,7 +18,7 @@ return {
 	-- Lualine
 	{
 		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		dependencies = { "mini.icons" },
 		config = function()
 			require("lualine").setup({
 				options = {
@@ -63,9 +63,6 @@ return {
 		end,
 	},
 
-	-- Icons
-	{ "nvim-tree/nvim-web-devicons", lazy = true },
-
 	-- UI Improvements (Snacks.nvim replaces dressing, notify, etc.)
 	{
 		"folke/snacks.nvim",
@@ -75,10 +72,22 @@ return {
 			input = {
 				enabled = true,
 			},
+			statuscolumn = {
+				enabled = true,
+				left = { "mark", "sign" }, -- Shows marks and signs (like LSP warnings)
+				right = { "fold", "git" }, -- Shows fold indicators and git signs
+				folds = {
+					open = true, -- Show icons for open folds (instead of numbers)
+					git_hl = true, -- Colors the fold icons based on git status
+				},
+			},
 			picker = { enabled = true },
 			notifier = { enabled = true },
 			terminal = { enabled = true },
-			explorer = { enabled = true }, -- The "Picker-style" tree explorer
+			explorer = {
+				enabled = true,
+				replace_netrw = true, -- Crucial for 'nvim .' to work
+			}, -- The "Picker-style" tree explorer
 			indent = {
 				enabled = true,
 				animate = {
@@ -223,6 +232,20 @@ return {
 				desc = "GitHub Pull Requests (all)",
 			},
 		},
+		config = function(_, opts)
+			require("snacks").setup(opts)
+
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					local arg = vim.fn.argv(0)
+					if arg and vim.fn.isdirectory(arg) == 1 then
+						vim.schedule(function()
+							Snacks.explorer({ cwd = arg })
+						end)
+					end
+				end,
+			})
+		end,
 	},
 
 	{
@@ -238,5 +261,32 @@ return {
 			enable_named_colors = true,
 			enable_tailwind = true,
 		},
+	},
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"echasnovski/mini.icons",
+		},
+		opts = {
+			-- This ensures render-markdown specifically looks for mini.icons
+			render_modes = true,
+			anti_conceal = { enabled = true },
+		},
+	},
+
+	-- Icons
+	{
+		"echasnovski/mini.icons",
+		lazy = false, -- Load early so it can mock devicons for other plugins
+		opts = {},
+		init = function()
+			-- This line is the "magic": it redirects calls from
+			-- nvim-web-devicons to mini.icons automatically.
+			package.preload["nvim-web-devicons"] = function()
+				require("mini.icons").mock_nvim_web_devicons()
+				return package.loaded["nvim-web-devicons"]
+			end
+		end,
 	},
 }
