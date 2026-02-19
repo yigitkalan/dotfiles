@@ -26,6 +26,12 @@ o.undodir = vim.fn.stdpath("data") .. "/undo" -- Better to use stdpath
 o.guicursor = "n-i:block-blinkwait1000-blinkon500-blinkoff500,i-ci-ve:ver25,r-cr:hor20,o:hor50"
 o.termguicolors = true
 
+o.wrap = true
+o.linebreak = true -- Don't break words in the middle
+o.breakindent = true -- Keep indentation on wrapped line
+o.textwidth = 120 -- Set maximum width for text
+o.colorcolumn = "120" -- Show a vertical line at 120 characters
+
 -- Fold options
 o.foldmethod = "expr"
 o.foldexpr = "v:lua.vim.treesitter.foldexpr()"

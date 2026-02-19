@@ -135,6 +135,7 @@ return {
 					python = { "isort", "black" },
 					javascript = { "prettierd", "prettier", stop_after_first = true },
 					typescript = { "prettierd", "prettier", stop_after_first = true },
+					markdown = { "prettierd", "prettier", stop_after_first = true },
 				},
 
 				-- 2. FORMAT ON SAVE (Conditional)
