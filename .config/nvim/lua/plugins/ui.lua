@@ -271,6 +271,13 @@ return {
 		opts = {
 			-- This ensures render-markdown specifically looks for mini.icons
 			render_modes = true,
+			heading = {
+				border = true,
+				sign = false,
+				icons = { "", "", "", "", "", "" },
+				signs = { "", "", "", "", "", "" },
+			},
+			indent = { enabled = true },
 			anti_conceal = { enabled = true },
 		},
 	},
