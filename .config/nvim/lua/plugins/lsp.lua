@@ -46,7 +46,6 @@ return {
 					vim.keymap.set("n", "gt", function()
 						Snacks.picker.lsp_type_definitions()
 					end, opts)
-
 					vim.keymap.set("n", "<leader>fs", function()
 						Snacks.picker.lsp_symbols()
 					end, opts)
@@ -54,7 +53,7 @@ return {
 						Snacks.picker.lsp_workspace_symbols()
 					end, opts)
 					vim.keymap.set("n", "<leader>wd", function()
-						Snacks.picker.diagnostics()
+						Snacks.picker.diagnostics({ filter = { cwd = false } })
 					end, opts) -- Changed to setqflist or open_float
 					vim.keymap.set("n", "K", function()
 						vim.lsp.buf.hover({ border = "rounded", max_width = 80 })
@@ -115,6 +114,14 @@ return {
 					["<C-p>"] = cmp.mapping.select_prev_item(),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				}),
+
+				-- 1. ADD THIS SECTION
+				completion = {
+					-- 'noselect' is removed here to force the first item to be highlighted
+					completeopt = "menu,menuone,noinsert",
+				},
+				preselect = cmp.PreselectMode.Item, -- Or cmp.PreselectMode.None if you want to skip
+
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },

@@ -133,9 +133,20 @@ return {
 				formatters_by_ft = {
 					lua = { "stylua" },
 					python = { "isort", "black" },
+					gdscript = { "gdscript-formatter" },
 					javascript = { "prettierd", "prettier", stop_after_first = true },
 					typescript = { "prettierd", "prettier", stop_after_first = true },
 					markdown = { "prettierd", "prettier", stop_after_first = true },
+				},
+
+				formatters = {
+					gdscript_formatter = {
+						command = "gdscript-formatter",
+						-- Keep reordering separate if you want (see previous conversation)
+						-- For standard auto-format, '--safe' is highly recommended
+						args = { "--safe" },
+						stdin = true,
+					},
 				},
 
 				-- 2. FORMAT ON SAVE (Conditional)

@@ -81,7 +81,22 @@ return {
 					git_hl = true, -- Colors the fold icons based on git status
 				},
 			},
-			picker = { enabled = true },
+			picker = {
+				enabled = true,
+				sources = {
+					files = {
+						-- This excludes patterns from 'find files'
+						exclude = { "*.uid", "*.import", ".git/" },
+					},
+					explorer = {
+						exclude = { "*.uid", "*.import", ".git" },
+					},
+					grep = {
+						-- This excludes patterns from 'live grep'
+						exclude = { "*.uid", "*.import" },
+					},
+				},
+			},
 			notifier = { enabled = true },
 			terminal = { enabled = true },
 			explorer = {
@@ -95,7 +110,7 @@ return {
 				},
 			}, -- Better indent guides/scope
 			dashboard = {
-				enabled = true,
+				enabled = vim.fn.argc() == 0,
 				sections = {
 					-- Main Header (Static)
 					{ section = "header" },
