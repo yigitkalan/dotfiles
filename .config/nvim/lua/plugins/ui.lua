@@ -86,14 +86,14 @@ return {
 				sources = {
 					files = {
 						-- This excludes patterns from 'find files'
-						exclude = { "*.uid", "*.import", ".git/" },
+						exclude = { "*.uid", "*.import", ".git/", "addons/" },
 					},
 					explorer = {
 						exclude = { "*.uid", "*.import", ".git" },
 					},
 					grep = {
 						-- This excludes patterns from 'live grep'
-						exclude = { "*.uid", "*.import" },
+						exclude = { "*.uid", "*.import", "node_modules/", "dist/", "addons/" },
 					},
 				},
 			},

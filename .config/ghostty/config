@@ -53,6 +53,6 @@ window-padding-y = 8
 window-decoration = server
 keybind = ctrl+shift+w=close_surface
 theme = Banana Blueberry
-# font-family = FiraCode Nerd Font Med
-font-family = JetBrainsMono Nerd Font
+font-family = FiraCode Nerd Font Med
+# font-family = JetBrainsMono Nerd Font
 font-size = 12
