@@ -172,8 +172,8 @@ alias tks='tmux kill-session -t'
 
 alias reboot="sudo reboot"
 
-alias startdpi="sudo systemctl start zapret"
-alias stopdpi="sudo systemctl stop zapret"
+alias startdpi='sudo systemctl start zapret --no-block && notify-send "Zapret" "Bypass Active"'
+alias stopdpi='sudo systemctl stop zapret && notify-send "Zapret" "Bypass Disabled"'
 
 # alias pacclean='pacman -Qdtq | xargs -r sudo pacman -Rns'
 alias pacclean='pacman -Qdtq | xargs -r -o sudo pacman -Rns'
