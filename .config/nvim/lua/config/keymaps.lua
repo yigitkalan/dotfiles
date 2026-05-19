@@ -33,3 +33,8 @@ map("n", "<a-j>", "<c-w>j", { silent = true })
 map("n", "<a-k>", "<c-w>k", { silent = true })
 map("n", "<a-l>", "<c-w>l", { silent = true })
 map("n", "<a-h>", "<c-w>h", { silent = true })
+
+map("n", "<A-\\>", function()
+    vim.cmd("botright 15split | terminal")
+    vim.cmd("startinsert")
+end, { desc = "Open Terminal Split" })
