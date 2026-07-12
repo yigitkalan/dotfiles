@@ -1,0 +1,35 @@
+[[language]]
+name = "typescript"
+language-servers = [ { name = "typescript-language-server", except-features = ["format"] } ]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+
+[[language]]
+name = "tsx"
+language-servers = [ { name = "typescript-language-server", except-features = ["format"] } ]
+auto-format = true
+formatter = { command = "prettier", args = ["--parser", "typescript"] }
+
+[language-server.roslyn-language-server]
+command = "roslyn-language-server"
+args = [ "--stdio", "--autoLoadProjects" ]
+
+[[language]]
+name = "c-sharp"
+language-servers = [ "roslyn-language-server" ]
+auto-format = true
+
+[language-server.godot]
+command = "nc"
+args = ["127.0.0.1", "6005"]
+
+# https://github.com/Multirious/helix-win-runner
+# Exec Path -> helix-win-runner
+# Exec Flags -> --clipboard -r --run "C:\Users\samet.yigitkalan\AppData\Local\Programs\Warp\warp.exe" --no-init-macro -t "PARTY" -n "warp.exe" -p {project} -f {file} -l {line} -c {col}
+
+[[language]]
+name = "gdscript"
+language-servers = ["godot"]
+auto-format = false
+# Change the formatter command here
+formatter = { command = "gdscript-formatter", args = ["-"] }

@@ -1,0 +1,37 @@
+# theme = "kaolin-dark"
+theme = "fleet_dark"
+# theme = "kanagawa"
+
+[editor]
+line-number = "relative"
+idle-timeout = 50
+cursorline = true
+
+[editor.lsp]
+display-inlay-hints = false
+display-messages = true
+
+[editor.inline-diagnostics]
+cursor-line = "warning"
+
+[keys.insert]
+j = { k = "normal_mode" }
+
+[keys.normal]
+C-g = [
+  ":write-all",
+  ":new",
+  ":insert-output lazygit",
+  ":buffer-close!",
+  ":redraw",
+  ":reload-all"
+]
+
+C-y = [
+  ":write-all", 
+  ":new",
+  ":insert-output 'yazi %f'", 
+  ":buffer-close!",
+  ":redraw",
+  ":reload-all"
+]
