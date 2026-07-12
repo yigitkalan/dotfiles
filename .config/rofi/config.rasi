@@ -136,4 +136,6 @@ element-text, element-icon {
     text-color: inherit;
 }
 
-@theme "/home/sy/.local/share/rofi/themes/spotlight-dark.rasi"
+//@theme "/home/sy/.local/share/rofi/themes/spotlight-dark.rasi"
+
+@theme "/home/yigitkalan/.local/share/rofi/themes/squared-material-red.rasi"
