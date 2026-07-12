@@ -41,7 +41,7 @@ g.loaded_netrwPlugin = 1
 o.foldmethod = "expr"
 -- o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 o.foldexpr = "indent"
-o.foldcolumn = "1" -- Show the fold column
+o.foldcolumn = "0"
 o.foldlevel = 99 -- Keep all folds open by default when opening a file
 o.foldlevelstart = 99
 o.foldenable = true
@@ -51,54 +51,53 @@ o.foldenable = true
 -- zM	Close all folds in the file (great for a bird's-eye view).
 -- zR	Open all folds in the file (back to normal).
 
-o.completeopt = {"menu", "menuone", "noselect"}
-
--- vim.cmd.colorscheme("tokyonight-night")
+o.completeopt = { "menu", "menuone", "noselect" }
 local function set_transparent()
-    vim.api.nvim_set_hl(0, "Normal", {bg = "none"})
-    vim.api.nvim_set_hl(0, "NormalNC", {bg = "none"})
-    vim.api.nvim_set_hl(0, "NormalFloat", {bg = "none"})
-    vim.api.nvim_set_hl(0, "FloatBorder", {bg = "none"})
-    vim.api.nvim_set_hl(0, "SignColumn", {bg = "none"})
-    vim.api.nvim_set_hl(0, "StatusLine", {bg = "none"})
-    vim.api.nvim_set_hl(0, "StatusLineNC", {bg = "none"})
-    vim.api.nvim_set_hl(0, "EndOfBuffer", {bg = "none"})
+	vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+	vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+	vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+	vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
+	vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+	vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+	vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
+	vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
 end
 
 set_transparent() -- run on startup
 
-vim.api.nvim_create_autocmd("ColorScheme",
-                            {pattern = "*", callback = set_transparent})
+vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = set_transparent })
 
 -- Disable some format options
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = "*",
-    callback = function() vim.opt_local.formatoptions:remove({"c", "r", "o"}) end
+	pattern = "*",
+	callback = function()
+		vim.opt_local.formatoptions:remove({ "c", "r", "o" })
+	end,
 })
 
 -- Filetype specific indentation
 vim.api.nvim_create_autocmd("FileType", {
-    pattern = {"html", "typescript", "typescriptreact", "markdown"},
-    callback = function()
-        vim.opt_local.shiftwidth = 2
-        vim.opt_local.tabstop = 2
-        vim.opt_local.softtabstop = 2
-        vim.opt_local.expandtab = true
-    end
+	pattern = { "html", "typescript", "typescriptreact", "markdown" },
+	callback = function()
+		vim.opt_local.shiftwidth = 2
+		vim.opt_local.tabstop = 2
+		vim.opt_local.softtabstop = 2
+		vim.opt_local.expandtab = true
+	end,
 })
 
 -- Remove ugly background of the floating window borders
-vim.api.nvim_set_hl(0, "FloatBorder", {bg = "NONE"})
+vim.api.nvim_set_hl(0, "FloatBorder", { bg = "NONE" })
 
 -- Restore cursor position
 vim.api.nvim_create_autocmd("BufReadPost", {
-    callback = function()
-        local mark = vim.api.nvim_buf_get_mark(0, '"')
-        local lcount = vim.api.nvim_buf_line_count(0)
-        if mark[1] > 0 and mark[1] <= lcount then
-            pcall(vim.api.nvim_win_set_cursor, 0, mark)
-        end
-    end
+	callback = function()
+		local mark = vim.api.nvim_buf_get_mark(0, '"')
+		local lcount = vim.api.nvim_buf_line_count(0)
+		if mark[1] > 0 and mark[1] <= lcount then
+			pcall(vim.api.nvim_win_set_cursor, 0, mark)
+		end
+	end,
 })
 
 -- PowerShell configuration
@@ -111,62 +110,66 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 --     o.shellredir = ">%s 2>&1"
 -- end
 if vim.loop.os_uname().sysname == "Windows_NT" then
-    local shell = (vim.fn.executable("pwsh.exe") == 1) and "pwsh.exe" or
-                      "powershell.exe"
-    o.shell = shell
-    o.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
-    o.shellquote = ""
-    o.shellxquote = ""
-    o.shellpipe = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
-    o.shellredir = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
+	local shell = (vim.fn.executable("pwsh.exe") == 1) and "pwsh.exe" or "powershell.exe"
+	o.shell = shell
+	o.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
+	o.shellquote = ""
+	o.shellxquote = ""
+	o.shellpipe = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
+	o.shellredir = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
 end
 
 -- Diagnostics configuration
 vim.diagnostic.config({
-    virtual_lines = false,
-    virtual_text = false,
-    signs = true,
-    underline = true,
-    update_in_insert = false,
-    severity_sort = true,
-    float = {
-        focusable = false,
-        max_width = 80,
-        style = "minimal",
-        border = "rounded",
-        source = true,
-        header = "",
-        prefix = ""
-    }
+	virtual_lines = false,
+	virtual_text = false,
+	signs = true,
+	underline = true,
+	update_in_insert = false,
+	severity_sort = true,
+	float = {
+		focusable = false,
+		max_width = 80,
+		style = "minimal",
+		border = "single",
+		source = true,
+		header = "",
+		prefix = "",
+	},
 })
 
 vim.diagnostic.config({
-    signs = {
-        text = {
-            [vim.diagnostic.severity.ERROR] = "",
-            [vim.diagnostic.severity.WARN] = "",
-            [vim.diagnostic.severity.HINT] = "",
-            [vim.diagnostic.severity.INFO] = ""
-        }
-    }
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "",
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.HINT] = "",
+			[vim.diagnostic.severity.INFO] = "",
+		},
+	},
 })
 
 -- Open diagnostics on hover
-vim.api.nvim_create_autocmd({"CursorHold"}, {
-    pattern = "*",
-    callback = function()
-        for _, winid in pairs(vim.api.nvim_tabpage_list_wins(0)) do
-            if vim.api.nvim_win_get_config(winid).zindex then return end
-        end
-        vim.diagnostic.open_float({
-            focusable = false,
-            scope = "cursor",
-            close_events = {
-                "CursorMoved", "CursorMovedI", "BufHidden", "InsertCharPre",
-                "WinLeave"
-            }
-        })
-    end
+vim.api.nvim_create_autocmd({ "CursorHold" }, {
+	pattern = "*",
+	callback = function()
+		for _, winid in pairs(vim.api.nvim_tabpage_list_wins(0)) do
+			if vim.api.nvim_win_get_config(winid).zindex then
+				return
+			end
+		end
+		vim.diagnostic.open_float({
+			focusable = false,
+			scope = "cursor",
+			close_events = {
+				"CursorMoved",
+				"CursorMovedI",
+				"BufHidden",
+				"InsertCharPre",
+				"WinLeave",
+			},
+		})
+	end,
 })
 
 -- local function start_godot_server()
