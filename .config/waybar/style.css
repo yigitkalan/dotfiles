@@ -1,240 +1,74 @@
-@import url("/home/sy/.cache/wal/colors-waybar.css");
+/* --- i3-bar Solid Color Theme --- */
+@define-color bar-bg     #191919; /* Solid dark background */
+@define-color text-main  #ffffff; /* Sharp white text */
+@define-color text-dim   #888888; /* Muted gray for labels/inactive */
+@define-color accent-red #ff5555; /* Alert color */
 
 * {
-    min-height: 0;
-    min-width: 0;
-    font-family: Lexend, "JetBrainsMono NFP";
-    font-size: 14px;
-    font-weight: 600;
     border: none;
+    border-radius: 0px; /* Stripped: No rounded corners */
+    font-family: "JetBrainsMono NFP", monospace;
+    font-size: 13px;
+    font-weight: normal;
+    min-height: 0;
 }
 
 window#waybar {
-    transition-property: background-color;
-    transition-duration: 0.5s;
-    background-color: #121212;
+    background-color: @bar-bg;
+    color: @text-main;
 }
 
-window#waybar.hidden {
-    opacity: 0.2;
+/* Base style for every module on the right */
+#network, #pulseaudio, #battery, #backlight, #memory, #cpu, #clock, #tray, #language {
+    padding: 0 10px;
+    background: transparent; /* Stripped: No individual blocks */
+    color: @text-main;
 }
 
-window#waybar.empty #window {
-    background-color: transparent;
-    padding: 0;
-    margin: 0;
-}
-
+/* Workspace styling matching i3's classic tabs */
 #workspaces {
-    background-color: #22282E;
-    border-radius: 12px;
-    /* padding: 0.3rem 0.6rem; */
-    margin: 0.4rem 0.25rem;
+    background: transparent;
 }
 
 #workspaces button {
-    border-radius: 8;
-    padding: 0.3rem 0.7rem;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#workspaces button:hover {
-    border-radius: 8;
-    color: #22282E;
-    background-color: #545454;
+    color: @text-dim;
+    padding: 0 12px;
+    background: transparent;
 }
 
 #workspaces button.active {
-    border-radius: 8px;
-    padding: 0.3rem 1.0rem;
-    background-color: @color1;
-    color: black;
+    background-color: #285577; /* Classic i3 active blue focus */
+    color: @text-main;
 }
 
 #workspaces button.urgent {
-    background-color: #d44339;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-    color: white;
+    background-color: @accent-red;
+    color: @text-main;
 }
 
-#clock {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#backlight {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#pulseaudio {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
+/* Distinct status colors */
 #pulseaudio.muted {
-    color: #505668;
-}
-
-#custom-logo {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #89b4fa;
-}
-
-#custom-power {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #f38ba8;
-}
-
-#custom-spotify {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#custom-notification {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#cpu {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#tray {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #445160;
-}
-
-#memory {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#window {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: #cdd6f4;
-}
-
-#window.empty {
-    opacity: 0;
-}
-
-#network {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: @color1;
-    color: black;
-}
-
-#language {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-}
-
-#battery {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-}
-
-
-#battery.charging,
-#battery.plugged {
-    color: #281320;
-    background-color: #B5E8E0;
-}
-
-#battery.full {
-    color: black;
-    background-color: @color1;
+    color: @text-dim;
 }
 
 #battery.critical:not(.charging) {
-    background-color: #B5E8E0;
-    color: #161320;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: ease-in;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+    color: @accent-red;
+    font-weight: bold;
 }
 
-
+#custom-launcher,
+#window,
 #custom-updates {
-    padding: 0.3rem 0.6rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: @color1;
-    color: black;
+    padding: 0 10px;
 }
 
-#custom-launcher {
-    padding: 0.3rem 1rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: #22282E;
-    color: @color1;
+#battery.charging {
+    color: #50fa7b;
 }
 
-#custom-powermenu {
-    padding: 0.3rem 1rem;
-    margin: 0.4rem 0.25rem;
-    border-radius: 6px;
-    background-color: @color1;
-    color: black;
-}
-
-@keyframes blink {
-    to {
-        background-color: #BF616A;
-        color: #B5E8E0;
-    }
-}
-
+/* Tooltip cleanup */
 tooltip {
-    background-color: #181825;
-    border: 2px solid #ffffff;
-    border-radius: 8px;
+    background-color: @bar-bg;
+    border: 1px solid #285577;
+    color: @text-main;
 }
