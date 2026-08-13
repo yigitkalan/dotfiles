@@ -1,18 +1,19 @@
-/*Dracula theme based on the Purple official rofi theme*/
+/* Basic Black and Grey Theme */
 
 * {
-    font: "FiraCode Nerd Font Medium 14";
-    foreground: #f8f8f2;
+    font: "FiraCode Nerd Font Medium 12";
+    foreground: #e0e0e0; /* Light grey/white text */
     active-foreground: #ffffff;
-    background-color: #141414;
-    active-background: #1c1c1c;
-    urgent-background: #ff5555;
-    urgent-foreground: #282a36;
+    background-color: #121212; /* Almost black background */
+    active-background: #333333; /* Dark grey for active/selected items */
+    urgent-background: #555555; /* Medium grey instead of red */
+    urgent-foreground: #ffffff;
+    
     selected-background: @active-background;
     selected-urgent-background: @urgent-background;
     selected-active-background: @active-background;
-    separatorcolor: @active-background;
-    bordercolor: @selected-background;
+    separatorcolor: #333333;
+    bordercolor: #555555; /* Medium grey border */
 }
 
 configuration {
@@ -24,12 +25,13 @@ configuration {
 
 #window {
     background-color: @background-color;
-    border:           1;
+    border:           2;
     border-radius:    8;
     border-color:     @bordercolor;
     padding:          15;
-    width:             40%;
+    width:            30%; /* Changed from 40% to 30% */
 }
+
 #mainbox {
     border:  0;
     padding: 0;
@@ -46,9 +48,9 @@ configuration {
     fixed-height: 0;
     border:       0px;
     border-color: @bordercolor;
-    spacing:      6px ;
+    spacing:      6px;
     scrollbar:    false;
-    padding:      2px 0px 0px ;
+    padding:      2px 0px 0px;
     lines:        10;
 }
 #element {
@@ -92,13 +94,13 @@ configuration {
     text-color:       @foreground;
 }
 #scrollbar {
-    width:        2px ;
+    width:        2px;
     border:       0;
-    handle-width: 8px ;
+    handle-width: 8px;
     padding:      0;
 }
 #sidebar {
-    border:       2px dash 0px 0px ;
+    border:       2px dash 0px 0px;
     border-color: @separatorcolor;
 }
 #button.selected {
@@ -108,7 +110,7 @@ configuration {
 #inputbar {
     spacing:    0;
     text-color: @foreground;
-    padding:    1px ;
+    padding:    1px;
 }
 #case-indicator {
     spacing:    0;
@@ -128,7 +130,7 @@ configuration {
 #textbox-prompt-colon {
     expand:     false;
     str:        " ->";
-    margin:     0px 0.3em 0em 0em ;
+    margin:     0px 0.3em 0em 0em;
     text-color: @foreground;
 }
 element-text, element-icon {
@@ -136,6 +138,5 @@ element-text, element-icon {
     text-color: inherit;
 }
 
-//@theme "/home/sy/.local/share/rofi/themes/spotlight-dark.rasi"
-
-@theme "/home/yigitkalan/.local/share/rofi/themes/squared-material-red.rasi"
+/* I have commented this out so your custom black and grey colors above will actually work! */
+/* @theme "/home/yigitkalan/.local/share/rofi/themes/squared-material-red.rasi" */

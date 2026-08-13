@@ -13,9 +13,9 @@ export XDG_DATA_DIRS="/usr/local/share:/usr/share"
 # export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
 
 export GOPATH=$HOME/work/go/gopath/bin
-export EDITOR="nvim"
-export VISUAL="nvim"
-export SYSTEMD_EDITOR="nvim"
+export EDITOR="helix"
+export VISUAL="helix"
+export SYSTEMD_EDITOR="helix"
 # export LIBVA_DRIVER_NAME="nvidia"
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 export FZF_DEFAULT_COMMAND='rg --files  --ignore-file $HOME/.ignore  2> /dev/null '
@@ -146,7 +146,7 @@ alias startBl='sudo systemctl start bluetooth'
 alias fzg='cd $(find * -type d | fzf)'
 alias fzo='fzf | xargs xdg-open'
 
-alias v="nvim"
+alias hx="helix"
 
 alias lg='lazygit'
 

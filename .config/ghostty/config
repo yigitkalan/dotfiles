@@ -53,7 +53,11 @@ window-padding-y = 8
 window-decoration = server
 keybind = ctrl+shift+w=close_surface
 #theme = Banana Blueberry
-theme = Cyberpunk Scarlet Protocol
-font-family = FiraCode Nerd Font Med
-# font-family = JetBrainsMono Nerd Font
-font-size = 12
+# theme = Cyberpunk Scarlet Protocol
+# theme = Duskfox
+# theme = Kanagawabones
+theme = GitHub Dark Colorblind
+# font-family = FiraCode Nerd Font Med
+font-family = JetBrainsMono Nerd Font
+font-size = 10
+background-opacity=0.9

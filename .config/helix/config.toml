@@ -1,6 +1,12 @@
 # theme = "kaolin-dark"
-theme = "fleet_dark"
+# theme = "fleet_dark"
 # theme = "kanagawa"
+# theme = "nightfox"
+# theme = "bogster"
+# theme = "iceberg-dark"
+# theme = "tokyonight"
+# theme = "jellybeans"
+theme = "transparent"
 
 [editor]
 line-number = "relative"

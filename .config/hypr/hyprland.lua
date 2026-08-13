@@ -31,15 +31,33 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("wl-paste -t text --watch clipman store --no-persist")
     hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
     hl.exec_cmd("hypridle")
+    hl.exec_cmd("blueman-applet")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
+    hl.exec_cmd("xrandr --output DP-1 --primary")
+    hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent")
     hl.exec_cmd("rclone mount ProtonDrive: /mnt/ProtonDrive/")
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 end)
 
 hl.on("config.reloaded", function()
     hl.exec_cmd("hyprsunset --temperature 4000")
+    hl.exec_cmd("sh -c 'killall wayvibes; wayvibes " .. os.getenv("HOME") .. "/.config/wayvibes/my-new-sound -v 0.2'")
 end)
+
+
+hl.config({
+    xwayland = {
+        force_zero_scaling = true
+    }
+})
+
+hl.config({
+    misc = {
+        vrr = 2 -- The '2' setting means it only activates in fullscreen games
+    }
+})
+
 
 
 -------------------------------
@@ -48,12 +66,17 @@ end)
 
 hl.env("XCURSOR_SIZE",              "24")
 hl.env("HYPRCURSOR_SIZE",           "24")
-hl.env("LIBVA_DRIVER_NAME",         "iHD")
-hl.env("GBM_BACKEND",               "iris")
-hl.env("__GLX_VENDOR_LIBRARY_NAME", "mesa")
+-- hl.env("LIBVA_DRIVER_NAME",         "iHD")
+-- hl.env("GBM_BACKEND",               "iris")
+-- hl.env("__GLX_VENDOR_LIBRARY_NAME", "mesa")
 hl.env("WLR_NO_HARDWARE_CURSORS",   "1")
 hl.env("WLR_DRM_NO_ATOMIC",         "1")
 
+-- Wayland & Electron / Qt Fixes
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+hl.env("QT_QPA_PLATFORM",              "wayland;xcb")
+hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
+hl.env("QT_WEBENGINE_CHROMIUM_FLAGS",  "--enable-features=UseOzonePlatform --ozone-platform=wayland --enable-gpu-rasterization --enable-zero-copy")
 
 -----------------------
 ---- LOOK AND FEEL ----
@@ -63,10 +86,12 @@ hl.config({
     general = {
         gaps_in          = 2,
         gaps_out         = 5,
-        border_size      = 0,
+        border_size      = 2,
         col = {
-            active_border   = "rgba(00000000)",
-            inactive_border = "rgba(00000000)",
+            active_border   = "#6B4DFF",
+            
+            -- Optional: give inactive windows a subtle border so they don't blend together
+            inactive_border = "#7C7985",
         },
         resize_on_border = false,
         allow_tearing    = false,
@@ -76,7 +101,7 @@ hl.config({
 
 hl.config({
     decoration = {
-        rounding         = 10,
+        rounding         = 0,
         active_opacity   = 1.0,
         inactive_opacity = 1.0,
         shadow = {
@@ -173,10 +198,11 @@ hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + n",         hl.dsp.workspace.move({ monitor = "l" }))
 hl.bind(mainMod .. " + m",         hl.dsp.workspace.move({ monitor = "r" }))
 
-hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.resize({ x =  100, y =    0 }), { repeating = true })
-hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.resize({ x = -100, y =    0 }), { repeating = true })
-hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.resize({ x =    0, y = -100 }), { repeating = true })
-hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.resize({ x =    0, y =  100 }), { repeating = true })
+-- Keyboard Resizing (Fixed with relative = true)
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.resize({ x = 100,  y = 0,    relative = true }), { repeating = true })
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.resize({ x = -100, y = 0,    relative = true }), { repeating = true })
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.resize({ x = 0,    y = -100, relative = true }), { repeating = true })
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.resize({ x = 0,    y = 100,  relative = true }), { repeating = true })
 
 hl.bind("XF86KbdLightOnOff",     hl.dsp.exec_cmd("brightnessctl --device='rgb:kbd_backlight' set 0"),    { locked = true })
 hl.bind("XF86KbdBrightnessDown", hl.dsp.exec_cmd("brightnessctl --device='rgb:kbd_backlight' set 10%-"), { locked = true })
@@ -221,7 +247,8 @@ hl.bind(mainMod .. " + P",
 hl.bind(mainMod .. " + SHIFT + P",
     hl.dsp.exec_cmd('grim -g "$(slurp -o)" - | wl-copy'))
 
-hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("systemctl suspend"), { locked = true })
+
+-- hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("systemctl suspend"), { locked = true })
 
 
 --------------------------------
@@ -231,54 +258,42 @@ hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd("systemctl suspend"), { locked =
 hl.window_rule({ match = { class = "firefox" },       workspace = "2" })
 hl.window_rule({ match = { class = "google-chrome" }, workspace = "2" })
 hl.window_rule({ match = { class = "zen" },           workspace = "2" })
+hl.window_rule({ match = { class = "Opera GX" },           workspace = "2" })
 hl.window_rule({ match = { class = "discord" },       workspace = "3" })
 hl.window_rule({ match = { class = "YouTube Music" }, workspace = "5" })
 
 hl.window_rule({ match = { class = "google-chrome", title = "Open File" }, float = true })
+
 -- ─────────────────────────────────────────────
--- GODOT WINDOW RULES
+-- CLEAN GODOT WINDOW RULES
 -- ─────────────────────────────────────────────
 
--- 1. Float ALL org.godotengine.Editor windows by default.
---    This catches: Project Settings, Script Editor popups,
---    the debug output panel, shader editors, everything.
+-- 1. Force the Main Editor Window to TILE
+-- Godot's main window always contains "Godot Engine" in its title
 hl.window_rule({
-    match = { initial_class = "^org\\.godotengine\\.Editor$" },
-    float = true,
+    match = { 
+        class = ".*godot.*", 
+        title = ".*Godot Engine.*" 
+    },
+    tile = true
 })
 
--- 2. Float the actual running game window.
---    class is the project name (e.g. "party-game"), initialTitle is "Godot".
---    This covers ALL your projects generically.
+-- 2. Float Godot's sub-windows (Project Settings, Editor Popups, Color Pickers)
 hl.window_rule({
-    match = {
-        initial_class = "negative:org\\.godotengine\\.Editor",
-        initial_title = "^Godot$",
+    match = { 
+        class = "^org\\.godotengine\\.Editor$", 
+        title = "negative:.*Godot Engine.*" 
     },
-    float = true,
-})
-
--- 3. TILE ONLY the main editor window.
---    The main editor is the only org.godotengine.Editor window
---    whose initialTitle is exactly "Godot".
---    All popups/panels have a descriptive initialTitle instead.
---    This rule comes LAST so it overrides rule 1 above.
-hl.window_rule({
-    match = {
-        initial_class = "^org\\.godotengine\\.Editor$",
-        initial_title = "^Godot$",
-    },
-    tile = true,
-})
-hl.window_rule({
-    match = { initial_title = "^Godot$", initial_class = "^(?!org\\.godotengine\\.Editor).*" },
     float = true
 })
 
+-- 3. Float running game windows launched from editor
 hl.window_rule({
-    name           = "suppress-maximize-events",
-    match          = { class = ".*" },
-    suppress_event = "maximize",
+    match = { 
+        title = "^Godot$", 
+        class = "negative:^org\\.godotengine\\.Editor$" 
+    },
+    float = true
 })
 
 hl.window_rule({ match = { class = "xwaylandvideobridge" }, opacity  = "0.0 override" })

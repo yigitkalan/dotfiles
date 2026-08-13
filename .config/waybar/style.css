@@ -20,9 +20,13 @@ window#waybar {
 
 /* Base style for every module on the right */
 #network, #pulseaudio, #battery, #backlight, #memory, #cpu, #clock, #tray, #language {
-    padding: 0 10px;
+    padding: 6px 10px;
     background: transparent; /* Stripped: No individual blocks */
     color: @text-main;
+}
+
+#tray {
+    background-color: #837999
 }
 
 /* Workspace styling matching i3's classic tabs */
@@ -32,12 +36,12 @@ window#waybar {
 
 #workspaces button {
     color: @text-dim;
-    padding: 0 12px;
+    padding: 6px 12px;
     background: transparent;
 }
 
 #workspaces button.active {
-    background-color: #285577; /* Classic i3 active blue focus */
+    background-color: #515B63; /* Classic i3 active blue focus */
     color: @text-main;
 }
 
@@ -59,7 +63,7 @@ window#waybar {
 #custom-launcher,
 #window,
 #custom-updates {
-    padding: 0 10px;
+    padding: 6px 10px;
 }
 
 #battery.charging {
