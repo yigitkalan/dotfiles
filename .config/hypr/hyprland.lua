@@ -264,28 +264,28 @@ hl.window_rule({ match = { class = "YouTube Music" }, workspace = "5" })
 
 hl.window_rule({ match = { class = "google-chrome", title = "Open File" }, float = true })
 
--- ─────────────────────────────────────────────
--- CLEAN GODOT WINDOW RULES
--- ─────────────────────────────────────────────
+-- -- ─────────────────────────────────────────────
+-- -- CLEAN GODOT WINDOW RULES
+-- -- ─────────────────────────────────────────────
 
--- 1. Force the Main Editor Window to TILE
--- Godot's main window always contains "Godot Engine" in its title
-hl.window_rule({
-    match = { 
-        class = ".*godot.*", 
-        title = ".*Godot Engine.*" 
-    },
-    tile = true
-})
+-- -- 1. Force the Main Editor Window to TILE
+-- -- Godot's main window always contains "Godot Engine" in its title
+-- hl.window_rule({
+--     match = { 
+--         class = ".*godot.*", 
+--         title = ".*Godot Engine.*" 
+--     },
+--     tile = true
+-- })
 
--- 2. Float Godot's sub-windows (Project Settings, Editor Popups, Color Pickers)
-hl.window_rule({
-    match = { 
-        class = "^org\\.godotengine\\.Editor$", 
-        title = "negative:.*Godot Engine.*" 
-    },
-    float = true
-})
+-- -- 2. Float Godot's sub-windows (Project Settings, Editor Popups, Color Pickers)
+-- hl.window_rule({
+--     match = { 
+--         class = "^org\\.godotengine\\.Editor$", 
+--         title = "negative:.*Godot Engine.*" 
+--     },
+--     float = true
+-- })
 
 -- 3. Float running game windows launched from editor
 hl.window_rule({
