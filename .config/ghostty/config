@@ -60,4 +60,5 @@ theme = GitHub Dark Colorblind
 # font-family = FiraCode Nerd Font Med
 font-family = JetBrainsMono Nerd Font
 font-size = 10
-background-opacity=0.9
+background-opacity=1
+background-blur=true
