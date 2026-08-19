@@ -164,11 +164,18 @@ alias livehere="live-server . & ; sass --watch . & "
 
 alias fixusb="sudo rmmod ehci_hcd && sudo modprobe ehci_hcd"
 
+#Tmux aliasaes
 alias tmo='tmux attach-session -t '
 alias tmn='tmux new-session -s '
 alias tka='tmux kill-session -a '
 alias tks='tmux kill-session -t'
 
+# Zellij aliases
+alias za='zellij attach'
+alias zn='zellij -s'
+alias zl='zellij list-sessions'
+alias zka='zellij delete-all-sessions'
+alias zk='zellij delete-session'
 
 alias reboot="sudo reboot"
 
@@ -189,6 +196,13 @@ alias backupNotes="rclone copy ~/Documents/notes/ ProtonDrive:Notes/ --progress"
 alias sendphone='kdeconnect-cli -d $(kdeconnect-cli -l --id-only) --share $(fzf)'
 
 alias ls='lsd'
+
+# --- Zellij Auto-Start / Attach ---
+# Only run if not already inside a Zellij session
+if [[ -z "$ZELLIJ" ]]; then
+    # Automatically attach to an existing session or create a default one
+    zellij attach -c
+fi
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
