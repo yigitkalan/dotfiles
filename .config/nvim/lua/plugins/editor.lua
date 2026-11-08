@@ -95,15 +95,7 @@ return {
         }
     }, -- Fugitive
     {"tpope/vim-fugitive", cmd = "Git"}, -- Tmux Navigator
-    {
-        "christoomey/vim-tmux-navigator",
-        keys = {
-            {"<C-h>", "<cmd>TmuxNavigateLeft<cr>", desc = "Tmux Left"},
-            {"<C-j>", "<cmd>TmuxNavigateDown<cr>", desc = "Tmux Down"},
-            {"<C-k>", "<cmd>TmuxNavigateUp<cr>", desc = "Tmux Up"},
-            {"<C-l>", "<cmd>TmuxNavigateRight<cr>", desc = "Tmux Right"}
-        }
-    }, -- Conform
+
     {
         "stevearc/conform.nvim",
         event = {"BufReadPre", "BufNewFile"},
@@ -113,24 +105,9 @@ return {
             -- 1. DEFINE YOUR FORMATTERS
             conform.setup({
                 formatters_by_ft = {
-                    lua = {"stylua"},
-                    python = {"isort", "black"},
-                    javascript = {
-                        "prettierd",
-                        "prettier",
-                        stop_after_first = true
-                    },
-                    typescript = {
-                        "prettierd",
-                        "prettier",
-                        stop_after_first = true
-                    },
-                    markdown = {
-                        "prettierd",
-                        "prettier",
-                        stop_after_first = true
-                    }
-                },
+                    lua = { "stylua" },
+                    rust = { "rustfmt" },
+                }, -- <--- FIX 1: Added missing comma here
 
                 -- 2. FORMAT ON SAVE (Conditional)
                 format_on_save = function(bufnr)
@@ -141,7 +118,7 @@ return {
                     end
                     return {timeout_ms = 500, lsp_fallback = true}
                 end
-            })
+            }) -- <--- FIX 2: Removed the extra '}' that was breaking the config function
 
             -- 3. KEYMAP: ALT + F to format manually
             -- <M-f> stands for Meta (Alt) + f

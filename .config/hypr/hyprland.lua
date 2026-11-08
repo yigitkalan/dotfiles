@@ -12,7 +12,7 @@ require("workspaces")
 ---- MY PROGRAMS ---
 --------------------
 
-local terminal    = "ghostty"
+local terminal    = "kitty"
 local menu        = os.getenv("HOME") .. "/.utils/launch_rofi.sh"
 local emojis      = os.getenv("HOME") .. "/.utils/launch_emoji.sh"
 local calculator  = os.getenv("HOME") .. "/.utils/launch_calculator.sh"
@@ -28,15 +28,11 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("waypaper --restore --backend hyprpaper")
     hl.exec_cmd("dunst")
     hl.exec_cmd(os.getenv("HOME") .. "/.utils/launch_waybar.sh")
-    hl.exec_cmd("wl-paste -t text --watch clipman store --no-persist")
-    hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("blueman-applet")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
-    hl.exec_cmd("xrandr --output DP-1 --primary")
     hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent")
-    hl.exec_cmd("rclone mount ProtonDrive: /mnt/ProtonDrive/")
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 end)
 
@@ -66,11 +62,6 @@ hl.config({
 
 hl.env("XCURSOR_SIZE",              "24")
 hl.env("HYPRCURSOR_SIZE",           "24")
--- hl.env("LIBVA_DRIVER_NAME",         "iHD")
--- hl.env("GBM_BACKEND",               "iris")
--- hl.env("__GLX_VENDOR_LIBRARY_NAME", "mesa")
-hl.env("WLR_NO_HARDWARE_CURSORS",   "1")
-hl.env("WLR_DRM_NO_ATOMIC",         "1")
 
 -- Wayland & Electron / Qt Fixes
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
@@ -258,36 +249,9 @@ hl.bind(mainMod .. " + SHIFT + P",
 hl.window_rule({ match = { class = "firefox" },       workspace = "2" })
 hl.window_rule({ match = { class = "google-chrome" }, workspace = "2" })
 hl.window_rule({ match = { class = "zen" },           workspace = "2" })
-hl.window_rule({ match = { class = "Opera GX" },           workspace = "2" })
 hl.window_rule({ match = { class = "discord" },       workspace = "3" })
 hl.window_rule({ match = { class = "YouTube Music" }, workspace = "5" })
 
-hl.window_rule({ match = { class = "google-chrome", title = "Open File" }, float = true })
-
--- -- ─────────────────────────────────────────────
--- -- CLEAN GODOT WINDOW RULES
--- -- ─────────────────────────────────────────────
-
--- -- 1. Force the Main Editor Window to TILE
--- -- Godot's main window always contains "Godot Engine" in its title
--- hl.window_rule({
---     match = { 
---         class = ".*godot.*", 
---         title = ".*Godot Engine.*" 
---     },
---     tile = true
--- })
-
--- -- 2. Float Godot's sub-windows (Project Settings, Editor Popups, Color Pickers)
--- hl.window_rule({
---     match = { 
---         class = "^org\\.godotengine\\.Editor$", 
---         title = "negative:.*Godot Engine.*" 
---     },
---     float = true
--- })
-
--- 3. Float running game windows launched from editor
 hl.window_rule({
     match = { 
         title = "^Godot$", 
@@ -296,11 +260,15 @@ hl.window_rule({
     float = true
 })
 
-hl.window_rule({ match = { class = "xwaylandvideobridge" }, opacity  = "0.0 override" })
-hl.window_rule({ match = { class = "xwaylandvideobridge" }, no_anim  = true })
-hl.window_rule({ match = { class = "xwaylandvideobridge" }, no_focus = true })
-hl.window_rule({ match = { class = "xwaylandvideobridge" }, max_size = { 1, 1 } })
-hl.window_rule({ match = { class = "xwaylandvideobridge" }, no_blur  = true })
+-- use if discord screenshare doesnt work properly
+-- hl.window_rule({
+--     match    = { class = "xwaylandvideobridge" },
+--     opacity  = "0.0 override",
+--     no_anim  = true,
+--     no_focus = true,
+--     no_blur  = true,
+--     max_size = { 1, 1 },
+-- })
 
 -- Sanity check: shows a notification when the FULL config has loaded successfully.
 -- Remove this line once everything works.

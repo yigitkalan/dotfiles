@@ -6,15 +6,11 @@ return {
         config = function()
             local install = require("nvim-treesitter.install")
             
-            -- Force GCC and disable the fallback to cl.exe
-            install.compilers = { "gcc" }
-            install.prefer_git = false -- Sometimes helps Windows pathing issues
-
             local ts = require("nvim-treesitter")
             ts.setup({})
 
             ts.install({
-                "c_sharp", "python", "gdscript", "godot_resource",
+                "python", "gdscript", "godot_resource",
                 "lua", "vim", "vimdoc", "sql", "javascript",
                 "typescript", "html", "css","markdown", "markdown_inline", "json", "yaml",
             })

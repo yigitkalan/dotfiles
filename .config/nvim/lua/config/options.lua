@@ -100,25 +100,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
--- PowerShell configuration
--- if vim.loop.os_uname().sysname == "Windows_NT" then
---     o.shell = "C:\\msys64\\usr\\bin\\zsh.exe"
---     o.shellquote = ""
---     o.shellcmdflag = "-ic"
---     o.shellxquote = ""
---     o.shellpipe = "2>&1 | tee %s; exit ${PIPESTATUS[0]}"
---     o.shellredir = ">%s 2>&1"
--- end
-if vim.loop.os_uname().sysname == "Windows_NT" then
-	local shell = (vim.fn.executable("pwsh.exe") == 1) and "pwsh.exe" or "powershell.exe"
-	o.shell = shell
-	o.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
-	o.shellquote = ""
-	o.shellxquote = ""
-	o.shellpipe = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
-	o.shellredir = "| Out-File -Encoding UTF8 %s; exit $LastExitCode"
-end
-
 -- Diagnostics configuration
 vim.diagnostic.config({
 	virtual_lines = false,

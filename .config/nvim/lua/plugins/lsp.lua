@@ -22,15 +22,9 @@ return {
 				pattern = "gdscript",
 				callback = function()
 					local addr
-					if vim.fn.has("win32") == 1 then
-						addr = "127.0.0.1:55432"
-					else
-						local pipe_path = "/tmp/godot.pipe"
-						if vim.uv.fs_stat(pipe_path) then
-							os.remove(pipe_path)
-						end
-						addr = pipe_path
-					end
+                    local pipe_path = "/tmp/godot.pipe"
+                    if vim.uv.fs_stat(pipe_path) then os.remove(pipe_path) end
+                    local ok, err = pcall(vim.fn.serverstart, pipe_path)
 
 					-- Only start if it's not already running
 					local ok, err = pcall(vim.fn.serverstart, addr)
@@ -85,17 +79,6 @@ return {
 			})
 		end,
 	}, -- { "seblyng/roslyn.nvim", ft = "cs", opts = {} },
-	{
-		"GustavEikaas/easy-dotnet.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-telescope/telescope.nvim",
-		},
-		ft = { "cs", "vb", "csproj", "sln" },
-		config = function()
-			require("easy-dotnet").setup({ picker = "telescope" })
-		end,
-	},
 	{
 		"Mathijs-Bakker/godotdev.nvim",
 		dependencies = {

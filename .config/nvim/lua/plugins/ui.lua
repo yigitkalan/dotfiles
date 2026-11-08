@@ -2,7 +2,6 @@ return {
 	-- Colorschemes
 	{ "Mofiqul/vscode.nvim", lazy = true },
 	{ "realbucksavage/riderdark.vim", lazy = true },
-	{ "nyoom-engineering/oxocarbon.nvim", lazy = true },
 	{ "thedenisnikulin/vim-cyberpunk", lazy = true },
 	{ "folke/tokyonight.nvim", lazy = true },
 	{ "rose-pine/neovim", name = "rose-pine", lazy = true },
