@@ -9,7 +9,7 @@ keybinds clear-defaults=true{
         bind "Alt t" { SwitchToMode "Tab"; }
         bind "Alt r" { SwitchToMode "Resize"; }
         bind "Alt s" { SwitchToMode "Session"; }
-        bind "Alt f" { SwitchToMode "Scroll"; }
+        bind "Alt /" { SwitchToMode "EnterSearch"; SearchInput 0; }
         bind "Alt m" { SwitchToMode "Move"; }
     }
     locked {
@@ -191,6 +191,7 @@ keybinds clear-defaults=true{
     shared_except "locked" {
         bind "Ctrl g" { SwitchToMode "Locked"; }
         bind "Ctrl q" { Quit; }
+        bind "Alt f" { ToggleFloatingPanes; }
         bind "Alt n" { NewPane; }
         bind "Alt i" { MoveTab "Left"; }
         bind "Alt o" { MoveTab "Right"; }
@@ -524,6 +525,9 @@ copy_command "wl-copy"                    // wayland
 // typically work best. Set to 0 to use the number of (physical) CPU cores.
 // NOTE: This only applies to web clients at the moment."#;
 // client_async_worker_tasks 4
+
+focus_follows_mouse true
+
 
 web_client {
     font "monospace"

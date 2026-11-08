@@ -199,10 +199,10 @@ alias ls='lsd'
 
 # --- Zellij Auto-Start / Attach ---
 # Only run if not already inside a Zellij session
-if [[ -z "$ZELLIJ" ]]; then
-    # Automatically attach to an existing session or create a default one
-    zellij attach -c
-fi
+# if [[ -z "$ZELLIJ" ]]; then
+#     # Automatically attach to an existing session or create a default one
+#     zellij attach -c
+# fi
 
 eval "$(starship init zsh)"
 eval "$(zoxide init zsh)"
