@@ -30,6 +30,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd(os.getenv("HOME") .. "/.utils/launch_waybar.sh")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("blueman-applet")
+    hl.exec_cmd("openrgb --startminimized --profile default")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
     hl.exec_cmd("/usr/lib/hyprpolkitagent/hyprpolkitagent")
@@ -62,6 +63,9 @@ hl.config({
 
 hl.env("XCURSOR_SIZE",              "24")
 hl.env("HYPRCURSOR_SIZE",           "24")
+hl.env("MANGOHUD", "1")
+
+hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
 -- Wayland & Electron / Qt Fixes
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
@@ -79,20 +83,20 @@ hl.config({
         gaps_out         = 5,
         border_size      = 2,
         col = {
-            active_border   = "#6B4DFF",
+            active_border   = "#7fb0b5",
             
             -- Optional: give inactive windows a subtle border so they don't blend together
             inactive_border = "#7C7985",
         },
         resize_on_border = false,
-        allow_tearing    = false,
+        allow_tearing    = true,
         layout           = "dwindle",
     },
 })
 
 hl.config({
     decoration = {
-        rounding         = 0,
+        rounding         = 10,
         active_opacity   = 1.0,
         inactive_opacity = 1.0,
         shadow = {
@@ -111,9 +115,13 @@ hl.config({
 
 hl.config({
     animations = {
-        enabled = false,
+        enabled = true,
     },
 })
+
+hl.animation({ leaf = "windows", enabled = true, speed = 4, bezier = "default", style = "popin 50%" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "default", style = "slide 100%" })
+
 
 -- REMOVED: dwindle.pseudotile — deleted in 0.55
 hl.config({
@@ -189,6 +197,8 @@ hl.bind(mainMod .. " + V",         hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + n",         hl.dsp.workspace.move({ monitor = "l" }))
 hl.bind(mainMod .. " + m",         hl.dsp.workspace.move({ monitor = "r" }))
 
+hl.bind(mainMod .. " + F10", hl.dsp.exec_cmd('killall -SIGUSR1 gpu-screen-recorder && notify-send "Replay Saved" "Last 30 seconds clipped!"'))
+
 -- Keyboard Resizing (Fixed with relative = true)
 hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.resize({ x = 100,  y = 0,    relative = true }), { repeating = true })
 hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.resize({ x = -100, y = 0,    relative = true }), { repeating = true })
@@ -251,6 +261,7 @@ hl.window_rule({ match = { class = "google-chrome" }, workspace = "2" })
 hl.window_rule({ match = { class = "zen" },           workspace = "2" })
 hl.window_rule({ match = { class = "discord" },       workspace = "3" })
 hl.window_rule({ match = { class = "YouTube Music" }, workspace = "5" })
+hl.window_rule({ match = { class = "Spotify" }, workspace = "5" })
 
 hl.window_rule({
     match = { 

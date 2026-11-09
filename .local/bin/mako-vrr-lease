@@ -1,0 +1,669 @@
+#!/usr/bin/env python3
+"""Hold a reversible Gamescope VRR override for one MAKO-wrapped game.
+
+The wrapper execs the game unchanged. This detached helper watches the
+Renderers' existing live status records and outlives an abruptly killed game.
+It never writes Steam's saved configuration.
+"""
+
+from __future__ import annotations
+
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import signal
+import shutil
+import socket
+import stat
+import struct
+import subprocess
+import sys
+import time
+from typing import NamedTuple
+
+
+POLL_SECONDS = 1.0
+HOLD_CHECK_SECONDS = 5.0
+RESTORE_ATTEMPTS = 5
+DISPLAY_FLAGS = re.compile(r"(?:^|\n)\s*-\s*Display Flags:\s*0x([0-9a-fA-F]+)(?:\s|$)")
+X_DISPLAY = re.compile(r":[0-9]+(?:\.[0-9]+)?\Z")
+X_CARDINAL = re.compile(r"^([A-Z_]+)\(CARDINAL\) = ([0-9]+)$", re.MULTILINE)
+VRR_DISPLAY_FLAG = 0x4
+STOP = False
+XROOT_CACHE: tuple[str, int, str] | None = None
+XROOT_RETRY_AFTER: tuple[str, int, float] | None = None
+
+
+class Publisher(NamedTuple):
+    """A normalized preference tied to a live host process identity."""
+
+    pid: int
+    tick: int
+    mode: str
+
+
+def read_status(path: Path) -> dict:
+    descriptor = os.open(path, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        info = os.fstat(descriptor)
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                or info.st_size > 65536):
+            raise ValueError("invalid status file")
+        payload = os.read(descriptor, 65537)
+        if len(payload) > 65536:
+            raise ValueError("oversized status file")
+        value = json.loads(payload)
+        if not isinstance(value, dict):
+            raise ValueError("invalid status object")
+        return value
+    finally:
+        os.close(descriptor)
+
+
+def lock_owners() -> dict[tuple[int, int, int], int]:
+    """The host kernel identifies the holder even across PID namespaces."""
+    try:
+        with Path("/proc/locks").open() as stream:
+            data = stream.read(1024 * 1024 + 1)
+        if len(data) > 1024 * 1024:
+            return {}
+        owners = {}
+        for line in data.splitlines():
+            fields = line.split()
+            if len(fields) != 8 or fields[1:4] != ["FLOCK", "ADVISORY", "WRITE"]:
+                continue
+            major, minor, inode = fields[5].split(":")
+            owners[(int(major, 16), int(minor, 16), int(inode))] = int(fields[4])
+        return owners
+    except (OSError, ValueError):
+        return {}
+
+
+def namespace_publisher(path: Path, pid: int, tick: int,
+                        owners: dict[tuple[int, int, int], int]) -> int | None:
+    """Require a held Renderer lock, UID, start tick, and namespace PID."""
+    try:
+        lock = path.with_name(path.name + ".lock").lstat()
+        if not stat.S_ISREG(lock.st_mode) or lock.st_uid != os.geteuid():
+            return None
+        host_pid = owners.get((os.major(lock.st_dev), os.minor(lock.st_dev), lock.st_ino))
+        if host_pid is None or Path(f"/proc/{host_pid}").stat().st_uid != os.geteuid():
+            return None
+        identity = process_identity(host_pid)
+        if identity is None or identity[1] != tick:
+            return None
+        for line in Path(f"/proc/{host_pid}/status").read_text().splitlines():
+            if line.startswith("NSpid:"):
+                return host_pid if int(line.split()[-1]) == pid else None
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+def publishers(path: Path) -> list[Publisher]:
+    result: list[Publisher] = []
+    owners = None
+    try:
+        for index, status_path in enumerate(path.glob("*-frame-generation-*.json")):
+            if index >= 64:
+                return []  # Ambiguous/unbounded inventory must not choose a game.
+            try:
+                record = read_status(status_path)
+                pid, tick = record["pid"], record["process_start_ticks"]
+                if type(pid) is not int or type(tick) is not int or pid <= 0 or tick <= 0:
+                    continue
+                identity = process_identity(pid)
+                if identity is None or identity[1] != tick:
+                    if owners is None:
+                        owners = lock_owners()
+                    pid = namespace_publisher(status_path, pid, tick, owners)
+                    if pid is None:
+                        continue
+                if Path(f"/proc/{pid}").stat().st_uid != os.geteuid():
+                    continue
+                requested = record["requested"]
+                mode = requested.get("gamescope_vrr_mode")
+                if (not isinstance(requested.get("name"), str) or not requested["name"]
+                        or mode not in ("follow-steam", "on", "off")):
+                    continue
+                if (requested.get("frame_generation_provisioned") is not True or
+                        requested.get("frame_generation_enabled") is not True):
+                    mode = "follow-steam"
+                result.append(Publisher(pid, tick, mode))
+            except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                continue
+    except OSError:
+        pass
+    return result
+
+
+def _stop(_signal: int, _frame: object) -> None:
+    global STOP
+    STOP = True
+
+
+def process_identity(pid: int) -> tuple[int, int] | None:
+    """Return parent PID and kernel start tick, guarding against PID reuse."""
+    try:
+        fields = Path(f"/proc/{pid}/stat").read_text().rsplit(") ", 1)[1].split()
+        return int(fields[1]), int(fields[19])
+    except (OSError, ValueError, IndexError):
+        return None
+
+
+def descendant_of(pid: int, ancestor: int, start_tick: int) -> bool:
+    seen: set[int] = set()
+    while pid > 1 and pid not in seen:
+        seen.add(pid)
+        if pid == ancestor:
+            identity = process_identity(pid)
+            return identity is not None and identity[1] == start_tick
+        identity = process_identity(pid)
+        if identity is None:
+            break
+        pid = identity[0]
+    return False
+
+
+def config_path() -> Path:
+    if os.environ.get("MAKO_CONFIG"):
+        return Path(os.environ["MAKO_CONFIG"])
+    return Path(os.environ.get("XDG_CONFIG_HOME", str(Path.home() / ".config"))) / "mako-render/conf.toml"
+
+
+def has_launch_token(pid: int, token: str) -> bool:
+    try:
+        return (b"MAKO_VRR_LEASE_TOKEN=" + token.encode()) in \
+            Path(f"/proc/{pid}/environ").read_bytes().split(b"\0")
+    except OSError:
+        return False
+
+
+def active_mode(path: Path, parent: int, start_tick: int, token: str,
+                observed: set[tuple[int, int]]) -> str | None:
+    """Use only live frame-generation contexts in this launch's process tree."""
+    modes: set[str] = set()
+    for pid, tick, mode in publishers(path):
+        if (pid, tick) not in observed:
+            if not has_launch_token(pid, token) and not descendant_of(pid, parent, start_tick):
+                continue
+            observed.add((pid, tick))
+        modes.add(mode)
+    return next(iter(modes)) if len(modes) == 1 else None
+
+
+def read_vrr_capability() -> bool | None:
+    """Use Gamescope's active display flag, not the current VRR setting."""
+    try:
+        result = subprocess.run(("gamescopectl",), capture_output=True,
+                                text=True, timeout=1.0, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if result.returncode:
+        return None
+    match = DISPLAY_FLAGS.search(result.stdout)
+    return bool(int(match.group(1), 16) & VRR_DISPLAY_FLAG) if match else None
+
+
+def xroot_properties(display: str, environment: dict[str, str] | None = None) -> dict[str, int] | None:
+    """Read Gamescope's Xwayland root without interpreting arbitrary xprop text."""
+    try:
+        result = subprocess.run((
+            "xprop", "-display", display, "-root", "GAMESCOPE_PID",
+            "GAMESCOPE_XWAYLAND_SERVER_ID", "GAMESCOPE_VRR_ENABLED",
+        ), capture_output=True, text=True, timeout=1.0, check=False, env=environment)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if result.returncode:
+        return None
+    return {name: int(value) for name, value in X_CARDINAL.findall(result.stdout)}
+
+
+def read_xroot_vrr() -> tuple[bool | None, str]:
+    """Resolve server zero for this game's X display, as the Renderer does."""
+    global XROOT_CACHE, XROOT_RETRY_AFTER
+    current_display = os.environ.get("DISPLAY", "")
+    if not X_DISPLAY.fullmatch(current_display):
+        return None, "x-display-unavailable"
+    current = xroot_properties(current_display)
+    if current is None:
+        return None, "x-display-unavailable"
+    gamescope_pid = current.get("GAMESCOPE_PID")
+    if not gamescope_pid or "GAMESCOPE_XWAYLAND_SERVER_ID" not in current:
+        return None, "x-session-unverified"
+    if XROOT_CACHE and XROOT_CACHE[:2] == (current_display, gamescope_pid):
+        root_display = XROOT_CACHE[2]
+        properties = current if root_display == current_display else xroot_properties(root_display)
+        if (properties and properties.get("GAMESCOPE_PID") == gamescope_pid and
+                properties.get("GAMESCOPE_XWAYLAND_SERVER_ID") == 0):
+            value = properties.get("GAMESCOPE_VRR_ENABLED")
+            return ((bool(value), "ok") if value in (0, 1)
+                    else (None, "x-vrr-unavailable"))
+        XROOT_CACHE = None
+    if (XROOT_RETRY_AFTER and XROOT_RETRY_AFTER[:2] ==
+            (current_display, gamescope_pid) and
+            time.monotonic() < XROOT_RETRY_AFTER[2]):
+        return None, "x-root-unverified"
+    candidates = [current_display] + [f":{number}" for number in range(16)
+                                      if f":{number}" != current_display]
+    for display in candidates:
+        properties = current if display == current_display else xroot_properties(display)
+        if (properties and properties.get("GAMESCOPE_PID") == gamescope_pid and
+                properties.get("GAMESCOPE_XWAYLAND_SERVER_ID") == 0):
+            XROOT_CACHE = (current_display, gamescope_pid, display)
+            XROOT_RETRY_AFTER = None
+            value = properties.get("GAMESCOPE_VRR_ENABLED")
+            if value in (0, 1):
+                return bool(value), "ok"
+            return None, "x-vrr-unavailable"
+    XROOT_RETRY_AFTER = (current_display, gamescope_pid, time.monotonic() + 5.0)
+    return None, "x-root-unverified"
+
+
+def read_vrr() -> tuple[bool | None, str]:
+    return read_xroot_vrr()
+
+
+def write_vrr(value: bool, expected: bool) -> bool:
+    current, _ = read_xroot_vrr()
+    if current != expected or XROOT_CACHE is None:
+        return False
+    try:
+        result = subprocess.run((
+            "xprop", "-display", XROOT_CACHE[2], "-root", "-f",
+            "GAMESCOPE_VRR_ENABLED", "32c", "-set", "GAMESCOPE_VRR_ENABLED",
+            "1" if value else "0",
+        ), capture_output=True, text=True, timeout=1.0, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    if result.returncode:
+        return False
+    for attempt in range(5):
+        if read_vrr()[0] == value:
+            return True
+        if attempt < 4:
+            time.sleep(0.1)
+    return False
+
+
+class DecisionLog:
+    """Record only changes in lease decisions, never one entry per poll."""
+
+    def __init__(self) -> None:
+        self.last: str | None = None
+
+    def record(self, decision: str) -> None:
+        if decision != self.last:
+            print(f"MAKO Renderer: Gamescope VRR lease decision={decision}", file=sys.stderr)
+            self.last = decision
+
+
+class VrrLease:
+    def __init__(self) -> None:
+        self.mode = "follow-steam"
+        self.baseline: bool | None = None
+        self.applied: bool | None = None
+        self.write_unverified_until: float | None = None
+        self.hold_check_after: float | None = None
+        self.yielded = False
+
+    def restore(self) -> bool:
+        if self.applied is not None and self.baseline is not None:
+            current, _ = read_vrr()
+            if current is None:
+                return False
+            if current == self.applied and current != self.baseline:
+                if not write_vrr(self.baseline, self.applied):
+                    return False
+                print(f"MAKO Renderer: Gamescope VRR lease restored previous value={int(self.baseline)}", file=sys.stderr)
+            elif current != self.applied:
+                print("MAKO Renderer: Gamescope VRR lease restoration skipped after external change", file=sys.stderr)
+        self.baseline = None
+        self.applied = None
+        self.write_unverified_until = None
+        self.hold_check_after = None
+        return True
+
+    def update(self, mode: str) -> str:
+        if mode != self.mode:
+            if not self.restore():
+                return "restore-not-verified"
+            self.mode = mode
+            self.yielded = False
+        if mode == "follow-steam":
+            return "following-steam"
+        if self.yielded:
+            return "yielded-to-external-change"
+        now = time.monotonic()
+        if (self.applied is not None and self.write_unverified_until is None and
+                self.hold_check_after is not None and now < self.hold_check_after):
+            return f"holding-{mode}"
+        current, query_status = read_vrr()
+        if current is None:
+            return f"query-{query_status}"
+        requested = mode == "on"
+        if self.applied is not None:
+            if self.write_unverified_until is not None:
+                if current == self.applied:
+                    self.write_unverified_until = None
+                    self.hold_check_after = now + HOLD_CHECK_SECONDS
+                    print(f"MAKO Renderer: Gamescope VRR lease applied value={int(requested)}", file=sys.stderr)
+                    return f"write-confirmed-{mode}"
+                if time.monotonic() < self.write_unverified_until:
+                    return "awaiting-write-readback"
+                self.baseline = None
+                self.applied = None
+                self.write_unverified_until = None
+                self.hold_check_after = None
+                self.yielded = True
+                return "write-not-applied"
+            if current != self.applied:
+                # Steam or the user took control. Never fight it or restore
+                # over their live choice. A MAKO profile change re-arms us.
+                self.baseline = None
+                self.applied = None
+                self.write_unverified_until = None
+                self.hold_check_after = None
+                self.yielded = True
+                print("MAKO Renderer: Gamescope VRR lease yielded to external change", file=sys.stderr)
+                return "yielded-to-external-change"
+            self.hold_check_after = now + HOLD_CHECK_SECONDS
+            return f"holding-{mode}"
+        self.baseline = current
+        self.applied = requested
+        if current == requested or write_vrr(requested, current):
+            self.hold_check_after = now + HOLD_CHECK_SECONDS
+            if current != requested:
+                print(f"MAKO Renderer: Gamescope VRR lease applied value={int(requested)}", file=sys.stderr)
+                return f"write-confirmed-{mode}"
+            return f"already-{mode}"
+        else:
+            self.write_unverified_until = time.monotonic() + 2.0
+            return "write-not-verified"
+
+
+def restore_on_exit(lease: VrrLease, decisions: DecisionLog,
+                    original_display: tuple[int, int]) -> bool:
+    """Retry transient readback failures without holding the session lock forever."""
+    for attempt in range(RESTORE_ATTEMPTS):
+        if display_identity() != original_display:
+            return True  # Never restore into a replacement Gamescope session.
+        if lease.restore():
+            return True
+        decisions.record("restore-not-verified")
+        if attempt + 1 < RESTORE_ATTEMPTS:
+            time.sleep(POLL_SECONDS)
+    decisions.record("restore-unverified-at-exit")
+    return False
+
+
+def session_lock() -> int | None:
+    runtime = os.environ.get("XDG_RUNTIME_DIR")
+    display = os.environ.get("GAMESCOPE_WAYLAND_DISPLAY")
+    if not runtime or not display:
+        return None
+    directory = Path(runtime)
+    try:
+        info = directory.stat()
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid():
+            return None
+        suffix = hashlib.sha256(display.encode()).hexdigest()[:16]
+        descriptor = os.open(directory / f"mako-vrr-{suffix}.lock",
+                             os.O_CREAT | os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
+        opened = os.fstat(descriptor)
+        if not stat.S_ISREG(opened.st_mode) or opened.st_uid != os.geteuid():
+            os.close(descriptor)
+            return None
+        return descriptor
+    except OSError:
+        return None
+
+
+def display_identity() -> tuple[int, int] | None:
+    runtime = os.environ.get("XDG_RUNTIME_DIR")
+    display = os.environ.get("GAMESCOPE_WAYLAND_DISPLAY")
+    if not runtime or not display:
+        return None
+    try:
+        info = (Path(runtime) / display).stat()
+    except OSError:
+        return None
+    return (info.st_dev, info.st_ino) if stat.S_ISSOCK(info.st_mode) else None
+
+
+def start_service(parent: str, token: str) -> int:
+    """Move the watcher outside Steam's game cgroup before the wrapper execs."""
+    if not os.environ.get("GAMESCOPE_WAYLAND_DISPLAY"):
+        return 0
+    if os.environ.get("WAYLAND_DISPLAY") not in (None, "", os.environ["GAMESCOPE_WAYLAND_DISPLAY"]):
+        return 0
+    display = display_identity()
+    if display is None:
+        return 0
+    if shutil.which("gamescopectl") is None:
+        print("MAKO Renderer: Gamescope VRR override unavailable: gamescopectl is missing", file=sys.stderr)
+        return 1
+    if shutil.which("xprop") is None:
+        print("MAKO Renderer: Gamescope VRR override unavailable: xprop is missing", file=sys.stderr)
+        return 1
+    identity = process_identity(int(parent))
+    if identity is None:
+        return 0
+    systemd_run = shutil.which("systemd-run")
+    if systemd_run is None:
+        print("MAKO Renderer: Gamescope VRR override unavailable: systemd-run is missing", file=sys.stderr)
+        return 1
+    command = [
+        systemd_run, "--user", "--collect", "--no-block", "--quiet",
+        f"--unit=mako-vrr-{token}",
+    ]
+    for key in ("GAMESCOPE_WAYLAND_DISPLAY", "WAYLAND_DISPLAY", "DISPLAY",
+                "XAUTHORITY", "XDG_RUNTIME_DIR", "XDG_CONFIG_HOME", "HOME",
+                "MAKO_CONFIG"):
+        if key in os.environ:
+            command.append(f"--setenv={key}={os.environ[key]}")
+    command.extend((str(Path(__file__).resolve()), parent, token, str(identity[1]),
+                    str(display[0]), str(display[1])))
+    try:
+        result = subprocess.run(command, capture_output=True, text=True,
+                                timeout=2.0, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        result = None
+    if result is None or result.returncode:
+        print("MAKO Renderer: Gamescope VRR override unavailable: transient user service did not start", file=sys.stderr)
+        return 1
+    print("MAKO Renderer: Gamescope VRR lease decision=service-start-requested", file=sys.stderr)
+    return 0
+
+
+def flatpak_environment(pid: int, tick: int) -> dict[str, str] | None:
+    """Recover only session identity from a live, same-user Flatpak publisher."""
+    try:
+        if (Path(f"/proc/{pid}").stat().st_uid != os.geteuid() or
+                not Path(f"/proc/{pid}/root/.flatpak-info").is_file()):
+            return None
+        with Path(f"/proc/{pid}/environ").open("rb") as stream:
+            payload = stream.read(262145)
+        if len(payload) > 262144:
+            return None
+        allowed = {"DISPLAY", "WAYLAND_DISPLAY", "GAMESCOPE_WAYLAND_DISPLAY", "XAUTHORITY"}
+        session = {}
+        for entry in payload.split(b"\0"):
+            key, _, value = entry.partition(b"=")
+            name = key.decode(errors="replace")
+            if name in allowed:
+                session[name] = value.decode()
+        display = session.get("GAMESCOPE_WAYLAND_DISPLAY", "")
+        if (not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", display) or
+                not X_DISPLAY.fullmatch(session.get("DISPLAY", "")) or
+                session.get("WAYLAND_DISPLAY") not in (None, "", display)):
+            return None
+        runtime = f"/run/user/{os.geteuid()}"
+        environment = {"PATH": "/usr/bin:/bin", "HOME": str(Path.home()),
+                       "XDG_RUNTIME_DIR": runtime,
+                       "DBUS_SESSION_BUS_ADDRESS": f"unix:path={runtime}/bus",
+                       "MAKO_CONFIG": str(config_path()), **session}
+        # Bind the protocol socket and X server to the very same compositor.
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as peer:
+            peer.settimeout(0.25)
+            peer.connect(str(Path(runtime) / display))
+            compositor, uid, _ = struct.unpack("3i", peer.getsockopt(
+                socket.SOL_SOCKET, socket.SO_PEERCRED, struct.calcsize("3i")))
+        props = xroot_properties(session["DISPLAY"], environment)
+        if uid != os.geteuid() or not props or props.get("GAMESCOPE_PID") != compositor:
+            return None
+        if (process_identity(pid) or (None, None))[1] != tick:
+            return None
+        # Never import PATH, LD_PRELOAD, Python, or home/config overrides from a game.
+        return environment
+    except (OSError, ValueError, UnicodeError):
+        return None
+
+
+def watch_flatpak() -> int:
+    """Host discovery only; existing detached per-game leases own all writes."""
+    signal.signal(signal.SIGTERM, _stop)
+    signal.signal(signal.SIGINT, _stop)
+    retry_at: dict[tuple[int, int], float] = {}
+    while not STOP:
+        current = {(p.pid, p.tick) for p in publishers(config_path().parent / "runtime-state")
+                   if p.mode in ("on", "off")}
+        retry_at = {key: value for key, value in retry_at.items() if key in current}
+        for pid, tick in current:
+            key = (pid, tick)
+            if time.monotonic() < retry_at.get(key, 0):
+                continue
+            retry_at[key] = time.monotonic() + 30
+            environment = flatpak_environment(pid, tick)
+            if environment is None:
+                continue
+            token = f"{pid}-{tick}-0"
+            try:
+                active = subprocess.run(("systemctl", "--user", "is-active", "--quiet",
+                                         f"mako-vrr-{token}.service"), env=environment,
+                                        timeout=2, check=False)
+                if active.returncode == 0:
+                    continue
+                subprocess.run((str(Path(__file__).resolve()), "--start",
+                                         str(pid), token), env=environment,
+                                        timeout=4, check=False)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
+        time.sleep(POLL_SECONDS)
+    return 0
+
+
+def main() -> int:
+    arguments = sys.argv[1:]
+    if arguments == ["--watch-flatpak"]:
+        return watch_flatpak()
+    starting = arguments[:1] == ["--start"]
+    if starting:
+        arguments = arguments[1:]
+    if (len(arguments) != (2 if starting else 5) or not arguments[0].isdigit() or
+            not re.fullmatch(r"[0-9-]{1,64}", arguments[1]) or
+            (not starting and not all(value.isdigit() for value in arguments[2:]))):
+        return 2
+    if starting:
+        return start_service(*arguments)
+    if not os.environ.get("GAMESCOPE_WAYLAND_DISPLAY"):
+        print("MAKO Renderer: Gamescope VRR lease decision=gamescope-display-unavailable", file=sys.stderr)
+        return 0
+    if os.environ.get("WAYLAND_DISPLAY") not in (None, "", os.environ["GAMESCOPE_WAYLAND_DISPLAY"]):
+        print("MAKO Renderer: Gamescope VRR lease decision=other-wayland-session", file=sys.stderr)
+        return 0
+    parent = int(arguments[0])
+    token = arguments[1]
+    start_tick = int(arguments[2])
+    original_display = (int(arguments[3]), int(arguments[4]))
+    if display_identity() != original_display:
+        print("MAKO Renderer: Gamescope VRR lease decision=display-session-changed", file=sys.stderr)
+        return 0
+    startup_deadline = time.monotonic() + 120
+    signal.signal(signal.SIGTERM, _stop)
+    signal.signal(signal.SIGINT, _stop)
+    path = config_path()
+    observed: set[tuple[int, int]] = set()
+    lock_fd = session_lock()
+    if lock_fd is None:
+        print("MAKO Renderer: Gamescope VRR lease decision=session-lock-unavailable", file=sys.stderr)
+        return 0
+    owns_lock = False
+    lease = VrrLease()
+    decisions = DecisionLog()
+    decisions.record("watching")
+    capability_check_at = 0.0
+    capable: bool | None = None
+    restoration_failed = False
+    try:
+        while not STOP:
+            if display_identity() != original_display:
+                decisions.record("display-session-changed")
+                break
+            parent_alive = (process_identity(parent) or (None, None))[1] == start_tick
+            observed = {item for item in observed if
+                        (process_identity(item[0]) or (None, None))[1] == item[1]}
+            if not parent_alive and not observed and time.monotonic() > startup_deadline:
+                decisions.record("game-ended")
+                break
+            matched_mode = active_mode(path.parent / "runtime-state", parent,
+                                       start_tick, token, observed)
+            mode = matched_mode or "follow-steam"
+            reason = ("no-matched-frame-generation-context" if matched_mode is None
+                      else "profile-follow-steam")
+            if mode != "follow-steam":
+                now = time.monotonic()
+                if now >= capability_check_at:
+                    capable = read_vrr_capability()
+                    capability_check_at = now + 5
+                if capable is not True:
+                    reason = ("display-vrr-unsupported" if capable is False
+                              else "display-vrr-capability-unavailable")
+                    mode = "follow-steam"
+            else:
+                capability_check_at = 0.0
+            if mode == "follow-steam":
+                if owns_lock:
+                    result = lease.update(mode)
+                    if result == "restore-not-verified":
+                        decisions.record(result)
+                        time.sleep(POLL_SECONDS)
+                        continue
+                    if lease.applied is None:
+                        fcntl.flock(lock_fd, fcntl.LOCK_UN)
+                        owns_lock = False
+                decisions.record(reason)
+            else:
+                if lease.yielded and mode == lease.mode:
+                    if owns_lock:
+                        fcntl.flock(lock_fd, fcntl.LOCK_UN)
+                        owns_lock = False
+                    decisions.record("yielded-to-external-change")
+                    time.sleep(POLL_SECONDS)
+                    continue
+                if not owns_lock:
+                    try:
+                        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        owns_lock = True
+                    except BlockingIOError:
+                        decisions.record("lease-lock-busy")
+                        time.sleep(POLL_SECONDS)
+                        continue
+                decisions.record(lease.update(mode))
+                if lease.yielded:
+                    fcntl.flock(lock_fd, fcntl.LOCK_UN)
+                    owns_lock = False
+            time.sleep(POLL_SECONDS)
+    finally:
+        if owns_lock and display_identity() == original_display:
+            restoration_failed = not restore_on_exit(lease, decisions, original_display)
+        decisions.record("stopped")
+        os.close(lock_fd)
+    return 1 if restoration_failed else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

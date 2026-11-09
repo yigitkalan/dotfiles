@@ -1,0 +1,463 @@
+#!/usr/bin/env bash
+# Filter one MAKO Renderer test run into a focused, shareable diagnostic trace.
+set -euo pipefail
+
+default_plugin_log="${HOME}/.config/mako-render/present-diagnostics.log"
+default_steam_logs=(
+  "${HOME}/.steam/steam/logs/console-linux.txt"
+  "${HOME}/.var/app/com.valvesoftware.Steam/.steam/steam/logs/console-linux.txt"
+)
+log_path="${MAKO_PRESENT_DIAGNOSTICS_LOG:-}"
+retained_session_count=10
+session=latest
+line_count=800
+presets=()
+
+usage() {
+  cat <<'EOF'
+Usage: mako-diagnostics [options] [PRESET ...]
+
+Filters retained MAKO Renderer diagnostics sessions. Multiple presets may be combined.
+The MAKO Decky private log is preferred. Otherwise, the newest native or
+Flatpak Steam console log is used.
+
+Presets:
+  hdr          HDR/scRGB selection, transport packing, passthrough, and initialization
+  config       Decky reloads and pending/applied safe runtime transitions
+  scaling      spatial extent, format, queue, activation, and scaling-only policy
+  adaptive     Adaptive policy, stabilization, ramp, rescue, and cadence
+  recovery     generated-image fallback, history warm-up, and in-place recovery
+  performance  fixed-rate telemetry plus slow presentation and GPU operations
+  lifecycle    swapchain creation/destruction and colour-pipeline selection
+  startup      layer discovery, context creation, HDR selection, and failures
+  layers       Vulkan-loader, Gamescope WSI, and MAKO layer discovery
+  errors       failures, timeouts, fallbacks, passthrough, and Vulkan errors
+  all          every relevant MAKO, Vulkan-loader, and Gamescope WSI line
+               (alias: everything)
+
+Options:
+  --log PATH       Use PATH as the latest-session log instead of auto-selection
+  --session NAME   Select latest, previous, oldest, previous-two, or all
+                   (default: latest)
+  --lines N        Return the last N matching trace lines per session (default: 800),
+                   plus up to 96 earlier identity/state/health context records
+  --list           List presets
+  -h, --help       Show this help
+
+Examples:
+  mako-diagnostics hdr
+  mako-diagnostics scaling
+  mako-diagnostics adaptive recovery
+  mako-diagnostics --lines 2000 all > mako-report.txt
+  mako-diagnostics --session previous --lines 2000 all > previous-report.txt
+  mako-diagnostics --session previous-two --lines 2000 all > earlier-report.txt
+  mako-diagnostics --session all --lines 2000 all > ten-session-report.txt
+EOF
+}
+
+list_presets() {
+  printf '%s\n' hdr config scaling adaptive recovery performance lifecycle startup layers errors all
+}
+
+while (($#)); do
+  case "$1" in
+    --log)
+      if (($# < 2)); then
+        echo "--log requires a path" >&2
+        exit 2
+      fi
+      log_path="$2"
+      shift 2
+      ;;
+    --lines)
+      if (($# < 2)); then
+        echo "--lines requires a positive integer" >&2
+        exit 2
+      fi
+      line_count="$2"
+      shift 2
+      ;;
+    --session)
+      if (($# < 2)); then
+        echo "--session requires latest, previous, oldest, previous-two, or all" >&2
+        exit 2
+      fi
+      session="$2"
+      shift 2
+      ;;
+    --list)
+      list_presets
+      exit 0
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --*)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 2
+      ;;
+    *)
+      presets+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [[ ! "$line_count" =~ ^[1-9][0-9]*$ ]]; then
+  echo "--lines must be a positive integer" >&2
+  exit 2
+fi
+
+case "$session" in
+  latest|previous|oldest|previous-two|all) ;;
+  *)
+    echo "--session must be latest, previous, oldest, previous-two, or all" >&2
+    exit 2
+    ;;
+esac
+
+if ((${#presets[@]} == 0)); then
+  presets=(all)
+fi
+
+if [[ -z "$log_path" ]]; then
+  if [[ -f "$default_plugin_log" ]]; then
+    log_path="$default_plugin_log"
+  else
+    for candidate in "${default_steam_logs[@]}"; do
+      if [[ -f "$candidate" &&
+            ( -z "$log_path" || "$candidate" -nt "$log_path" ) ]]; then
+        log_path="$candidate"
+      fi
+    done
+    if [[ -z "$log_path" ]]; then
+      log_path="${default_steam_logs[0]}"
+    fi
+  fi
+fi
+
+base_log_path="$log_path"
+oldest_session_index=$((retained_session_count - 1))
+log_paths=()
+session_labels=()
+
+add_session_log() {
+  log_paths+=("$1")
+  session_labels+=("$2")
+}
+
+case "$session" in
+  latest)
+    add_session_log "$base_log_path" latest
+    ;;
+  previous)
+    add_session_log "${base_log_path}.1" previous
+    ;;
+  oldest)
+    add_session_log "${base_log_path}.${oldest_session_index}" oldest
+    ;;
+  previous-two)
+    if [[ -f "${base_log_path}.2" ]]; then
+      add_session_log "${base_log_path}.2" previous-2
+    fi
+    if [[ -f "${base_log_path}.1" ]]; then
+      add_session_log "${base_log_path}.1" previous
+    fi
+    ;;
+  all)
+    for ((session_index = oldest_session_index; session_index >= 1; session_index--)); do
+      selected_log_path="${base_log_path}.${session_index}"
+      selected_session="previous-${session_index}"
+      if ((session_index == oldest_session_index)); then
+        selected_session=oldest
+      elif ((session_index == 1)); then
+        selected_session=previous
+      fi
+      if [[ -f "$selected_log_path" ]]; then
+        add_session_log "$selected_log_path" "$selected_session"
+      fi
+    done
+    if [[ -f "$base_log_path" ]]; then
+      add_session_log "$base_log_path" latest
+    fi
+    ;;
+esac
+
+if ((${#log_paths[@]} == 0)); then
+  echo "Diagnostics log not found: $base_log_path" >&2
+  echo "Enable MAKO_PRESENT_DIAGNOSTICS=1, reproduce the issue, and quit the game first." >&2
+  exit 1
+fi
+
+for selected_log_path in "${log_paths[@]}"; do
+  if [[ ! -f "$selected_log_path" ]]; then
+    echo "Diagnostics log not found for session '$session': $selected_log_path" >&2
+    echo "Only the latest $retained_session_count diagnostics-enabled MAKO Decky launches are retained." >&2
+    exit 1
+  fi
+done
+
+pattern=""
+add_pattern() {
+  if [[ -n "$pattern" ]]; then
+    pattern+="|"
+  fi
+  pattern+="($1)"
+}
+
+# Every report should identify the exact engine that produced it. This makes a
+# missing render layer visible even when the user selects only a focused
+# preset such as HDR or performance. Retain the former prefix in the filter so
+# reports collected immediately after an upgrade can still include old logs.
+renderer_prefix='(MAKO Renderer:|mako:)'
+# Steam console-linux.txt timestamps every stderr line, including exception
+# continuations and Wayland errors. Match only that known envelope.
+steam_timestamp_prefix='[[][0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9][]][[:space:]]+'
+add_pattern "$renderer_prefix render layer active; identity=VK_LAYER_MAKO_render; build="
+# A presentation or initialization failure explains missing later telemetry in
+# any preset. Its adjacent exception details are folded into the same record.
+add_pattern "$renderer_prefix [^:]*failed:"
+# libwayland reports compositor protocol errors without a Renderer prefix.
+# Keep its exact error shape, including older @ object IDs and destroyed
+# proxies: an EPIPE bridge failure can otherwise hide the server's cause.
+# This does not admit ordinary Wayland request traces or arbitrary game logs.
+add_pattern "^($steam_timestamp_prefix)?([[:alpha:]_][[:alnum:]_]*[#@][0-9]+|[[]destroyed object[]]): error -?[0-9]+:"
+# Interleaved Vulkan processes are common on SteamOS. Keep their identity and
+# swapchain metadata in every focused report so policy and slow-operation
+# records can be attributed without expanding the report to unrelated output.
+add_pattern "$renderer_prefix present diagnostics: operation=(launch-environment|process-identity|swapchain-context-create)"
+# Gamescope's explicit presentation properties are low-frequency environment
+# metadata. Keep the initial snapshot and any live pacing-owner transition in
+# every report without collecting unrelated compositor output.
+add_pattern "$renderer_prefix Gamescope presentation feedback"
+add_pattern "$renderer_prefix presentation timing (initialized|fallback);"
+add_pattern "$renderer_prefix present diagnostics: operation=gamescope-presentation-feedback"
+# Wrapper session admission failures are deliberately log-only. Retain this
+# line in every focused report so a Desktop-session fallback remains visible
+# without reproducing Gamescope WSI's modal error path.
+add_pattern 'MAKO Decky: Gamescope WSI skipped:'
+# Spatial-scaling and live resource policy records are low-frequency
+# swapchain/startup metadata. Keep them in every focused report so combined
+# Fixed/Adaptive failures cannot be misread as frame-generation-only sessions.
+# The focused scaling preset adds related colour, runtime-transition, and
+# generic swapchain failures.
+spatial_scaling_record="$renderer_prefix (spatial scaling|live spatial scaling change|live profile resource change|LS1 scaling unavailable|standalone spatial scaling|multi-swapchain spatial-scaling|frame generation was enabled after the application device was created without external interop|frame-generation backend initialization failed; independent spatial scaling retained)"
+add_pattern "$spatial_scaling_record"
+live_recreation_record="$renderer_prefix present diagnostics: operation=(generated-present-recreation-drain|original-present-recreation-propagate|swapchain-recreation-observed|swapchain-create-observed|replacement-wsi-prime|replacement-backend-stabilization)"
+add_pattern "$live_recreation_record"
+# Periodic health and collection failures are useful for every failure mode,
+# including memory/thermal degradation outside frame-generation presets.
+add_pattern "$renderer_prefix present diagnostics: operation=(runtime-health|present-phase-summary|gpu-headroom|adaptive-efficiency-probe-cancelled)"
+
+for preset in "${presets[@]}"; do
+  case "$preset" in
+    adaptive|recovery|performance|scaling)
+      add_pattern "$renderer_prefix present diagnostics: operation=(application-acquire|application-queue-present)"
+      ;;
+  esac
+  case "$preset" in
+    hdr)
+      add_pattern "$renderer_prefix (swapchain colour pipeline|HDR10 transport|HDR scaling precision|HDR shader precision|HDR shader source footprint|HDR generation precision|frame generation disabled for this swapchain|frame generation is off for this swapchain|frame-generation initialization failed|MAKO frame-generation initialization failed)"
+      add_pattern "$renderer_prefix Gamescope application HDR feedback"
+      add_pattern "$renderer_prefix present diagnostics: operation=(runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-state-applied|gamescope-refresh-rate-applied)"
+      ;;
+    config)
+      add_pattern "$renderer_prefix (updated configuration in place|updated mako configuration in place|configuration changes requiring GPU resource reconstruction|process-static configuration changes|global backend construction changed)"
+      add_pattern "$renderer_prefix renderer-memory operation=private-context-(prepared|applied)"
+      add_pattern "$renderer_prefix present diagnostics: operation=(runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-transition-recreation-requested|runtime-state-applied)"
+      ;;
+    scaling)
+      # Preserve full bridge records, including protocol/stage/drop fields and legacy VRR margins.
+      # Keep the complete wait record, including first_failure_* call identity.
+      add_pattern "$renderer_prefix present diagnostics: operation=(gamescope-bridge-timing|application-present-mode|application-present-wait)"
+      add_pattern "$renderer_prefix (swapchain colour pipeline|swapchain creation failed|swapchain presentation failed)"
+      add_pattern "$renderer_prefix Gamescope application HDR feedback"
+      add_pattern "$renderer_prefix present diagnostics: operation=(runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-transition-recreation-requested|runtime-state-applied|gamescope-refresh-rate-applied)"
+      add_pattern '(fixed-surface )?spatial scaling (context initialization failed|requires|source and presentation extents are identical)'
+      ;;
+    adaptive)
+      add_pattern "$renderer_prefix present diagnostics: operation=adaptive-"
+      add_pattern "$renderer_prefix present diagnostics: operation=(runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-state-applied|generated-delivery-miss|gamescope-refresh-rate-applied)"
+      ;;
+    recovery)
+      # Rescue decisions evolve; retain bounded cap restoration and historical
+      # cap-release experiments through their shared operation families.
+      add_pattern "$renderer_prefix present diagnostics: operation=(adaptive-rescue-|adaptive-auto-base-cap-|adaptive-paced-load-)"
+      add_pattern "$renderer_prefix present diagnostics: operation=adaptive-load-shed .*reason=paced-unpaid-real-frame-cost"
+      # Include focus/watchdog records, including older recovery operation names.
+      add_pattern "$renderer_prefix present diagnostics: operation=(gamescope-focus|lower-present-stall-|adaptive-recovery-(recreation-|in-place-))"
+      add_pattern "$renderer_prefix present diagnostics: operation=(adaptive-wsi-headroom-limit|skip-generated-frames|resume-generated-frames|generated-image-recovered|generated-delivery-miss|generated-admission-pressure|generated-admission-recovered|fixed-cadence-collapse-(probe-start|probe-rejected|probe-recovered|recovery-unstable|recovery-verified)|ordered-acquire-policy|ordered-acquire-classification-split|ordered-acquire-budget-exhausted|ordered-acquire-guard|ordered-acquire-guard-bypass|ordered-acquire-native-saturation|ordered-acquire-quarantine|ordered-acquire-retry|ordered-acquire-recovered|ordered-acquire-stabilized|pipeline-busy-bypass|pipeline-busy-recovered|render-fence-budget-missed|history-warmup|swapchain-recreation-suppressed|runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied)"
+      ;;
+    performance)
+      add_pattern "$renderer_prefix present diagnostics: operation=(adaptive-rescue-|adaptive-auto-base-cap-|adaptive-paced-load-)"
+      add_pattern "$renderer_prefix present diagnostics: operation=adaptive-load-shed .*reason=paced-unpaid-real-frame-cost"
+      # Preserve full bridge records, including protocol/stage/drop fields and legacy VRR margins.
+      # Keep the complete wait record, including first_failure_* call identity.
+      add_pattern "$renderer_prefix present diagnostics: operation=(gamescope-bridge-timing|application-present-mode|application-present-wait)"
+      add_pattern "$renderer_prefix present diagnostics: operation=(gamescope-focus|lower-present-stall-|adaptive-recovery-(recreation-|in-place-))"
+      add_pattern "$renderer_prefix (backend-memory|renderer-memory) operation="
+      add_pattern "$renderer_prefix present diagnostics: operation=(adaptive-wsi-headroom-limit|fixed-plan|fixed-cadence-collapse-(probe-start|probe-rejected|probe-recovered|recovery-unstable|recovery-verified)|runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-transition-recreation-requested|runtime-state-applied|generated-delivery-miss|generated-admission-pressure|generated-admission-recovered|ordered-acquire-policy|ordered-acquire-classification-split|ordered-acquire-budget-exhausted|ordered-acquire-guard|ordered-acquire-guard-bypass|ordered-acquire-native-saturation|ordered-acquire-quarantine|ordered-acquire-retry|ordered-acquire-recovered|ordered-acquire-stabilized|pipeline-busy-recovered|pipeline-busy-bypass|gamescope-refresh-rate-applied|present-|schedule-|submit-|acquire-|wait-|copy-|render-)"
+      ;;
+    lifecycle)
+      add_pattern "$renderer_prefix present diagnostics: operation=swapchain-context-(create|destroy)"
+      add_pattern "$renderer_prefix present diagnostics: operation=(runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-state-applied)"
+      add_pattern "$renderer_prefix (swapchain colour pipeline|HDR10 transport|HDR scaling precision|HDR shader precision|HDR shader source footprint|HDR generation precision|frame generation disabled for this swapchain|frame generation is off for this swapchain|frame-generation initialization failed|MAKO frame-generation initialization failed)"
+      ;;
+    startup)
+      add_pattern '(VK_LAYER_MAKO_render|VkLayer_MAKO_render|Gamescope WSI|Vulkan Loader|<Loader>|<Device>)'
+      add_pattern "$renderer_prefix present diagnostics: operation=swapchain-context-create"
+      add_pattern "$renderer_prefix Gamescope application HDR feedback"
+      add_pattern "$renderer_prefix present diagnostics: operation=(runtime-transition-pending|runtime-transition-prepared|runtime-transition-failed|runtime-transition-applied|runtime-state-applied)"
+      add_pattern "$renderer_prefix (swapchain colour pipeline|HDR10 transport|HDR scaling precision|HDR shader precision|HDR shader source footprint|HDR generation precision|frame generation disabled for this swapchain|frame generation is off for this swapchain|frame-generation initialization failed|MAKO frame-generation initialization failed)"
+      ;;
+    layers)
+      add_pattern '(VK_LAYER_MAKO_render|VkLayer_MAKO_render|Gamescope WSI|Vulkan Loader|<Loader>|<Device>)'
+      ;;
+    errors)
+      add_pattern "$renderer_prefix.*(failed|failure|error|timeout|fallback|passthrough|disabled|VK_ERROR|VK_TIMEOUT|VK_NOT_READY|device lost)"
+      add_pattern '(Vulkan Loader|Gamescope WSI).*(ERROR|Error|error|WARNING|Warning|warning)'
+      ;;
+    all|everything)
+      add_pattern '(MAKO Renderer:|mako:|VK_LAYER_MAKO_render|VkLayer_MAKO_render|Gamescope WSI|Vulkan Loader|<Loader>|<Device>)'
+      ;;
+    *)
+      echo "Unknown preset: $preset" >&2
+      echo "Available presets:" >&2
+      list_presets >&2
+      exit 2
+      ;;
+  esac
+done
+
+# Renderer exceptions use a branded header followed by unprefixed "- " lines.
+# Filtering those lines independently loses the operation and Vulkan result.
+# Fold only adjacent details into one bounded record before either collection
+# pass, so even --lines 1 preserves the header and its error together.
+normalize_renderer_errors() {
+  awk -v renderer="$renderer_prefix" -v steam_timestamp="$steam_timestamp_prefix" '
+    {
+      message = $0
+      sub("^" steam_timestamp, "", message)
+      if (header != "" && message ~ /^[[:space:]]*-[[:space:]]/) {
+        if (details < 8) header = header " " message
+        else if (details == 8) header = header " error_details_truncated=1"
+        ++details
+        next
+      }
+      if (header != "") { print header; header = "" }
+      if ($0 ~ renderer " [^:]*failed:[[:space:]]*$") {
+        header = $0
+        details = 0
+      } else print
+    }
+    END { if (header != "") print header }
+  ' "$1"
+}
+
+# Keep report context separate from the recent trace budget. Collection runs
+# after gameplay; this bounded AWK state adds no Renderer sampling or logging.
+# Independent limits stop frequent swapchain replacement from evicting build
+# identity or the first health sample of a still-active monitor.
+collect_context() {
+  normalize_renderer_errors "$1" | awk -v renderer="$renderer_prefix" -v pattern="$pattern" -v recent="$line_count" '
+    function field(name,    index_, value, prefix) {
+      prefix = name "="
+      for (index_ = 1; index_ <= NF; ++index_)
+        if (index($index_, prefix) == 1) {
+          value = substr($index_, length(prefix) + 1)
+          sub(/[;,]$/, "", value)
+        }
+      return value
+    }
+    function remember(group, id, first,    key, candidate, victim) {
+      key = group SUBSEP id
+      if (!(key in records) && counts[group] == limits[group]) {
+        victim = ""
+        for (candidate in records)
+          if (groups[candidate] == group &&
+              (victim == "" || touched[candidate] < touched[victim]))
+            victim = candidate
+        delete records[victim]; delete origins[victim]; delete positions[victim]
+        delete touched[victim]; delete groups[victim]
+        --counts[group]; ++evicted
+      }
+      if (!(key in records)) { ++counts[group]; groups[key] = group }
+      if (!first || !(key in records)) {
+        records[key] = $0
+        origins[key] = NR
+        positions[key] = matches ? matched : 0
+      }
+      touched[key] = ++sequence
+    }
+    BEGIN { limits["identity"] = 32; limits["state"] = 32; limits["health"] = 32 }
+    {
+      matches = ($0 ~ pattern)
+      if (matches) ++matched
+      if ($0 !~ renderer) next
+      if ($0 ~ renderer " (render layer active;|backend GPU selection:)" ||
+          (matches && $0 ~ renderer " swapchain colour pipeline:")) {
+        remember("identity", $0, 1)
+        next
+      }
+      if ($0 !~ renderer " present diagnostics: operation=(launch-environment|process-identity|swapchain-context-create|runtime-state-applied|runtime-health)") next
+      operation = field("operation")
+      if (operation == "launch-environment")
+        remember("identity", "launch:" field("pid"), 0)
+      else if (operation == "process-identity")
+        remember("identity", "process:" field("pid") ":" field("role"), 0)
+      else if (operation == "runtime-health-unavailable")
+        remember("identity", $0, 1)
+      else if (operation == "runtime-health" && field("monitor") != "") {
+        owner = field("pid") ":" field("role") ":" field("monitor")
+        remember("health", "first:" owner, 1)
+        remember("health", "latest:" owner, 0)
+      } else if (operation == "swapchain-context-create" || operation == "runtime-state-applied") {
+        owner = field("context")
+        if (owner == "") owner = $0
+        owner = field("role") ":" owner
+        remember("state", "first:" operation ":" owner, 1)
+        remember("state", "latest:" operation ":" owner, 0)
+      }
+    }
+    END {
+      cutoff = matched - recent
+      if (cutoff < 0) cutoff = 0
+      for (key in records)
+        if (positions[key] > cutoff) in_recent[records[key]] = 1
+      for (key in records)
+        if (records[key] in in_recent) delete records[key]
+      # Collapse first/latest snapshots of an unchanged record, keeping order.
+      for (key in records)
+        for (other in records)
+          if (key != other && records[key] == records[other] &&
+              (origins[key] > origins[other] ||
+               (origins[key] == origins[other] && key > other))) {
+            delete records[key]
+            break
+          }
+      retained = 0
+      for (key in records) ++retained
+      print "collection: matched_trace_lines=" matched + 0 "; omitted_trace_lines=" cutoff "; earlier_context_records=" retained "; context_limit=96; context_keys_evicted=" evicted + 0 > "/dev/stderr"
+      print "MAKO Renderer diagnostics context: earlier source records; recent trace follows" > "/dev/stderr"
+      while (retained-- > 0) {
+        next_key = ""
+        for (key in records)
+          if (next_key == "" || origins[key] < origins[next_key]) next_key = key
+        print records[next_key]
+        delete records[next_key]
+      }
+    }
+  '
+}
+
+for index in "${!log_paths[@]}"; do
+  selected_log_path="${log_paths[$index]}"
+  selected_session="${session_labels[$index]}"
+  echo "MAKO Renderer diagnostics source: $selected_log_path" >&2
+  echo "session: $selected_session; retained sessions: $retained_session_count; presets: ${presets[*]}; last matching lines: $line_count" >&2
+  collect_context "$selected_log_path"
+  echo "MAKO Renderer diagnostics recent trace:" >&2
+  { normalize_renderer_errors "$selected_log_path" | grep -aE "$pattern" || true; } | tail -n "$line_count"
+done

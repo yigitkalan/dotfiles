@@ -7,8 +7,8 @@
 * {
     border: none;
     border-radius: 0px; /* Stripped: No rounded corners */
-    font-family: "JetBrainsMono NFP", monospace;
-    font-size: 13px;
+    font-family: "JetBrainsMono NFP ExtraBold", monospace;
+    font-size: 14px;
     font-weight: normal;
     min-height: 0;
 }

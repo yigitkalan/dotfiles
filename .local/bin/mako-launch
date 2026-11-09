@@ -1,0 +1,623 @@
+#!/usr/bin/env bash
+# Launch one command with the standalone MAKO Renderer Vulkan layer enabled.
+set -euo pipefail
+
+usage() {
+    cat <<'EOF'
+Usage: mako-launch [--] COMMAND [ARG ...]
+
+Activates MAKO Renderer for one command through its supported SDR presentation
+boundary, prevents the known LSFG-VK 1.x and 2.x frame-generation layers from
+joining the same Vulkan process, and uses a deterministic MAKO implicit-layer
+directory for reliable swapchain ownership.
+
+Set environment variables before mako-launch to pass them to the game:
+  MAKO_PROFILE=my-profile mako-launch COMMAND [ARG ...]
+
+Enable MAKO's private bundled vkBasalt after the Renderer:
+  ENABLE_VKBASALT=1 mako-launch COMMAND [ARG ...]
+
+VKBASALT_CONFIG_FILE=/absolute/path/vkBasalt.conf selects an optional config.
+
+Enable installed host MangoHud (exclusive with Shaders; requires Python 3):
+  MANGOHUD=1 mako-launch COMMAND [ARG ...]
+
+A readable ~/.config/mako-render/mangohud.conf supplies the shared HUD layout.
+XDG_CONFIG_HOME is respected. Check host availability without changing files:
+  mako-launch --check-mangohud
+
+Standalone launch compatibility settings are read from:
+  ~/.config/mako-render/launcher.conf
+
+MAKO_LAUNCH_CONFIG=/path/to/launcher.conf selects another settings file.
+
+Advanced troubleshooting only:
+  MAKO_ALLOW_COMPETING_LAYERS=1 mako-launch COMMAND [ARG ...]
+
+Allowing multiple frame-generation layers in one process is unsupported and
+may cause startup, synchronization, presentation, or image-quality failures.
+EOF
+}
+
+# Keep discovery and admission in one owner for both the Qt availability check
+# and launch. Only named, guarded manifests enter the private directory; never
+# expose the host's implicit-layer directory to the game. Python runs only when
+# MangoHud is requested, not on normal launches or in the rendering loop.
+mako_mangohud_manifests() {
+    python3 - "$1" <<'PYTHON'
+import contextlib
+import fcntl
+import json
+import os
+from pathlib import Path
+import platform
+import stat
+import sys
+import tempfile
+
+
+def discover():
+    if os.environ.get("FLATPAK_ID") or platform.machine() not in ("x86_64", "AMD64"):
+        return {}
+    home = Path.home()
+    roots = [Path(os.environ.get("XDG_CONFIG_HOME") or home / ".config"),
+             Path(os.environ.get("XDG_DATA_HOME") or home / ".local/share")]
+    for key, default in (("XDG_CONFIG_DIRS", "/etc/xdg"), ("XDG_DATA_DIRS", "/usr/local/share:/usr/share")):
+        roots.extend(Path(value) for value in (os.environ.get(key) or default).split(":") if value.startswith("/"))
+    admitted = {}
+    for suffix, arch in (("x86_64", "64"), ("x86", "32")):
+        filename = "MangoHud." + suffix + ".json"
+        for root in roots:
+            if not root.is_absolute():
+                continue
+            source = root / "vulkan/implicit_layer.d" / filename
+            try:
+                # Nonblocking open plus fstat prevents special files from hanging
+                # the availability check or a game launch.
+                fd = os.open(source, os.O_RDONLY | os.O_NONBLOCK)
+                with os.fdopen(fd, "rb") as stream:
+                    if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                        continue
+                    content = stream.read(65537)
+                if len(content) > 65536:
+                    continue
+                manifest = json.loads(content)
+                layer = manifest.get("layer")
+                if (not isinstance(layer, dict) or "layers" in manifest or
+                        layer.get("name") != "VK_LAYER_MANGOHUD_overlay_" + suffix or
+                        layer.get("type") != "GLOBAL" or
+                        layer.get("library_arch") not in (None, arch) or
+                        layer.get("enable_environment") != {"MANGOHUD": "1"} or
+                        layer.get("disable_environment") != {"DISABLE_MANGOHUD": "1"}):
+                    continue
+                library = layer.get("library_path")
+                if not isinstance(library, str) or not library or any(c in library for c in "\r\n\0"):
+                    continue
+                if "/" in library:
+                    library_path = (source.parent / library).resolve()
+                    if not library_path.is_file() or not os.access(library_path, os.R_OK):
+                        continue
+                    layer["library_path"] = str(library_path)
+                layer["library_arch"] = arch
+                admitted[filename] = json.dumps(manifest, indent=2) + "\n"
+                break
+            except (OSError, ValueError, AttributeError, TypeError):
+                continue
+    return admitted
+
+
+@contextlib.contextmanager
+def locked_directory(directory):
+    fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield os.fstat(fd)
+    finally:
+        os.close(fd)
+
+
+def prepare(manifests):
+    if not manifests:
+        raise ValueError("no compatible host MangoHud manifest")
+    directory = Path(os.environ.get("XDG_CACHE_HOME") or Path.home() / ".cache") / "mako-render/mangohud"
+    if not directory.is_absolute() or any(c in str(directory) for c in ":\r\n"):
+        raise ValueError("invalid MangoHud cache path")
+    directory.mkdir(mode=0o700, parents=True, exist_ok=True)
+    # Concurrent launches must not observe another launch's temporary file.
+    with locked_directory(directory) as info:
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid() or info.st_mode & 0o022:
+            raise ValueError("MangoHud cache directory is not private")
+        names = {"MangoHud.x86_64.json", "MangoHud.x86.json"}
+        if any(path.name not in names for path in directory.iterdir()):
+            raise ValueError("unexpected files in MangoHud cache directory")
+        for name in names:
+            target = directory / name
+            if target.is_symlink() or (target.exists() and not target.is_file()):
+                raise ValueError("invalid cached MangoHud manifest")
+            if name not in manifests:
+                target.unlink(missing_ok=True)
+                continue
+            content = manifests[name]
+            if (target.exists() and target.stat().st_size == len(content.encode()) and
+                    target.read_bytes() == content.encode()):
+                continue
+            fd, temporary = tempfile.mkstemp(prefix="mangohud-manifest-", dir=directory.parent)
+            try:
+                with os.fdopen(fd, "w") as stream:
+                    stream.write(content)
+                os.replace(temporary, target)
+            finally:
+                Path(temporary).unlink(missing_ok=True)
+    return directory
+
+
+try:
+    manifests = discover()
+    if sys.argv[1] == "check":
+        print(json.dumps({"available": bool(manifests)}))
+    else:
+        print(prepare(manifests))
+except (OSError, ValueError) as error:
+    print("MAKO Renderer: MangoHud unavailable: " + str(error), file=sys.stderr)
+    sys.exit(1)
+PYTHON
+}
+
+if (($# == 0)); then
+    echo "mako-launch requires a command to run." >&2
+    usage >&2
+    exit 2
+fi
+
+case "$1" in
+    --check-mangohud)
+        mako_mangohud_manifests check
+        exit $?
+        ;;
+    -h|--help)
+        usage
+        exit 0
+        ;;
+    --)
+        shift
+        if (($# == 0)); then
+            echo "mako-launch requires a command after --." >&2
+            usage >&2
+            exit 2
+        fi
+        ;;
+esac
+
+# Launcher-only compatibility settings must be established before the child
+# starts, but they are not Renderer profile values and must never be placed in
+# conf.toml. Parse the UI-owned fixed key/value format without sourcing or
+# evaluating user-controlled text. An invalid file fails closed to defaults.
+mako_launch_config_path="${MAKO_LAUNCH_CONFIG:-}"
+if [[ -z "$mako_launch_config_path" ]]; then
+    if [[ -n "${XDG_CONFIG_HOME:-}" ]]; then
+        mako_launch_config_path="$XDG_CONFIG_HOME/mako-render/launcher.conf"
+    elif [[ -n "${HOME:-}" ]]; then
+        mako_launch_config_path="$HOME/.config/mako-render/launcher.conf"
+    else
+        mako_launch_config_path="/etc/mako-render/launcher.conf"
+    fi
+fi
+unset MAKO_LAUNCH_CONFIG
+
+mako_launch_version_seen=0
+mako_disable_hdr_exposure=1
+mako_disable_hdr_exposure_seen=0
+mako_disable_steam_overlay=1
+mako_disable_steam_overlay_seen=0
+mako_launch_enable_zink=0
+mako_launch_force_alsa_audio=0
+mako_launch_enable_zink_seen=0
+mako_launch_force_alsa_audio_seen=0
+mako_launch_config_valid=1
+if [[ -f "$mako_launch_config_path" ]]; then
+    while IFS= read -r mako_launch_line || [[ -n "$mako_launch_line" ]]; do
+        mako_launch_line="${mako_launch_line#"${mako_launch_line%%[!$' \t\r\n']*}"}"
+        mako_launch_line="${mako_launch_line%"${mako_launch_line##*[!$' \t\r\n']}"}"
+        if [[ -z "$mako_launch_line" || "$mako_launch_line" == \#* ]]; then
+            continue
+        fi
+        if [[ "$mako_launch_line" != *=* ]]; then
+            mako_launch_config_valid=0
+            break
+        fi
+        mako_launch_key="${mako_launch_line%%=*}"
+        mako_launch_value="${mako_launch_line#*=}"
+        if [[ "$mako_launch_value" == *=* ]]; then
+            mako_launch_config_valid=0
+            break
+        fi
+        mako_launch_key="${mako_launch_key#"${mako_launch_key%%[!$' \t\r\n']*}"}"
+        mako_launch_key="${mako_launch_key%"${mako_launch_key##*[!$' \t\r\n']}"}"
+        mako_launch_value="${mako_launch_value#"${mako_launch_value%%[!$' \t\r\n']*}"}"
+        mako_launch_value="${mako_launch_value%"${mako_launch_value##*[!$' \t\r\n']}"}"
+        case "$mako_launch_key" in
+            version)
+                if [[ "$mako_launch_version_seen" != 0 || "$mako_launch_value" != 1 ]]; then
+                    mako_launch_config_valid=0
+                    break
+                fi
+                mako_launch_version_seen=1
+                ;;
+            disable_hdr_exposure)
+                if [[ "$mako_disable_hdr_exposure_seen" != 0 ||
+                        "$mako_launch_value" != 0 && "$mako_launch_value" != 1 ]]; then
+                    mako_launch_config_valid=0
+                    break
+                fi
+                mako_disable_hdr_exposure="$mako_launch_value"
+                mako_disable_hdr_exposure_seen=1
+                ;;
+            disable_steam_overlay)
+                if [[ "$mako_disable_steam_overlay_seen" != 0 ||
+                        "$mako_launch_value" != 0 && "$mako_launch_value" != 1 ]]; then
+                    mako_launch_config_valid=0
+                    break
+                fi
+                mako_disable_steam_overlay="$mako_launch_value"
+                mako_disable_steam_overlay_seen=1
+                ;;
+            enable_zink)
+                if [[ "$mako_launch_enable_zink_seen" != 0 ||
+                        "$mako_launch_value" != 0 && "$mako_launch_value" != 1 ]]; then
+                    mako_launch_config_valid=0
+                    break
+                fi
+                mako_launch_enable_zink="$mako_launch_value"
+                mako_launch_enable_zink_seen=1
+                ;;
+            force_alsa_audio)
+                if [[ "$mako_launch_force_alsa_audio_seen" != 0 ||
+                        "$mako_launch_value" != 0 && "$mako_launch_value" != 1 ]]; then
+                    mako_launch_config_valid=0
+                    break
+                fi
+                mako_launch_force_alsa_audio="$mako_launch_value"
+                mako_launch_force_alsa_audio_seen=1
+                ;;
+            *)
+                mako_launch_config_valid=0
+                break
+                ;;
+        esac
+    done < "$mako_launch_config_path"
+
+    if [[ "$mako_launch_version_seen" != 1 ]]; then
+        mako_launch_config_valid=0
+    fi
+    if [[ "$mako_launch_config_valid" != 1 ]]; then
+        echo "mako-launch: ignoring invalid launcher configuration: $mako_launch_config_path" >&2
+        mako_launch_enable_zink=0
+        mako_launch_force_alsa_audio=0
+        mako_disable_steam_overlay=1
+        mako_disable_hdr_exposure=1
+    fi
+fi
+unset mako_launch_config_path mako_launch_line mako_launch_key mako_launch_value
+unset mako_launch_version_seen mako_launch_config_valid
+unset mako_launch_enable_zink_seen mako_launch_force_alsa_audio_seen
+unset mako_disable_steam_overlay_seen
+unset mako_disable_hdr_exposure_seen
+
+if [[ "$mako_launch_enable_zink" == 1 ]]; then
+    export __GLX_VENDOR_LIBRARY_NAME=mesa
+    export MESA_LOADER_DRIVER_OVERRIDE=zink
+    export GALLIUM_DRIVER=zink
+fi
+if [[ "$mako_launch_force_alsa_audio" == 1 ]]; then
+    export SDL_AUDIODRIVER=alsa
+    case ";${WINEDLLOVERRIDES:-};" in
+        *";winepulse.drv=d;"*) ;;
+        *) export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:+$WINEDLLOVERRIDES;}winepulse.drv=d" ;;
+    esac
+    case ";${WINEDLLOVERRIDES:-};" in
+        *";winealsa.drv=b;"*) ;;
+        *) export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:+$WINEDLLOVERRIDES;}winealsa.drv=b" ;;
+    esac
+fi
+unset mako_launch_enable_zink mako_launch_force_alsa_audio
+
+# Treat vkBasalt as an explicit standalone opt-in. Consume its upstream enable
+# gate here so the child can receive one ordered explicit chain instead of
+# discovering the same layer through both explicit and implicit activation.
+mako_vkbasalt_requested="${ENABLE_VKBASALT:-0}"
+case "$mako_vkbasalt_requested" in
+    0|1) ;;
+    *)
+        echo "ENABLE_VKBASALT must be 0 or 1 when used with mako-launch." >&2
+        exit 2
+        ;;
+esac
+mako_mangohud_requested="${MANGOHUD:-0}"
+case "$mako_mangohud_requested" in
+    0|1) ;;
+    *) echo "MAKO Renderer: MANGOHUD must be 0 or 1." >&2; exit 2 ;;
+esac
+if [[ "$mako_mangohud_requested" == 1 && "$mako_vkbasalt_requested" == 1 ]]; then
+    echo "MAKO Renderer: MangoHud and Shaders cannot be enabled together; select one." >&2
+    exit 2
+fi
+unset MANGOHUD
+export DISABLE_MANGOHUD=1
+mako_vkbasalt_config="${VKBASALT_CONFIG_FILE:-}"
+unset ENABLE_VKBASALT VKBASALT_CONFIG_FILE VKBASALT_CONFIG_RELOAD
+export DISABLE_VKBASALT=1
+
+allow_competing_layers="${MAKO_ALLOW_COMPETING_LAYERS:-0}"
+case "$allow_competing_layers" in
+    0)
+        # These are the disable_environment gates declared by the two public
+        # LSFG-VK manifest generations. The Vulkan loader must see them before
+        # it discovers and assembles the process's layer chain.
+        export DISABLE_LSFG=1
+        export DISABLE_LSFGVK=1
+        ;;
+    1)
+        # Explicitly remove inherited guards for an advanced comparison run.
+        # This is intentionally opt-in and unsupported for ordinary gameplay.
+        unset DISABLE_LSFG DISABLE_LSFGVK
+        ;;
+    *)
+        echo "MAKO_ALLOW_COMPETING_LAYERS must be 0 or 1." >&2
+        exit 2
+        ;;
+esac
+
+# Do not expose the launcher's private policy switch to the renderer or game.
+unset MAKO_ALLOW_COMPETING_LAYERS
+
+# Resolve the installed private manifest directory from this launcher. This is
+# the deterministic SDR boundary proven by MAKO v2: Steam's Vulkan Fossilize,
+# overlay, and system-wide presentation layers cannot bypass MAKO's device or
+# swapchain hooks. Gamescope and Steam's Game Mode UI remain outside this
+# application layer chain. Older packages fall back to their public manifest.
+mako_launcher_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+mako_install_prefix="$(cd -- "$mako_launcher_dir/.." && pwd -P)"
+mako_data_home="${XDG_DATA_HOME:-$HOME/.local/share}"
+mako_implicit_layer_path="$mako_install_prefix/share/mako-render/vulkan/implicit_layer.d"
+if [[ ! -d "$mako_implicit_layer_path" && -d "$mako_data_home/mako-render/vulkan/implicit_layer.d" ]]; then
+    mako_implicit_layer_path="$mako_data_home/mako-render/vulkan/implicit_layer.d"
+elif [[ ! -d "$mako_implicit_layer_path" ]]; then
+    mako_implicit_layer_path="$mako_install_prefix/share/vulkan/implicit_layer.d"
+fi
+
+# When overlay removal is off, preserve Steam's named Desktop Mode FPS overlay
+# when Steam requested it and its per-user manifests are available.
+# The directory is exposed solely for explicit-layer discovery, so
+# Steam Fossilize and unrelated implicit layers remain outside MAKO's boundary.
+# Gaming Mode keeps its compositor-owned performance display unchanged.
+mako_steam_overlay_layers=""
+mako_steam_overlay_layer_dir="$mako_data_home/vulkan/implicit_layer.d"
+mako_gamescope_session=0
+mako_flatpak_launch=0
+if [[ "${1##*/}" == flatpak && "${2:-}" == run ]]; then
+    mako_flatpak_launch=1
+fi
+if [[ -n "${GAMESCOPE_WAYLAND_DISPLAY:-}" &&
+        ( -z "${WAYLAND_DISPLAY:-}" ||
+          "${WAYLAND_DISPLAY}" == "${GAMESCOPE_WAYLAND_DISPLAY}" ) ]]; then
+    mako_gamescope_session=1
+fi
+if [[ "$mako_disable_steam_overlay" != 1 &&
+        "${ENABLE_VK_LAYER_VALVE_steam_overlay_1:-0}" == 1 &&
+        "$mako_gamescope_session" != 1 && "$mako_flatpak_launch" != 1 ]]; then
+    if [[ -r "$mako_steam_overlay_layer_dir/steamoverlay_x86_64.json" ]]; then
+        mako_steam_overlay_layers=VK_LAYER_VALVE_steam_overlay_64
+    fi
+    if [[ -r "$mako_steam_overlay_layer_dir/steamoverlay_i386.json" ]]; then
+        mako_steam_overlay_layers="${mako_steam_overlay_layers:+$mako_steam_overlay_layers:}VK_LAYER_VALVE_steam_overlay_32"
+    fi
+    if [[ -n "$mako_steam_overlay_layers" ]]; then
+        export VK_LAYER_PATH="$mako_steam_overlay_layer_dir${VK_LAYER_PATH:+:$VK_LAYER_PATH}"
+    fi
+fi
+
+# Remove any inherited vkBasalt request before deciding whether the private
+# bundled layer can join. This prevents a system-wide manifest or duplicate
+# caller entry from bypassing the standalone launcher's ownership boundary.
+mako_existing_instance_layers=":${VK_INSTANCE_LAYERS:-}:"
+while [[ "$mako_existing_instance_layers" == *":VK_LAYER_VKBASALT_post_processing:"* ]]; do
+    mako_existing_instance_layers="${mako_existing_instance_layers/:VK_LAYER_VKBASALT_post_processing:/:}"
+done
+for mako_mangohud_layer in VK_LAYER_MANGOHUD_overlay_x86_64 VK_LAYER_MANGOHUD_overlay_x86; do
+    while [[ "$mako_existing_instance_layers" == *":$mako_mangohud_layer:"* ]]; do
+        mako_existing_instance_layers="${mako_existing_instance_layers/:$mako_mangohud_layer:/:}"
+    done
+done
+if [[ -n "$mako_steam_overlay_layers" ]]; then
+    for mako_steam_overlay_layer in VK_LAYER_VALVE_steam_overlay_64 VK_LAYER_VALVE_steam_overlay_32; do
+        while [[ "$mako_existing_instance_layers" == *":$mako_steam_overlay_layer:"* ]]; do
+            mako_existing_instance_layers="${mako_existing_instance_layers/:$mako_steam_overlay_layer:/:}"
+        done
+    done
+fi
+mako_existing_instance_layers="${mako_existing_instance_layers#:}"
+mako_existing_instance_layers="${mako_existing_instance_layers%:}"
+
+mako_vkbasalt_enabled=0
+mako_vkbasalt_layer_path="$mako_install_prefix/share/mako-render/vulkan/vkbasalt.d"
+mako_vkbasalt_library64="$mako_install_prefix/lib/vkbasalt/libvkbasalt.so"
+mako_vkbasalt_library32="$mako_install_prefix/lib32/vkbasalt/libvkbasalt.so"
+if [[ ! -r "$mako_vkbasalt_layer_path/vkBasalt.json" ||
+        ! -r "$mako_vkbasalt_layer_path/vkBasalt.x86.json" ||
+        ! -r "$mako_vkbasalt_library64" ||
+        ! -r "$mako_vkbasalt_library32" ]]; then
+    mako_vkbasalt_layer_path="$mako_data_home/mako-render/vulkan/vkbasalt.d"
+    mako_vkbasalt_library64="$mako_data_home/../lib/vkbasalt/libvkbasalt.so"
+    mako_vkbasalt_library32="$mako_data_home/../lib32/vkbasalt/libvkbasalt.so"
+fi
+if [[ "$mako_vkbasalt_requested" == 1 && "${DISABLE_MAKO:-0}" != 1 ]]; then
+    if [[ ! -r "$mako_vkbasalt_layer_path/vkBasalt.json" ||
+            ! -r "$mako_vkbasalt_layer_path/vkBasalt.x86.json" ||
+            ! -r "$mako_vkbasalt_library64" ||
+            ! -r "$mako_vkbasalt_library32" ]]; then
+        echo "mako-launch: private 64-bit/32-bit vkBasalt payload is unavailable; continuing with MAKO Renderer only." >&2
+    elif [[ -n "$mako_vkbasalt_config" && ! -r "$mako_vkbasalt_config" ]]; then
+        echo "mako-launch: vkBasalt config is not readable: $mako_vkbasalt_config; continuing with MAKO Renderer only." >&2
+    else
+        mako_existing_instance_layers=":$mako_existing_instance_layers:"
+        while [[ "$mako_existing_instance_layers" == *":VK_LAYER_MAKO_render:"* ]]; do
+            mako_existing_instance_layers="${mako_existing_instance_layers/:VK_LAYER_MAKO_render:/:}"
+        done
+        mako_existing_instance_layers="${mako_existing_instance_layers#:}"
+        mako_existing_instance_layers="${mako_existing_instance_layers%:}"
+        if [[ -n "$mako_existing_instance_layers" ]]; then
+            export VK_INSTANCE_LAYERS="VK_LAYER_MAKO_render:VK_LAYER_VKBASALT_post_processing${mako_steam_overlay_layers:+:$mako_steam_overlay_layers}:$mako_existing_instance_layers"
+        else
+            export VK_INSTANCE_LAYERS="VK_LAYER_MAKO_render:VK_LAYER_VKBASALT_post_processing${mako_steam_overlay_layers:+:$mako_steam_overlay_layers}"
+        fi
+        mako_implicit_layer_path="$mako_implicit_layer_path:$mako_vkbasalt_layer_path"
+        unset DISABLE_VKBASALT
+        if [[ -n "$mako_vkbasalt_config" ]]; then
+            export VKBASALT_CONFIG_FILE="$mako_vkbasalt_config"
+            export VKBASALT_CONFIG_RELOAD=1
+        fi
+        mako_vkbasalt_enabled=1
+    fi
+fi
+if [[ "$mako_vkbasalt_enabled" != 1 && -n "$mako_steam_overlay_layers" &&
+        "${DISABLE_MAKO:-0}" != 1 ]]; then
+    if [[ -n "$mako_existing_instance_layers" ]]; then
+        export VK_INSTANCE_LAYERS="VK_LAYER_MAKO_render:$mako_steam_overlay_layers:$mako_existing_instance_layers"
+    else
+        export VK_INSTANCE_LAYERS="VK_LAYER_MAKO_render:$mako_steam_overlay_layers"
+    fi
+elif [[ "$mako_vkbasalt_enabled" != 1 && -n "$mako_steam_overlay_layers" ]]; then
+    if [[ -n "$mako_existing_instance_layers" ]]; then
+        export VK_INSTANCE_LAYERS="$mako_steam_overlay_layers:$mako_existing_instance_layers"
+    else
+        export VK_INSTANCE_LAYERS="$mako_steam_overlay_layers"
+    fi
+elif [[ "$mako_vkbasalt_enabled" != 1 ]]; then
+    unset VKBASALT_CONFIG_RELOAD
+    if [[ -n "$mako_existing_instance_layers" ]]; then
+        export VK_INSTANCE_LAYERS="$mako_existing_instance_layers"
+    else
+        unset VK_INSTANCE_LAYERS
+    fi
+fi
+if [[ "$mako_mangohud_requested" == 1 && "${DISABLE_MAKO:-0}" != 1 ]]; then
+    if [[ -n "${FLATPAK_ID:-}" || "$mako_flatpak_launch" == 1 ]]; then
+        echo "MAKO Renderer: host MangoHud is unavailable for Flatpak; continuing without MangoHud." >&2
+    elif mako_mangohud_directory="$(mako_mangohud_manifests prepare)"; then
+        mako_implicit_layer_path="$mako_implicit_layer_path:$mako_mangohud_directory"
+        export MANGOHUD=1
+        unset DISABLE_MANGOHUD
+        # Match Decky's 64-bit explicit ordering. The guarded 32-bit manifest
+        # stays implicit and is admitted only to a matching 32-bit process.
+        if [[ -r "$mako_mangohud_directory/MangoHud.x86_64.json" ]]; then
+            mako_mangohud_chain=":${VK_INSTANCE_LAYERS:-}:"
+            while [[ "$mako_mangohud_chain" == *":VK_LAYER_MAKO_render:"* ]]; do
+                mako_mangohud_chain="${mako_mangohud_chain/:VK_LAYER_MAKO_render:/:}"
+            done
+            mako_mangohud_chain="${mako_mangohud_chain#:}"
+            mako_mangohud_chain="${mako_mangohud_chain%:}"
+            export VK_INSTANCE_LAYERS="VK_LAYER_MAKO_render:VK_LAYER_MANGOHUD_overlay_x86_64${mako_mangohud_chain:+:$mako_mangohud_chain}"
+        fi
+        mako_mangohud_config="${XDG_CONFIG_HOME:-$HOME/.config}/mako-render/mangohud.conf"
+        if [[ -f "$mako_mangohud_config" && -r "$mako_mangohud_config" ]]; then
+            export MANGOHUD_CONFIGFILE="$mako_mangohud_config"
+        fi
+    else
+        echo "MAKO Renderer: continuing without MangoHud." >&2
+    fi
+fi
+unset mako_mangohud_requested mako_mangohud_directory mako_mangohud_config
+unset mako_mangohud_chain mako_mangohud_layer
+export VK_IMPLICIT_LAYER_PATH="$mako_implicit_layer_path"
+unset VK_ADD_IMPLICIT_LAYER_PATH
+# Apply the saved process-start Performance setting before application exec.
+# BEGIN MAKO_STEAM_OVERLAY_PRELOAD_POLICY
+mako_steam_overlay_preload_removed=0
+mako_steam_overlay_preload_filter_requested="${mako_disable_steam_overlay:-1}"
+if [[ "$mako_steam_overlay_preload_filter_requested" == 1 ]]; then
+    export DISABLE_VK_LAYER_VALVE_steam_overlay_1=1
+    unset ENABLE_VK_LAYER_VALVE_steam_overlay_1
+    mako_overlay_instance_layers=":${VK_INSTANCE_LAYERS:-}:"
+    for mako_overlay_layer in VK_LAYER_VALVE_steam_overlay_64 VK_LAYER_VALVE_steam_overlay_32; do
+        while [[ "$mako_overlay_instance_layers" == *":$mako_overlay_layer:"* ]]; do
+            mako_overlay_instance_layers="${mako_overlay_instance_layers/:$mako_overlay_layer:/:}"
+        done
+    done
+    mako_overlay_instance_layers="${mako_overlay_instance_layers#:}"
+    mako_overlay_instance_layers="${mako_overlay_instance_layers%:}"
+    if [[ -n "$mako_overlay_instance_layers" ]]; then
+        export VK_INSTANCE_LAYERS="$mako_overlay_instance_layers"
+    else
+        unset VK_INSTANCE_LAYERS
+    fi
+    mako_preload_list="${LD_PRELOAD:-}"
+    mako_preload_list="${mako_preload_list//[$' \t\n\r\v\f:']/ }"
+    IFS=' ' read -r -a mako_preload_entries <<< "$mako_preload_list"
+    mako_retained_preloads=""
+    for mako_preload_entry in "${mako_preload_entries[@]}"; do
+        if [[ "${mako_preload_entry##*/}" == gameoverlayrenderer.so ]]; then
+            mako_steam_overlay_preload_removed=$((mako_steam_overlay_preload_removed + 1))
+        else
+            mako_retained_preloads="${mako_retained_preloads:+$mako_retained_preloads:}$mako_preload_entry"
+        fi
+    done
+    if ((mako_steam_overlay_preload_removed > 0)); then
+        if [[ -n "$mako_retained_preloads" ]]; then
+            export LD_PRELOAD="$mako_retained_preloads"
+        else
+            unset LD_PRELOAD
+        fi
+    fi
+    unset mako_overlay_instance_layers mako_overlay_layer
+    unset mako_preload_list mako_preload_entries mako_preload_entry mako_retained_preloads
+fi
+# END MAKO_STEAM_OVERLAY_PRELOAD_POLICY
+if [[ "${MAKO_PRESENT_DIAGNOSTICS:-0}" != 0 ]]; then
+    printf 'MAKO Renderer: present diagnostics: operation=launch-environment pid=%s steam_overlay_preload_filter_requested=%s steam_overlay_preload_removed=%s\n' \
+        "$$" "$mako_steam_overlay_preload_filter_requested" "$mako_steam_overlay_preload_removed" >&2
+fi
+unset mako_steam_overlay_preload_removed
+unset mako_steam_overlay_preload_filter_requested mako_disable_steam_overlay
+unset mako_launcher_dir mako_install_prefix mako_data_home mako_implicit_layer_path
+unset mako_existing_instance_layers mako_vkbasalt_layer_path
+unset mako_vkbasalt_library64 mako_vkbasalt_library32
+unset mako_vkbasalt_requested mako_vkbasalt_config
+unset mako_steam_overlay_layer_dir mako_steam_overlay_layer
+unset mako_steam_overlay_layers mako_gamescope_session mako_flatpak_launch
+
+# Gamescope WSI implements its own FIFO policy above MAKO, while MAKO expands
+# one application present into a generated/original sequence below it. Keeping
+# both policies active serializes the two lower presents and can collapse a
+# 60 FPS game to roughly 13 FPS. Suppress WSI inside this deterministic chain;
+# the Gamescope compositor itself remains active.
+export DISABLE_GAMESCOPE_WSI=1
+unset ENABLE_GAMESCOPE_WSI
+
+# HDR uses MAKO's private Gamescope surface bridge, independently of full WSI.
+export MAKO_DISABLE_HDR_EXPOSURE="$mako_disable_hdr_exposure"
+if [[ "$mako_disable_hdr_exposure" == 0 ]]; then
+    export DXVK_HDR=1
+else
+    unset DXVK_HDR
+fi
+unset mako_disable_hdr_exposure
+if [[ "$mako_vkbasalt_enabled" == 1 || -n "${VK_INSTANCE_LAYERS:-}" &&
+        ":${VK_INSTANCE_LAYERS}:" == *":VK_LAYER_MAKO_render:"* ]]; then
+    unset ENABLE_MAKO
+else
+    export ENABLE_MAKO=1
+fi
+unset mako_vkbasalt_enabled
+
+if [[ -n "${GAMESCOPE_WAYLAND_DISPLAY:-}" &&
+        ( -z "${WAYLAND_DISPLAY:-}" ||
+          "$WAYLAND_DISPLAY" == "$GAMESCOPE_WAYLAND_DISPLAY" ) ]]; then
+    mako_vrr_helper="$(dirname -- "${BASH_SOURCE[0]}")/mako-vrr-lease"
+    if [[ -x "$mako_vrr_helper" ]]; then
+        export MAKO_VRR_LEASE_TOKEN="$$-$RANDOM-$RANDOM"
+        "$mako_vrr_helper" --start "$$" "$MAKO_VRR_LEASE_TOKEN" || :
+    fi
+    unset mako_vrr_helper
+fi
+
+exec "$@"

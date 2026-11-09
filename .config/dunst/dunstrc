@@ -23,7 +23,7 @@
     # Width of frame around window
     frame_width = 1
     # Color of frame around window
-    frame_color = "#4287f5"
+    frame_color = "#7fb0b5"
     # Sort messages by urgency
     sort = yes
     # Idle seconds
@@ -93,7 +93,7 @@
     # Dunst verbosity
     verbosity = mesg
     # Corner radius of dunst
-    corner_radius = 15
+    corner_radius = 0
     # Ignore dbus closeNotification message
     ignore_dbusclose = false
 

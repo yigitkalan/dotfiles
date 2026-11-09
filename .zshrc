@@ -31,6 +31,7 @@ alias cl="clear"
 alias rm="rm -i"
 alias open="xdg-open"
 alias ls='lsd'
+alias v='nvim'
 alias hx="helix"
 alias lg='lazygit'
 alias keyb="setxkbmap -layout"

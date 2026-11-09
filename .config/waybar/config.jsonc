@@ -1,22 +1,21 @@
 {
     "layer": "bottom",
     "modules-left": [
-        "custom/launcher",
+        "clock",
         "custom/updates",
         "hyprland/window",
         "tray"
     ],
     "modules-center": [
-        "hyprland/workspaces"
+        "hyprland/workspaces",
     ],
     "modules-right": [
-        "backlight",
+        // "backlight",
         "pulseaudio",
-        "battery",
+        // "battery",
         "hyprland/language",
         "memory",
-        "network",
-        "clock"
+        "network"
         // "custom/powermenu"
     ],
     "pulseaudio": {
@@ -35,10 +34,12 @@
                 "",
                 ""
             ]
+
         },
         "scroll-step": 1,
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
         "on-click-right": "pavucontrol",
+        "on-click-middle": "~/.config/waybar/cycle_audio.sh",
         "ignored-sinks": [
             "Easy Effects Sink"
         ]
